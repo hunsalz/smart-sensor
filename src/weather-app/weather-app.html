@@ -13,6 +13,9 @@
 <link rel="import" href="../../bower_components/paper-styles/color.html">
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
 
+<link rel="import" href="../../bower_components/chart-elements/chart-line.html">
+<link rel="import" href="../../bower_components/mqtt-elements/mqtt-elements.html">
+
 <dom-module id="weather-app">
   <template>
     <style is="custom-style" include="app-grid-style">
@@ -72,7 +75,7 @@
       .content-area {
         padding-top: 30vh;
       }
-      .item-header {
+      .widget-header {
         padding: 10px;
         background-color: #f3f3f3;
         border: 1px solid #dedede;
@@ -84,13 +87,16 @@
         width: 100%;
         text-align: center;
       }
-      .item-body {
+      .widget-body {
         padding: 10px;
         border: 1px solid #dedede;
         border-top: none;
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
         @apply(--shadow-elevation-2dp);
+      }
+      .widget-chart {
+        width: 100%;
       }
     </style>
     <!-- header -->
@@ -108,25 +114,25 @@
     <div class="content-area">
       <div class="app-grid">
         <div>
-          <button class="item-header" on-click="toggle" toggle="temperature">Temperature 26.1 °C</button>
+          <button class="widget-header" on-click="toggle" toggle="temperature">Temperature 26.1 °C</button>
           <iron-collapse id="temperature" tabindex="0">
-            <div class="item-body">
-              <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
+            <div class="widget-body">
+              <chart-line id="temperature_chart_id" class="widget-chart" data="[[temperature_chart]]"></chart-line>
             </div>
           </iron-collapse>
         </div>
         <div>
-          <button class="item-header" on-click="toggle" toggle="humidity">Humidity 12.3 %</button>
+          <button class="widget-header" on-click="toggle" toggle="humidity">Humidity 12.3 %</button>
           <iron-collapse id="humidity" tabindex="1">
-            <div class="item-body">
-              <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
+            <div class="widget-body">
+              <chart-line id="humidity_chart_id" class="widget-chart" data="[[humidity_chart]]"></chart-line>
             </div>
           </iron-collapse>
         </div>
         <div>
-          <button class="item-header" on-click="toggle" toggle="pressure">Pressure 10131 ?</button>
+          <button class="widget-header" on-click="toggle" toggle="pressure">Pressure 10131 Pa</button>
           <iron-collapse id="pressure" tabindex="2">
-            <div class="item-body">
+            <div class="widget-body">
               <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
             </div>
           </iron-collapse>
@@ -138,9 +144,44 @@
     Polymer({
       is: 'weather-app',
       properties: {
-        prop1: {
-          type: String,
-          value: 'weather-app'
+        temperature_chart: {
+          type: Object,
+          value: {
+            labels: ["22:10", "22:11", "22:12", "22:13", "22:14", "22:15", "22:16"],
+            datasets: [{
+              label: "Temperature DHT22",
+              fill: true,
+              backgroundColor: "rgba(220,220,220,0.2)",
+              borderColor: "rgba(220,220,220,1)",
+              borderWidth: 1,
+              responsive: true,
+              data: [26.5, 26.4, 26.4, 26.2, 26.0, 26.2, 25.9]
+            },
+            {
+              label: "Temperature BMP280",
+              fill: true,
+              backgroundColor: "rgba(151,187,205,0.2)",
+              borderColor: "rgba(151,187,205,1)",
+              borderWidth: 1,
+              responsive: true,
+              data: [25.8, 26.2, 25.9, 26.1, 25.8, 25.8, 25.6]
+            }]
+          }
+        },
+        humidity_chart: {
+          type: Object,
+          value: {
+            labels: ["22:10", "22:11", "22:12", "22:13", "22:14", "22:15", "22:16"],
+            datasets: [{
+              label: "Humidity",
+              fill: true,
+              backgroundColor: "rgba(220,220,220,0.2)",
+              borderColor: "rgba(220,220,220,1)",
+              borderWidth: 1,
+              responsive: true,
+              data: [13.4, 13.5, 13.5, 13.4, 13.3, 13.5, 13.6]
+            }]
+          }
         }
       },
       attached: function() {
