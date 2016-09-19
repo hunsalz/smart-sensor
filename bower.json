@@ -1,0 +1,19 @@
+{
+  "name": "weather-app",
+  "main": "index.html",
+  "dependencies": {
+    "polymer": "Polymer/polymer#latest",
+    "app-layout": "PolymerElements/app-layout#latest",
+    "iron-collapse": "PolymerElements/iron-collapse#latest",
+    "iron-icons": "PolymerElements/iron-icons#latest",
+    "iron-flex-layout": "PolymerElements/iron-flex-layout#latest",
+    "paper-icon-button": "PolymerElements/paper-icon-button#latest",
+    "paper-styles": "PolymerElements/paper-styles#latest"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
+    "web-component-tester": "^4.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
+  }
+}

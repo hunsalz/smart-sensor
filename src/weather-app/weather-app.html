@@ -1,0 +1,161 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/app-layout/app-grid/app-grid-style.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+
+<link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-styles/color.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+
+<dom-module id="weather-app">
+  <template>
+    <style is="custom-style" include="app-grid-style">
+      :host {
+        display: block;
+        @apply(--paper-font-common-base);
+        --app-grid-columns: 3;
+        --app-grid-gutter: 5px;
+        --app-grid-expandible-item-columns: 3;
+      }
+      app-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 30vh;
+        color: #fff;
+        background-image: url(../img/header.png);
+        background-position: bottom center;
+        background-size: cover;
+        --app-header-background-front-layer: {
+          background: -webkit-linear-gradient(top, transparent 0%, transparent 50%, rgba(0,0,0,0.5) 100%);
+        };
+        --app-header-background-rear-layer: {
+          background-color: #303f9f;
+        };
+      }
+      paper-icon-button {
+        --paper-icon-button-ink-color: white;
+      }
+      [main-title] {
+        margin-top: 10vh;
+        font-size: 4em;
+        font-weight: bold;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      [condensed-title] {
+        font-size: 1em;
+        font-weight: normal;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      @media (max-width: 639px) {
+        :host {
+          --app-grid-columns: 1;
+          --app-grid-gutter: 5px;
+          --app-grid-expandible-item-columns: 1;
+        }
+        [main-title] {
+          font-size: 2em;
+          text-align: center;
+        }
+      }
+      .content-area {
+        padding-top: 30vh;
+      }
+      .item-header {
+        padding: 10px;
+        background-color: #f3f3f3;
+        border: 1px solid #dedede;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        font-size: 18px;
+        cursor: pointer;
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
+        width: 100%;
+        text-align: center;
+      }
+      .item-body {
+        padding: 10px;
+        border: 1px solid #dedede;
+        border-top: none;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        @apply(--shadow-elevation-2dp);
+      }
+    </style>
+    <!-- header -->
+    <app-header condenses fixed
+        effects="waterfall resize-snapped-title fade-background"
+        effects-config='{"resize-snapped-title": {"startsAt": 0.8, "duration": "100ms"}, "fade-background": {"startsAt": 0.8, "endsAt": 0.9}}'>
+      <app-toolbar>
+        <paper-icon-button icon="menu" alt="Menu"></paper-icon-button>
+        <div condensed-title>My Weather Station</div>
+        <paper-icon-button icon="search" alt="Search"></paper-icon-button>
+      </app-toolbar>
+      <div main-title>My Weather Station</div>
+    </app-header>
+    <!-- content area -->
+    <div class="content-area">
+      <div class="app-grid">
+        <div>
+          <button class="item-header" on-click="toggle" toggle="temperature">Temperature 26.1 °C</button>
+          <iron-collapse id="temperature" tabindex="0">
+            <div class="item-body">
+              <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
+            </div>
+          </iron-collapse>
+        </div>
+        <div>
+          <button class="item-header" on-click="toggle" toggle="humidity">Humidity 12.3 %</button>
+          <iron-collapse id="humidity" tabindex="1">
+            <div class="item-body">
+              <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
+            </div>
+          </iron-collapse>
+        </div>
+        <div>
+          <button class="item-header" on-click="toggle" toggle="pressure">Pressure 10131 ?</button>
+          <iron-collapse id="pressure" tabindex="2">
+            <div class="item-body">
+              <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
+            </div>
+          </iron-collapse>
+        </div>
+      </div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'weather-app',
+      properties: {
+        prop1: {
+          type: String,
+          value: 'weather-app'
+        }
+      },
+      attached: function() {
+        this._updateGridStyles = this._updateGridStyles || function() {
+          this.updateStyles();
+          }.bind(this);
+        window.addEventListener('resize', this._updateGridStyles);
+      },
+      detached: function() {
+        window.removeEventListener('resize', this._updateGridStyles);
+      },
+      toggle: function(event) {
+        var args = Polymer.dom(event).rootTarget.getAttribute('toggle');
+        this.$[args].toggle();
+      }
+    });
+  </script>
+</dom-module>
