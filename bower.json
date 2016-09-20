@@ -1,5 +1,5 @@
 {
-  "name": "weather-app",
+  "name": "weather-station",
   "main": "index.html",
   "dependencies": {
     "polymer": "Polymer/polymer#latest",

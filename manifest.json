@@ -1,6 +1,6 @@
 {
-  "name": "weather-app",
-  "short_name": "weather-app",
+  "name": "weather-station",
+  "short_name": "weather-station",
   "start_url": "/",
   "display": "standalone"
 }

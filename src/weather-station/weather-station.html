@@ -16,7 +16,7 @@
 <link rel="import" href="../../bower_components/chart-elements/chart-line.html">
 <link rel="import" href="../../bower_components/mqtt-elements/mqtt-elements.html">
 
-<dom-module id="weather-app">
+<dom-module id="weather-station">
   <template>
     <style is="custom-style" include="app-grid-style">
       :host {
@@ -185,7 +185,7 @@
   </template>
   <script>
     Polymer({
-      is: 'weather-app',
+      is: 'weather-station',
       properties: {
         temperature_chart: {
           type: Object,
@@ -238,7 +238,6 @@
       },
       toggle: function(event) {
         var args = Polymer.dom(event).path[1].getAttribute('toggle');
-        console.log(args);
         this.$[args].toggle();
       }
     });
