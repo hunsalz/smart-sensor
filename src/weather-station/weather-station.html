@@ -2,6 +2,7 @@
 
 <link rel="import" href="../../bower_components/app-layout/app-grid/app-grid-style.html">
 <link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
 
@@ -22,9 +23,10 @@
       :host {
         display: block;
         @apply(--paper-font-common-base);
-        --app-grid-columns: 3;
+        --app-grid-columns: 2;
         --app-grid-gutter: 5px;
         --app-grid-expandible-item-columns: 3;
+        --app-grid-item-height: 100%;
       }
       app-header {
         position: fixed;
@@ -36,19 +38,18 @@
         background-image: url(../img/header.png);
         background-position: bottom center;
         background-size: cover;
+        z-index: 1; /* added z-index to avoid that the chart.js canvas shine through the header */
         --app-header-background-front-layer: {
           background: -webkit-linear-gradient(top, transparent 0%, transparent 50%, rgba(0,0,0,0.5) 100%);
         };
         --app-header-background-rear-layer: {
-          background-color: white;
+          background-color: var(--paper-blue-500);
         };
       }
       paper-icon-button {
         --paper-icon-button-ink-color: white;
       }
       [main-title] {
-        margin-top: 10vh;
-        font-size: 4em;
         font-weight: bold;
         text-align: center;
         overflow: hidden;
@@ -61,19 +62,31 @@
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      @media (max-width: 639px) {
+      @media screen and (min-width: 1000px) {
+        :host {
+          --app-grid-columns: 3;
+        }
+        [main-title] {
+          font-size: 4em;
+        }
+      }
+      @media screen and (min-width: 700px) and (max-width: 1000px) {
+        :host {
+          --app-grid-columns: 2;
+        }
+        [main-title] {
+          font-size: 3em;
+        }
+      }
+      @media screen and (max-width: 700px) {
         :host {
           --app-grid-columns: 1;
-          --app-grid-gutter: 5px;
-          --app-grid-expandible-item-columns: 1;
         }
         [main-title] {
           font-size: 2em;
-          text-align: center;
         }
       }
       .content-area {
-        padding-top: 30vh;
         background-color: white;
       }
       .widget-header {
@@ -82,11 +95,27 @@
         border: 1px solid #dedede;
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
-        font-size: 18px;
+        font-size: 1em;
         cursor: pointer;
         -webkit-tap-highlight-color: rgba(0,0,0,0);
         width: 100%;
         @apply(--layout-horizontal);
+      }
+      .widget-header-title {
+        padding: 5px 15px 5px 15px;
+        color: var(--paper-blue-grey-700);
+        font-weight: normal;
+        text-align: left;
+        @apply(--layout-flex);
+        @apply(--layout-self-center);
+      }
+      .widget-header-label {
+        padding: 5px 15px 5px 15px;
+        border-radius: 15px;
+        background-color: var(--paper-red-500);
+        color: white;
+        font-weight: normal;
+        white-space: nowrap;
       }
       .widget-body {
         padding: 10px;
@@ -95,35 +124,33 @@
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
         @apply(--shadow-elevation-2dp);
-      }
-      .widget-text {
-        padding: 5px 15px 5px 15px;
-        color: var(--paper-blue-grey-700);
-        font-weight: normal;
-        text-align: left;
-        @apply(--layout-flex);
-        @apply(--layout-self-center);
-      }
-      .widget-highlight-box {
-        padding: 5px 15px 5px 15px;
-        border-radius: 15px;
-        background-color: var(--paper-red-500);
-        color: white;
-        font-weight: normal;
-        white-space: nowrap;
+        height: 100%;
       }
       .widget-chart {
         width: 100%;
+        height: 100%;
+      }
+      .widget-footer {
+        color: var(--paper-blue-grey-700);
+        text-align: center;
+        font-size: 0.75em;
+      }
+      footer {
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+        background-color: white;
+        font-size: 14px;
       }
     </style>
+    <app-header-layout fullbleed>
     <!-- header -->
     <app-header condenses fixed
         effects="waterfall resize-snapped-title fade-background"
         effects-config='{"resize-snapped-title": {"startsAt": 0.8, "duration": "100ms"}, "fade-background": {"startsAt": 0.8, "endsAt": 0.9}}'>
       <app-toolbar>
-        <paper-icon-button icon="menu" alt="Menu"></paper-icon-button>
         <div condensed-title>My Weather Station</div>
-        <paper-icon-button icon="search" alt="Search"></paper-icon-button>
+        <paper-icon-button icon="icons:settings" alt="Settings"></paper-icon-button>
       </app-toolbar>
       <div main-title>My Weather Station</div>
     </app-header>
@@ -132,57 +159,69 @@
       <div class="app-grid">
         <div>
           <button class="widget-header" on-click="toggle" toggle="temperature">
-            <div class="widget-text">Temperature</div><div class="widget-highlight-box">26.1°C</div>
+            <div class="widget-header-title">Temperature</div><div class="widget-header-label">26.1°C</div>
           </button>
           <iron-collapse id="temperature" tabindex="0">
             <div class="widget-body">
-              <chart-line id="temperature_chart_id" class="widget-chart" data="[[temperature_chart]]"></chart-line>
+              <chart-line id="temperature_chart_id" class="widget-chart" data="[[temperature_chart]]" options="[[chart_options]]"></chart-line>
+              <div class="widget-footer">last update: 22:13:12</div>
             </div>
           </iron-collapse>
         </div>
+
+
+
+
         <div>
           <button class="widget-header" on-click="toggle" toggle="humidity">
-            <div class="widget-text">Humidity</div><div class="widget-highlight-box">12.4%</div>
+            <div class="widget-header-title">Humidity</div><div class="widget-header-label">12.4%</div>
           </button>
           <iron-collapse id="humidity" tabindex="1">
             <div class="widget-body">
-              <chart-line id="humidity_chart_id" class="widget-chart" data="[[humidity_chart]]"></chart-line>
+              <chart-line id="humidity_chart_id" class="widget-chart" data="[[humidity_chart]]" options="[[chart_options]]"></chart-line>
+              <div class="widget-footer">last update: 22:13:12</div>
             </div>
           </iron-collapse>
         </div>
         <div>
           <button class="widget-header" on-click="toggle" toggle="pressure">
-            <div class="widget-text">Atmosheric pressure</div><div class="widget-highlight-box">10131 Pa</div>
+            <div class="widget-header-title">Atmosheric pressure</div><div class="widget-header-label">10131 Pa</div>
           </button>
           <iron-collapse id="pressure" tabindex="2">
             <div class="widget-body">
               <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
+              <div class="widget-footer">last update: 22:13:12</div>
             </div>
           </iron-collapse>
         </div>
-
         <div>
           <button class="widget-header" on-click="toggle" toggle="CO2">
-            <div class="widget-text">CO2 in Air</div><div class="widget-highlight-box">0.040425%</div>
+            <div class="widget-header-title">CO2 in Air</div><div class="widget-header-label">0.040425%</div>
           </button>
           <iron-collapse id="CO2" tabindex="3">
             <div class="widget-body">
               <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
+              <div class="widget-footer">last update: 22:13:12</div>
             </div>
           </iron-collapse>
         </div>
         <div>
           <button class="widget-header" on-click="toggle" toggle="altitude">
-            <div class="widget-text">Altitude</div><div class="widget-highlight-box">121m</div>
+            <div class="widget-header-title">Altitude</div><div class="widget-header-label">121m</div>
           </button>
           <iron-collapse id="altitude" tabindex="4">
             <div class="widget-body">
               <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
+              <div class="widget-footer">last update: 22:13:12</div>
             </div>
           </iron-collapse>
         </div>
       </div>
     </div>
+    <footer>
+      &copy; Build with Polymer
+    </footer>
+    </app-header-layout>
   </template>
   <script>
     Polymer({
@@ -198,7 +237,6 @@
               backgroundColor: "rgba(220,220,220,0.2)",
               borderColor: "rgba(220,220,220,1)",
               borderWidth: 1,
-              responsive: true,
               data: [26.5, 26.4, 26.4, 26.2, 26.0, 26.2, 25.9]
             },
             {
@@ -207,7 +245,6 @@
               backgroundColor: "rgba(151,187,205,0.2)",
               borderColor: "rgba(151,187,205,1)",
               borderWidth: 1,
-              responsive: true,
               data: [25.8, 26.2, 25.9, 26.1, 25.8, 25.8, 25.6]
             }]
           }
@@ -225,6 +262,16 @@
               responsive: true,
               data: [13.4, 13.5, 13.5, 13.4, 13.3, 13.5, 13.6]
             }]
+          }
+        },
+        chart_options: {
+          type: Object,
+          value: {
+
+            legend: {
+              display: true,
+              position: 'top'
+            }
           }
         }
       },
