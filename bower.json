@@ -12,9 +12,10 @@
     "paper-icon-button": "PolymerElements/paper-icon-button#latest",
     "paper-input": "PolymerElements/paper-input#latest",
     "paper-styles": "PolymerElements/paper-styles#latest",
+    "paper-toggle-button": "PolymerElements/paper-toggle-button#latest",
     "neon-animation": "PolymerElements/neon-animation#latest",
     "chart-elements": "robdodson/chart-elements#latest",
-    "mqtt-elements": "^0.0.6-beta"
+    "mqtt-elements": "mqttjs/mqtt-elements#latest"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
