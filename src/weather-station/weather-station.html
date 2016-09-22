@@ -116,6 +116,7 @@
         @apply(--layout-self-center);
       }
       .widget-header-label {
+        margin: 0px 2px 0px 2px;
         padding: 5px 15px 5px 15px;
         border-radius: 15px;
         background-color: var(--paper-red-500);
@@ -171,8 +172,8 @@
           <div>
             <button class="widget-header" on-tap="_toggle" toggle="temperature">
               <div class="widget-header-title">Temperature</div>
-              <div class="widget-header-label">[[last_dht22_response.parsedPayload.celsius]]°C</div>
-              <div class="widget-header-label">[[last_bmp280_response.parsedPayload.celsius]]°C</div>
+              <div class="widget-header-label">[[last_DHT22_response.parsedPayload.celsius]]°C</div>
+              <div class="widget-header-label">[[last_BMP280_response.parsedPayload.celsius]]°C</div>
             </button>
             <iron-collapse id="temperature" tabindex="0">
               <div class="widget-body">
@@ -184,7 +185,7 @@
           <div>
             <button class="widget-header" on-tap="_toggle" toggle="humidity">
               <div class="widget-header-title">Humidity</div>
-              <div class="widget-header-label">[[last_dht22_response.parsedPayload.humidity]]%</div>
+              <div class="widget-header-label">[[last_DHT22_response.parsedPayload.humidity]]%</div>
             </button>
             <iron-collapse id="humidity" tabindex="1">
               <div class="widget-body">
@@ -195,8 +196,8 @@
           </div>
           <div>
             <button class="widget-header" on-tap="_toggle" toggle="pressure">
-              <div class="widget-header-title">Atmosheric pressure</div>
-              <div class="widget-header-label">10131 Pa</div>
+              <div class="widget-header-title">Atmospheric pressure</div>
+              <div class="widget-header-label">[[last_BMP280_response.parsedPayload.pascal]]Pa</div>
             </button>
             <iron-collapse id="pressure" tabindex="2">
               <div class="widget-body">
@@ -208,7 +209,7 @@
           <div>
             <button class="widget-header" on-tap="_toggle" toggle="CO2">
               <div class="widget-header-title">CO2 in Air</div>
-              <div class="widget-header-label">0.040425%</div>
+              <div class="widget-header-label">[[last_MQ135_response.parsedPayload.co2]]%</div>
             </button>
             <iron-collapse id="CO2" tabindex="3">
               <div class="widget-body">
@@ -220,7 +221,7 @@
           <div>
             <button class="widget-header" on-tap="_toggle" toggle="altitude">
               <div class="widget-header-title">Altitude</div>
-              <div class="widget-header-label">121m</div>
+              <div class="widget-header-label">[[last_BMP280_response.parsedPayload.altitude]]m</div>
             </button>
             <iron-collapse id="altitude" tabindex="4">
               <div class="widget-body">
@@ -273,14 +274,21 @@
         number-of-messages="Infinity"
         payload-type="Custom"
         payload-parse-function="[[_payloadParseFunc]]"
-        last-message="{{last_dht22_response}}">
+        last-message="{{last_DHT22_response}}">
       </mqtt-subscription>
       <mqtt-subscription
         topic="sensor/BMP280"
         number-of-messages="Infinity"
         payload-type="Custom"
         payload-parse-function="[[_payloadParseFunc]]"
-        last-message="{{last_bmp280_response}}">
+        last-message="{{last_BMP280_response}}">
+      </mqtt-subscription>
+      <mqtt-subscription
+        topic="sensor/MQ135"
+        number-of-messages="Infinity"
+        payload-type="Custom"
+        payload-parse-function="[[_payloadParseFunc]]"
+        last-message="{{last_MQ135_response}}">
       </mqtt-subscription>
     </mqtt-connection>
   </template>
@@ -307,16 +315,21 @@
           type: String,
           value: ""
         },
-        last_dht22_response: {
+        last_DHT22_response: {
           type: Object,
           value: null,
           notify: true,
           observer: '_updateDHT22ChartValues'
         },
-        last_bmp280_response: {
+        last_BMP280_response: {
           type: Object,
           value: null,
           observer: '_updateBMP280ChartValues'
+        },
+        last_MQ135_response: {
+          type: Object,
+          value: null,
+          observer: '_updateMQ135ChartValues'
         },
         temperature_chart: {
           type: Object,
@@ -343,7 +356,7 @@
         humidity_chart: {
           type: Object,
           value: {
-            labels: ["22:10", "22:11", "22:12", "22:13", "22:14", "22:15", "22:16"],
+            labels: ["22:16"],
             datasets: [{
               label: "Humidity",
               fill: true,
@@ -351,7 +364,7 @@
               borderColor: "rgba(220,220,220,1)",
               borderWidth: 1,
               responsive: true,
-              data: [13.4, 13.5, 13.5, 13.4, 13.3, 13.5, 13.6]
+              data: [13.6]
             }]
           }
         },
@@ -375,6 +388,10 @@
         window.removeEventListener('resize', this._updateGridStyles);
       },
       _toggle: function(event) {
+
+        // TODO
+        console.log(Polymer.dom(event));
+
         var args = Polymer.dom(event).path[1].getAttribute('toggle');
         this.$[args].toggle();
       },
@@ -393,11 +410,16 @@
       _updateTimeline(chart, time) {
         var timeline = chart.labels;
         var datasets = chart.datasets;
+        // TODO
         if (time !== timeline[timeline.length - 1]) {
-          timeline.shift();
+          if (timeline.length >= 10) {
+            timeline.shift();
+          }
           timeline.push(time);
           for (var i = 0; i < datasets.length; i++) {
-            datasets[i].data.shift();
+            if (timeline.length >= 10) {
+              datasets[i].data.shift();
+            }
             datasets[i].data.push('NaN');
           }
         }
@@ -434,9 +456,15 @@
           this.$.temperature_chart_id.updateChart();
         }
       },
+      _updateMQ135ChartValues: function(event) {
+        if (event) {
+          console.log(event);
+          // TODO
+        }
+      },
       _getCurrentTime: function() {
         var now = new Date();
-        return [this._pad(now.getHours()), this._pad(now.getMinutes())].join(':');
+        return [this._pad(now.getHours()), this._pad(now.getMinutes()), this._pad(now.getSeconds())].join(':');
       },
       _pad: function(n) {
         return n < 10 ? '0' + n.toString(10) : n.toString(10);
