@@ -10,9 +10,14 @@
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-styles/color.html">
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
+
+<link rel="import" href="../../bower_components/neon-animation/neon-animations.html">
 
 <link rel="import" href="../../bower_components/chart-elements/chart-line.html">
 <link rel="import" href="../../bower_components/mqtt-elements/mqtt-elements.html">
@@ -131,6 +136,7 @@
         height: 100%;
       }
       .widget-footer {
+        margin: 5px;
         color: var(--paper-blue-grey-700);
         text-align: center;
         font-size: 0.75em;
@@ -142,91 +148,155 @@
         background-color: white;
         font-size: 14px;
       }
+      paper-dialog {
+        width: 100%;
+      }
     </style>
+    <!-- application -->
     <app-header-layout fullbleed>
-    <!-- header -->
-    <app-header condenses fixed
-        effects="waterfall resize-snapped-title fade-background"
-        effects-config='{"resize-snapped-title": {"startsAt": 0.8, "duration": "100ms"}, "fade-background": {"startsAt": 0.8, "endsAt": 0.9}}'>
-      <app-toolbar>
-        <div condensed-title>My Weather Station</div>
-        <paper-icon-button icon="icons:settings" alt="Settings"></paper-icon-button>
-      </app-toolbar>
-      <div main-title>My Weather Station</div>
-    </app-header>
-    <!-- content area -->
-    <div class="content-area">
-      <div class="app-grid">
-        <div>
-          <button class="widget-header" on-click="toggle" toggle="temperature">
-            <div class="widget-header-title">Temperature</div><div class="widget-header-label">26.1°C</div>
-          </button>
-          <iron-collapse id="temperature" tabindex="0">
-            <div class="widget-body">
-              <chart-line id="temperature_chart_id" class="widget-chart" data="[[temperature_chart]]" options="[[chart_options]]"></chart-line>
-              <div class="widget-footer">last update: 22:13:12</div>
-            </div>
-          </iron-collapse>
-        </div>
-
-
-
-
-        <div>
-          <button class="widget-header" on-click="toggle" toggle="humidity">
-            <div class="widget-header-title">Humidity</div><div class="widget-header-label">12.4%</div>
-          </button>
-          <iron-collapse id="humidity" tabindex="1">
-            <div class="widget-body">
-              <chart-line id="humidity_chart_id" class="widget-chart" data="[[humidity_chart]]" options="[[chart_options]]"></chart-line>
-              <div class="widget-footer">last update: 22:13:12</div>
-            </div>
-          </iron-collapse>
-        </div>
-        <div>
-          <button class="widget-header" on-click="toggle" toggle="pressure">
-            <div class="widget-header-title">Atmosheric pressure</div><div class="widget-header-label">10131 Pa</div>
-          </button>
-          <iron-collapse id="pressure" tabindex="2">
-            <div class="widget-body">
-              <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
-              <div class="widget-footer">last update: 22:13:12</div>
-            </div>
-          </iron-collapse>
-        </div>
-        <div>
-          <button class="widget-header" on-click="toggle" toggle="CO2">
-            <div class="widget-header-title">CO2 in Air</div><div class="widget-header-label">0.040425%</div>
-          </button>
-          <iron-collapse id="CO2" tabindex="3">
-            <div class="widget-body">
-              <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
-              <div class="widget-footer">last update: 22:13:12</div>
-            </div>
-          </iron-collapse>
-        </div>
-        <div>
-          <button class="widget-header" on-click="toggle" toggle="altitude">
-            <div class="widget-header-title">Altitude</div><div class="widget-header-label">121m</div>
-          </button>
-          <iron-collapse id="altitude" tabindex="4">
-            <div class="widget-body">
-              <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
-              <div class="widget-footer">last update: 22:13:12</div>
-            </div>
-          </iron-collapse>
+      <!-- header -->
+      <app-header condenses fixed
+          effects="waterfall resize-snapped-title fade-background"
+          effects-config='{"resize-snapped-title": {"startsAt": 0.8, "duration": "100ms"}, "fade-background": {"startsAt": 0.8, "endsAt": 0.9}}'>
+        <app-toolbar>
+          <div condensed-title>My Weather Station</div>
+          <paper-icon-button icon="icons:more-vert" alt="Settings" on-tap="_openMQTTSettings"></paper-icon-button>
+        </app-toolbar>
+        <div main-title>My Weather Station</div>
+      </app-header>
+      <!-- content area -->
+      <div class="content-area">
+        <div class="app-grid">
+          <div>
+            <button class="widget-header" on-tap="_toggle" toggle="temperature">
+              <div class="widget-header-title">Temperature</div><div class="widget-header-label">26.1°C</div>
+            </button>
+            <iron-collapse id="temperature" tabindex="0">
+              <div class="widget-body">
+                <div class="widget-footer">last update: 22:13:12</div>
+                <chart-line id="temperature_chart_id" class="widget-chart" data="[[temperature_chart]]" options="[[chart_options]]"></chart-line>
+              </div>
+            </iron-collapse>
+          </div>
+          <div>
+            <button class="widget-header" on-tap="_toggle" toggle="humidity">
+              <div class="widget-header-title">Humidity</div><div class="widget-header-label">12.4%</div>
+            </button>
+            <iron-collapse id="humidity" tabindex="1">
+              <div class="widget-body">
+                <div class="widget-footer">last update: 22:13:12</div>
+                <chart-line id="humidity_chart_id" class="widget-chart" data="[[humidity_chart]]" options="[[chart_options]]"></chart-line>
+              </div>
+            </iron-collapse>
+          </div>
+          <div>
+            <button class="widget-header" on-tap="_toggle" toggle="pressure">
+              <div class="widget-header-title">Atmosheric pressure</div><div class="widget-header-label">10131 Pa</div>
+            </button>
+            <iron-collapse id="pressure" tabindex="2">
+              <div class="widget-body">
+                <div class="widget-footer">last update: 22:13:12</div>
+                <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
+              </div>
+            </iron-collapse>
+          </div>
+          <div>
+            <button class="widget-header" on-tap="_toggle" toggle="CO2">
+              <div class="widget-header-title">CO2 in Air</div><div class="widget-header-label">0.040425%</div>
+            </button>
+            <iron-collapse id="CO2" tabindex="3">
+              <div class="widget-body">
+                <div class="widget-footer">last update: 22:13:12</div>
+                <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
+              </div>
+            </iron-collapse>
+          </div>
+          <div>
+            <button class="widget-header" on-tap="_toggle" toggle="altitude">
+              <div class="widget-header-title">Altitude</div><div class="widget-header-label">121m</div>
+            </button>
+            <iron-collapse id="altitude" tabindex="4">
+              <div class="widget-body">
+                <div class="widget-footer">last update: 22:13:12</div>
+                <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
+              </div>
+            </iron-collapse>
+          </div>
+          <div>
+            <button class="widget-header" on-tap="_toggle" toggle="altitude">
+              <div class="widget-header-title">Geo location</div><div class="widget-header-label">48.9854054-8.3919125</div>
+            </button>
+            <iron-collapse id="altitude" tabindex="4">
+              <div class="widget-body">
+                <div class="widget-footer">last update: 22:13:12</div>
+                <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
+              </div>
+            </iron-collapse>
+          </div>
         </div>
       </div>
-    </div>
-    <footer>
-      &copy; Build with Polymer
-    </footer>
+      <footer>
+        &copy; Build with Polymer
+      </footer>
     </app-header-layout>
+    <!-- settings dialog -->
+    <paper-dialog id="mqtt_dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" withBackdrop>
+      <h2>MQTT settings</h2>
+      <paper-input label="Enter MQTT broker URL"></paper-input>
+      <paper-input label="User"></paper-input>
+      <paper-input label="Password"></paper-input>
+      <div class="buttons">
+        <span>[[connected]]<span>
+        <paper-button on-tap="_connectMQTTBroker">Connect</paper-button>
+      </div>
+    </paper-dialog>
+    <!-- MQTT connection & subscription -->
+    <mqtt-connection
+      url="[[mqtt_broker_url]]"
+      username="[[mqtt_broker_user]]"
+      password="[[mqtt_broker_password]]"
+      with-credentials
+      auto
+      connected="{{connected}}">
+      <mqtt-subscription
+        topic="sensor/DHT22"
+        number-of-messages="Infinity"
+        last-message="{{dht_msg}}">
+      </mqtt-subscription>
+      <mqtt-subscription
+        topic="sensor/BMP280"
+        number-of-messages="Infinity"
+        last-message="{{bmp_msg}}">
+      </mqtt-subscription>
+    </mqtt-connection>
   </template>
   <script>
     Polymer({
       is: 'weather-station',
       properties: {
+        mqtt_broker_url: {
+          type: String,
+          value: "wss://m21.cloudmqtt.com:33444"
+        },
+        mqtt_broker_user: {
+          type: String,
+          value: ""
+        },
+        mqtt_broker_password: {
+          type: String,
+          value: ""
+        },
+        dht_msg: {
+          type: Object,
+          value: null,
+          notify: true,
+          observer: '_handleDHTMsg'
+        },
+        bmp_msg: {
+          type: Object,
+          value: null,
+          observer: '_handleBMPMsg'
+        },
         temperature_chart: {
           type: Object,
           value: {
@@ -267,10 +337,9 @@
         chart_options: {
           type: Object,
           value: {
-
             legend: {
               display: true,
-              position: 'top'
+              position: 'bottom'
             }
           }
         }
@@ -284,9 +353,68 @@
       detached: function() {
         window.removeEventListener('resize', this._updateGridStyles);
       },
-      toggle: function(event) {
+      _toggle: function(event) {
         var args = Polymer.dom(event).path[1].getAttribute('toggle');
         this.$[args].toggle();
+      },
+      _openMQTTSettings: function() {
+        this.$.mqtt_dialog.open();
+      },
+      _connectMQTTBroker: function() {
+        console.log("Try to connect to MQTT broker ...");
+
+        // TODO
+      },
+      _updateTimeline(chart, time) {
+        var timeline = chart.labels;
+        var datasets = chart.datasets;
+        if (time !== timeline[timeline.length - 1]) {
+          timeline.shift();
+          timeline.push(time);
+          for (var i = 0; i < datasets.length; i++) {
+            datasets[i].data.shift();
+            datasets[i].data.push('NaN');
+          }
+        }
+      },
+      _handleDHTMsg: function(event) {
+        if (event) {
+          console.log(event);
+          var json = JSON.parse(event.parsedPayload);
+          // review timeline(s) with current time
+          var time = this._getCurrentTime();
+          this._updateTimeline(this.humidity_chart, time);
+          this._updateTimeline(this.temperature_chart, time);
+          // add new value(s)
+          var array = this.humidity_chart.datasets[0].data;
+          array[array.length - 1] = json.humidity;
+          array = this.temperature_chart.datasets[0].data;
+          array[array.length - 1] = json.celsius;
+          // rerender charts
+          this.$.humidity_chart_id.updateChart();
+          this.$.temperature_chart_id.updateChart();
+        }
+      },
+      _handleBMPMsg: function(event) {
+        if (event) {
+          console.log(event);
+          var json = JSON.parse(event.parsedPayload);
+          // review timeline(s) with current time
+          var time = this._getCurrentTime();
+          this._updateTimeline(this.temperature_chart, time);
+          // add new value(s)
+          array = this.temperature_chart.datasets[1].data;
+          array[array.length - 1] = json.celsius;
+          // rerender charts
+          this.$.temperature_chart_id.updateChart();
+        }
+      },
+      _getCurrentTime: function() {
+        var now = new Date();
+        return [this._pad(now.getHours()), this._pad(now.getMinutes())].join(':');
+      },
+      _pad: function(n) {
+        return n < 10 ? '0' + n.toString(10) : n.toString(10);
       }
     });
   </script>
