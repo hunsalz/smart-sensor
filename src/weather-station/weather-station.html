@@ -16,6 +16,7 @@
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-styles/color.html">
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
+<link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
 
 <link rel="import" href="../../bower_components/neon-animation/neon-animations.html">
 
@@ -72,7 +73,7 @@
           --app-grid-columns: 3;
         }
         [main-title] {
-          font-size: 4em;
+          font-size: 3em;
         }
       }
       @media screen and (min-width: 700px) and (max-width: 1000px) {
@@ -80,7 +81,7 @@
           --app-grid-columns: 2;
         }
         [main-title] {
-          font-size: 3em;
+          font-size: 2em;
         }
       }
       @media screen and (max-width: 700px) {
@@ -88,7 +89,7 @@
           --app-grid-columns: 1;
         }
         [main-title] {
-          font-size: 2em;
+          font-size: 1em;
         }
       }
       .content-area {
@@ -169,7 +170,9 @@
         <div class="app-grid">
           <div>
             <button class="widget-header" on-tap="_toggle" toggle="temperature">
-              <div class="widget-header-title">Temperature</div><div class="widget-header-label">26.1°C</div>
+              <div class="widget-header-title">Temperature</div>
+              <div class="widget-header-label">[[last_dht22_response.parsedPayload.celsius]]°C</div>
+              <div class="widget-header-label">[[last_bmp280_response.parsedPayload.celsius]]°C</div>
             </button>
             <iron-collapse id="temperature" tabindex="0">
               <div class="widget-body">
@@ -180,7 +183,8 @@
           </div>
           <div>
             <button class="widget-header" on-tap="_toggle" toggle="humidity">
-              <div class="widget-header-title">Humidity</div><div class="widget-header-label">12.4%</div>
+              <div class="widget-header-title">Humidity</div>
+              <div class="widget-header-label">[[last_dht22_response.parsedPayload.humidity]]%</div>
             </button>
             <iron-collapse id="humidity" tabindex="1">
               <div class="widget-body">
@@ -191,7 +195,8 @@
           </div>
           <div>
             <button class="widget-header" on-tap="_toggle" toggle="pressure">
-              <div class="widget-header-title">Atmosheric pressure</div><div class="widget-header-label">10131 Pa</div>
+              <div class="widget-header-title">Atmosheric pressure</div>
+              <div class="widget-header-label">10131 Pa</div>
             </button>
             <iron-collapse id="pressure" tabindex="2">
               <div class="widget-body">
@@ -202,7 +207,8 @@
           </div>
           <div>
             <button class="widget-header" on-tap="_toggle" toggle="CO2">
-              <div class="widget-header-title">CO2 in Air</div><div class="widget-header-label">0.040425%</div>
+              <div class="widget-header-title">CO2 in Air</div>
+              <div class="widget-header-label">0.040425%</div>
             </button>
             <iron-collapse id="CO2" tabindex="3">
               <div class="widget-body">
@@ -213,7 +219,8 @@
           </div>
           <div>
             <button class="widget-header" on-tap="_toggle" toggle="altitude">
-              <div class="widget-header-title">Altitude</div><div class="widget-header-label">121m</div>
+              <div class="widget-header-title">Altitude</div>
+              <div class="widget-header-label">121m</div>
             </button>
             <iron-collapse id="altitude" tabindex="4">
               <div class="widget-body">
@@ -224,7 +231,8 @@
           </div>
           <div>
             <button class="widget-header" on-tap="_toggle" toggle="altitude">
-              <div class="widget-header-title">Geo location</div><div class="widget-header-label">48.9854054-8.3919125</div>
+              <div class="widget-header-title">Geo location</div>
+              <div class="widget-header-label">48.9854054-8.3919125</div>
             </button>
             <iron-collapse id="altitude" tabindex="4">
               <div class="widget-body">
@@ -245,11 +253,12 @@
       <paper-input label="Enter MQTT broker URL"></paper-input>
       <paper-input label="User"></paper-input>
       <paper-input label="Password"></paper-input>
-      <div class="buttons">
-        <span>[[connected]]<span>
+      <paper-toggle-button>Connect</paper-toggle-button>
+      <span>[[connected]]<span>
+      <!--div class="buttons">
         <paper-button on-tap="_connectMQTTBroker">Connect</paper-button>
       </div>
-    </paper-dialog>
+    </paper-dialog-->
     <!-- MQTT connection & subscription -->
     <mqtt-connection
       url="[[mqtt_broker_url]]"
@@ -259,14 +268,19 @@
       auto
       connected="{{connected}}">
       <mqtt-subscription
+        id="dht22_subscription"
         topic="sensor/DHT22"
         number-of-messages="Infinity"
-        last-message="{{dht_msg}}">
+        payload-type="Custom"
+        payload-parse-function="[[_payloadParseFunc]]"
+        last-message="{{last_dht22_response}}">
       </mqtt-subscription>
       <mqtt-subscription
         topic="sensor/BMP280"
         number-of-messages="Infinity"
-        last-message="{{bmp_msg}}">
+        payload-type="Custom"
+        payload-parse-function="[[_payloadParseFunc]]"
+        last-message="{{last_bmp280_response}}">
       </mqtt-subscription>
     </mqtt-connection>
   </template>
@@ -274,9 +288,16 @@
     Polymer({
       is: 'weather-station',
       properties: {
+        _payloadParseFunc: {
+          type: Function,
+          readOnly: true,
+          value: function () {
+            return this._parsePayload.bind(this);
+          }
+        },
         mqtt_broker_url: {
           type: String,
-          value: "wss://m21.cloudmqtt.com:33444"
+          value: ""
         },
         mqtt_broker_user: {
           type: String,
@@ -286,16 +307,16 @@
           type: String,
           value: ""
         },
-        dht_msg: {
+        last_dht22_response: {
           type: Object,
           value: null,
           notify: true,
-          observer: '_handleDHTMsg'
+          observer: '_updateDHT22ChartValues'
         },
-        bmp_msg: {
+        last_bmp280_response: {
           type: Object,
           value: null,
-          observer: '_handleBMPMsg'
+          observer: '_updateBMP280ChartValues'
         },
         temperature_chart: {
           type: Object,
@@ -365,6 +386,10 @@
 
         // TODO
       },
+      _parsePayload: function(...payload) {
+        var jsonString = String.fromCharCode.apply(null, new Uint8Array(payload));
+        return JSON.parse(jsonString);
+      },
       _updateTimeline(chart, time) {
         var timeline = chart.labels;
         var datasets = chart.datasets;
@@ -377,10 +402,10 @@
           }
         }
       },
-      _handleDHTMsg: function(event) {
+      _updateDHT22ChartValues: function(event) {
         if (event) {
           console.log(event);
-          var json = JSON.parse(event.parsedPayload);
+          var json = event.parsedPayload;
           // review timeline(s) with current time
           var time = this._getCurrentTime();
           this._updateTimeline(this.humidity_chart, time);
@@ -395,10 +420,10 @@
           this.$.temperature_chart_id.updateChart();
         }
       },
-      _handleBMPMsg: function(event) {
+      _updateBMP280ChartValues: function(event) {
         if (event) {
           console.log(event);
-          var json = JSON.parse(event.parsedPayload);
+          var json = event.parsedPayload;
           // review timeline(s) with current time
           var time = this._getCurrentTime();
           this._updateTimeline(this.temperature_chart, time);
