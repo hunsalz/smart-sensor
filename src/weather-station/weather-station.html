@@ -23,6 +23,8 @@
 <link rel="import" href="../../bower_components/chart-elements/chart-line.html">
 <link rel="import" href="../../bower_components/mqtt-elements/mqtt-elements.html">
 
+<link rel="import" href="chart-widget.html">
+
 <dom-module id="weather-station">
   <template>
     <style is="custom-style" include="app-grid-style">
@@ -169,55 +171,12 @@
       <!-- content area -->
       <div class="content-area">
         <div class="app-grid">
-          <div>
-            <button class="widget-header" on-tap="_toggle" toggle="temperature">
-              <div class="widget-header-title">Temperature</div>
-              <div class="widget-header-label">[[last_DHT22_response.parsedPayload.celsius]]°C</div>
-              <div class="widget-header-label">[[last_BMP280_response.parsedPayload.celsius]]°C</div>
-            </button>
-            <iron-collapse id="temperature" tabindex="0">
-              <div class="widget-body">
-                <div class="widget-footer">last update: 22:13:12</div>
-                <chart-line id="temperature_chart_id" class="widget-chart" data="[[temperature_chart]]" options="[[chart_options]]"></chart-line>
-              </div>
-            </iron-collapse>
-          </div>
-          <div>
-            <button class="widget-header" on-tap="_toggle" toggle="humidity">
-              <div class="widget-header-title">Humidity</div>
-              <div class="widget-header-label">[[last_DHT22_response.parsedPayload.humidity]]%</div>
-            </button>
-            <iron-collapse id="humidity" tabindex="1">
-              <div class="widget-body">
-                <div class="widget-footer">last update: 22:13:12</div>
-                <chart-line id="humidity_chart_id" class="widget-chart" data="[[humidity_chart]]" options="[[chart_options]]"></chart-line>
-              </div>
-            </iron-collapse>
-          </div>
-          <div>
-            <button class="widget-header" on-tap="_toggle" toggle="pressure">
-              <div class="widget-header-title">Atmospheric pressure</div>
-              <div class="widget-header-label">[[last_BMP280_response.parsedPayload.pascal]]Pa</div>
-            </button>
-            <iron-collapse id="pressure" tabindex="2">
-              <div class="widget-body">
-                <div class="widget-footer">last update: 22:13:12</div>
-                <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
-              </div>
-            </iron-collapse>
-          </div>
-          <div>
-            <button class="widget-header" on-tap="_toggle" toggle="CO2">
-              <div class="widget-header-title">CO2 in Air</div>
-              <div class="widget-header-label">[[last_MQ135_response.parsedPayload.co2]]%</div>
-            </button>
-            <iron-collapse id="CO2" tabindex="3">
-              <div class="widget-body">
-                <div class="widget-footer">last update: 22:13:12</div>
-                <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
-              </div>
-            </iron-collapse>
-          </div>
+          <chart-widget id="temperature_widget_id" title="Temperature" label="[[last_DHT22_response.parsedPayload.celsius]]°C"></chart-widget>
+          <chart-widget id="humidity_widget_id" title="Humidity" label="[[last_DHT22_response.parsedPayload.humidity]]%"></chart-widget>
+          <chart-widget id="pressure_widget_id" title="Atmospheric pressure" label="[[last_BMP280_response.parsedPayload.pascal]]Pa"></chart-widget>
+          <chart-widget id="co2_widget_id" title="CO2 in Air" label="[[last_MQ135_response.parsedPayload.co2]]%"></chart-widget>
+
+          <!-- TODO other widget layouts, keep tabindex -->
           <div>
             <button class="widget-header" on-tap="_toggle" toggle="altitude">
               <div class="widget-header-title">Altitude</div>
@@ -231,17 +190,18 @@
             </iron-collapse>
           </div>
           <div>
-            <button class="widget-header" on-tap="_toggle" toggle="altitude">
+            <button class="widget-header" on-tap="_toggle" toggle="geo">
               <div class="widget-header-title">Geo location</div>
               <div class="widget-header-label">48.9854054-8.3919125</div>
             </button>
-            <iron-collapse id="altitude" tabindex="4">
+            <iron-collapse id="geo" tabindex="4">
               <div class="widget-body">
                 <div class="widget-footer">last update: 22:13:12</div>
                 <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
               </div>
             </iron-collapse>
           </div>
+
         </div>
       </div>
       <footer>
@@ -330,52 +290,6 @@
           type: Object,
           value: null,
           observer: '_updateMQ135ChartValues'
-        },
-        temperature_chart: {
-          type: Object,
-          value: {
-            labels: ["22:10", "22:11", "22:12", "22:13", "22:14", "22:15", "22:16"],
-            datasets: [{
-              label: "Temperature DHT22",
-              fill: true,
-              backgroundColor: "rgba(220,220,220,0.2)",
-              borderColor: "rgba(220,220,220,1)",
-              borderWidth: 1,
-              data: [26.5, 26.4, 26.4, 26.2, 26.0, 26.2, 25.9]
-            },
-            {
-              label: "Temperature BMP280",
-              fill: true,
-              backgroundColor: "rgba(151,187,205,0.2)",
-              borderColor: "rgba(151,187,205,1)",
-              borderWidth: 1,
-              data: [25.8, 26.2, 25.9, 26.1, 25.8, 25.8, 25.6]
-            }]
-          }
-        },
-        humidity_chart: {
-          type: Object,
-          value: {
-            labels: ["22:16"],
-            datasets: [{
-              label: "Humidity",
-              fill: true,
-              backgroundColor: "rgba(220,220,220,0.2)",
-              borderColor: "rgba(220,220,220,1)",
-              borderWidth: 1,
-              responsive: true,
-              data: [13.6]
-            }]
-          }
-        },
-        chart_options: {
-          type: Object,
-          value: {
-            legend: {
-              display: true,
-              position: 'bottom'
-            }
-          }
         }
       },
       attached: function() {
@@ -390,7 +304,7 @@
       _toggle: function(event) {
 
         // TODO
-        console.log(Polymer.dom(event));
+        //console.log(Polymer.dom(event));
 
         var args = Polymer.dom(event).path[1].getAttribute('toggle');
         this.$[args].toggle();
@@ -407,67 +321,95 @@
         var jsonString = String.fromCharCode.apply(null, new Uint8Array(payload));
         return JSON.parse(jsonString);
       },
-      _updateTimeline(chart, time) {
-        var timeline = chart.labels;
-        var datasets = chart.datasets;
-        // TODO
-        if (time !== timeline[timeline.length - 1]) {
-          if (timeline.length >= 10) {
-            timeline.shift();
-          }
-          timeline.push(time);
-          for (var i = 0; i < datasets.length; i++) {
-            if (timeline.length >= 10) {
-              datasets[i].data.shift();
-            }
-            datasets[i].data.push('NaN');
-          }
-        }
-      },
       _updateDHT22ChartValues: function(event) {
         if (event) {
           console.log(event);
           var json = event.parsedPayload;
-          // review timeline(s) with current time
-          var time = this._getCurrentTime();
-          this._updateTimeline(this.humidity_chart, time);
-          this._updateTimeline(this.temperature_chart, time);
-          // add new value(s)
-          var array = this.humidity_chart.datasets[0].data;
-          array[array.length - 1] = json.humidity;
-          array = this.temperature_chart.datasets[0].data;
-          array[array.length - 1] = json.celsius;
-          // rerender charts
-          this.$.humidity_chart_id.updateChart();
-          this.$.temperature_chart_id.updateChart();
+          // initialize chart dataset if unset
+          if (!this.$.temperature_widget_id.data) {
+            this.$.temperature_widget_id.data = {
+              labels: [],
+              datasets: [{
+                label: "Temperature DHT22",
+                fill: true,
+                backgroundColor: "rgba(220,220,220,0.2)",
+                borderColor: "rgba(220,220,220,1)",
+                borderWidth: 1,
+                data: []
+              },
+              {
+                label: "Temperature BMP280",
+                fill: true,
+                backgroundColor: "rgba(151,187,205,0.2)",
+                borderColor: "rgba(151,187,205,1)",
+                borderWidth: 1,
+                data: []
+              }]
+            }
+          }
+          // initialize chart dataset if unset
+          if (!this.$.humidity_widget_id.data) {
+            this.$.humidity_widget_id.data = {
+              labels: [],
+              datasets: [{
+                label: "Humidity",
+                fill: true,
+                backgroundColor: "rgba(220,220,220,0.2)",
+                borderColor: "rgba(220,220,220,1)",
+                borderWidth: 1,
+                data: []
+              }]
+            };
+          }
+          // apply new value(s)
+          this.$.humidity_widget_id.apply([json.humidity]);
+          // apply new value(s)
+          this.$.temperature_widget_id.apply([json.celsius]);
         }
       },
       _updateBMP280ChartValues: function(event) {
         if (event) {
           console.log(event);
           var json = event.parsedPayload;
-          // review timeline(s) with current time
-          var time = this._getCurrentTime();
-          this._updateTimeline(this.temperature_chart, time);
-          // add new value(s)
-          array = this.temperature_chart.datasets[1].data;
-          array[array.length - 1] = json.celsius;
-          // rerender charts
-          this.$.temperature_chart_id.updateChart();
+          // initialize chart dataset if unset
+          if (!this.$.pressure_widget_id.data) {
+            this.$.pressure_widget_id.data = {
+              labels: [],
+              datasets: [{
+                label: "Atmospheric pressure",
+                fill: true,
+                backgroundColor: "rgba(220,220,220,0.2)",
+                borderColor: "rgba(220,220,220,1)",
+                borderWidth: 1,
+                data: []
+              }]
+            };
+          }
+          // apply new value(s)
+          this.$.pressure_widget_id.apply([json.pascal]);
         }
       },
       _updateMQ135ChartValues: function(event) {
         if (event) {
           console.log(event);
-          // TODO
+          var json = event.parsedPayload;
+          // initialize chart dataset if unset
+          if (!this.$.co2_widget_id.data) {
+            this.$.co2_widget_id.data = {
+              labels: [],
+              datasets: [{
+                label: "CO2 in Air",
+                fill: true,
+                backgroundColor: "rgba(220,220,220,0.2)",
+                borderColor: "rgba(220,220,220,1)",
+                borderWidth: 1,
+                data: []
+              }]
+            };
+          }
+          // apply new value(s)
+          this.$.co2_widget_id.apply([json.co2]);
         }
-      },
-      _getCurrentTime: function() {
-        var now = new Date();
-        return [this._pad(now.getHours()), this._pad(now.getMinutes()), this._pad(now.getSeconds())].join(':');
-      },
-      _pad: function(n) {
-        return n < 10 ? '0' + n.toString(10) : n.toString(10);
       }
     });
   </script>
