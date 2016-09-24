@@ -1,5 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
+
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 
 <dom-module id="chart-widget">
@@ -46,17 +48,6 @@
         @apply(--shadow-elevation-2dp);
         height: 100%;
       }
-      .widget-chart {
-        width: 100%;
-        height: 100%;
-      }
-      /* rename !!! */
-      .widget-footer {
-        margin: 5px;
-        color: var(--paper-blue-grey-700);
-        text-align: center;
-        font-size: 0.75em;
-      }
     </style>
     <div>
       <button class="widget-header" on-tap="_toggle">
@@ -65,12 +56,7 @@
       </button>
       <iron-collapse id="collapse_id" tabindex="[[tabindex]]">
         <div class="widget-body">
-          <!-- TODO use hide instead of template if -->
-          <div class="widget-footer">last update: 22:13:12</div>
-          <chart-line id="chart_id" class="widget-chart" data="[[data]]" options="[[options]]"></chart-line>
-          <template is="dom-if" if="[[!data]]">
-            <div>no data available</div>
-          </template>
+          <content></content>
         </div>
       </iron-collapse>
     </div>
@@ -87,70 +73,10 @@
         label: {
           type: String,
           value: null
-        },
-        tabindex: {
-          type: Number,
-          value: 0
-        },
-        data: {
-          type: Object,
-          value: null
-        },
-        options: {
-          type: Object,
-          value: {
-            responsive: true,
-            legend: {
-              display: true,
-              position: 'bottom'
-            }
-          }
-        },
-        max: {
-          type: Number,
-          value: 10
         }
       },
       _toggle: function() {
         this.$.collapse_id.toggle();
-      },
-      apply: function(values) {
-        if (this.data && values && Array.isArray(values)) {
-          // shift XAxis accordingly
-          this._shiftXAxis(this._getCurrentTime());
-          // add new values to chart
-          var array;
-          for (var i = 0; i < this.data.datasets.length; i++) {
-            array = this.data.datasets[i].data;
-            array[array.length - 1] = values[i];
-          }
-          // rerender chart
-          this.$.chart_id.updateChart();
-        }
-      },
-      _shiftXAxis(label) {
-        var labels = this.data.labels;
-        var datasets = this.data.datasets;
-        //
-        if (label !== labels[labels.length - 1]) {
-          if (labels.length > this.max) {
-            labels.shift();
-          }
-          labels.push(label);
-          for (var i = 0; i < datasets.length; i++) {
-            if (datasets[i].length > this.max) {
-              datasets[i].data.shift();
-            }
-            datasets[i].data.push('NaN');
-          }
-        }
-      },
-      _getCurrentTime: function() {
-        var now = new Date();
-        return [this._pad(now.getHours()), this._pad(now.getMinutes()), this._pad(now.getSeconds())].join(':');
-      },
-      _pad: function(n) {
-        return n < 10 ? '0' + n.toString(10) : n.toString(10);
       }
     });
   </script>

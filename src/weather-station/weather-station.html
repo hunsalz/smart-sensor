@@ -6,7 +6,6 @@
 <link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
 
-<link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
@@ -97,53 +96,9 @@
       .content-area {
         background-color: white;
       }
-      .widget-header {
-        padding: 10px;
-        background-color: white;
-        border: 1px solid #dedede;
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-        font-size: 1em;
-        cursor: pointer;
-        -webkit-tap-highlight-color: rgba(0,0,0,0);
-        width: 100%;
-        @apply(--layout-horizontal);
-      }
-      .widget-header-title {
-        padding: 5px 15px 5px 15px;
-        color: var(--paper-blue-grey-700);
-        font-weight: normal;
-        text-align: left;
-        @apply(--layout-flex);
-        @apply(--layout-self-center);
-      }
-      .widget-header-label {
-        margin: 0px 2px 0px 2px;
-        padding: 5px 15px 5px 15px;
-        border-radius: 15px;
-        background-color: var(--paper-red-500);
-        color: white;
-        font-weight: normal;
-        white-space: nowrap;
-      }
-      .widget-body {
-        padding: 10px;
-        border: 1px solid #dedede;
-        border-top: none;
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
-        @apply(--shadow-elevation-2dp);
-        height: 100%;
-      }
-      .widget-chart {
+      .chart {
         width: 100%;
         height: 100%;
-      }
-      .widget-footer {
-        margin: 5px;
-        color: var(--paper-blue-grey-700);
-        text-align: center;
-        font-size: 0.75em;
       }
       footer {
         height: 50px;
@@ -171,37 +126,27 @@
       <!-- content area -->
       <div class="content-area">
         <div class="app-grid">
-          <chart-widget id="temperature_widget_id" title="Temperature" label="[[last_DHT22_response.parsedPayload.celsius]]°C"></chart-widget>
-          <chart-widget id="humidity_widget_id" title="Humidity" label="[[last_DHT22_response.parsedPayload.humidity]]%"></chart-widget>
-          <chart-widget id="pressure_widget_id" title="Atmospheric pressure" label="[[last_BMP280_response.parsedPayload.pascal]]Pa"></chart-widget>
-          <chart-widget id="co2_widget_id" title="CO2 in Air" label="[[last_MQ135_response.parsedPayload.co2]]%"></chart-widget>
 
-          <!-- TODO other widget layouts, keep tabindex -->
-          <div>
-            <button class="widget-header" on-tap="_toggle" toggle="altitude">
-              <div class="widget-header-title">Altitude</div>
-              <div class="widget-header-label">[[last_BMP280_response.parsedPayload.altitude]]m</div>
-            </button>
-            <iron-collapse id="altitude" tabindex="4">
-              <div class="widget-body">
-                <div class="widget-footer">last update: 22:13:12</div>
-                <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
-              </div>
-            </iron-collapse>
-          </div>
-          <div>
-            <button class="widget-header" on-tap="_toggle" toggle="geo">
-              <div class="widget-header-title">Geo location</div>
-              <div class="widget-header-label">48.9854054-8.3919125</div>
-            </button>
-            <iron-collapse id="geo" tabindex="4">
-              <div class="widget-body">
-                <div class="widget-footer">last update: 22:13:12</div>
-                <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
-              </div>
-            </iron-collapse>
-          </div>
-
+          <!-- TODO add tabindex; add last update info -->
+          <chart-widget id="temperature_widget_id" title="Temperature" label="[[last_DHT22_response.parsedPayload.celsius]]°C">
+            <chart-line id="temperature_chart_id" class="chart" data="[[temperature_chart]]" options="[[options]]"></chart-line>
+          </chart-widget>
+          <chart-widget id="humidity_widget_id" title="Humidity" label="[[last_DHT22_response.parsedPayload.humidity]]%">
+            <chart-line id="humidity_chart_id" class="chart" data="[[humidity_chart]]" options="[[options]]"></chart-line>
+          </chart-widget>
+          <chart-widget id="pressure_widget_id" title="Atmospheric pressure" label="[[last_BMP280_response.parsedPayload.pascal]]Pa">
+            <chart-line id="pressure_chart_id" class="chart" data="[[pressure_chart]]" options="[[options]]"></chart-line>
+          </chart-widget>
+          <chart-widget id="co2_widget_id" title="CO2 in Air" label="[[last_MQ135_response.parsedPayload.co2]]%">
+            <chart-line id="co2_chart_id" class="chart" data="[[co2_chart]]" options="[[options]]"></chart-line>
+          </chart-widget>
+          <!-- TODO remove dummy code from subsequent widgets -->
+          <chart-widget id="altitude_widget_id" title="Altitude" label="[[last_BMP280_response.parsedPayload.altitude]]m">
+            <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
+          </chart-widget>
+          <chart-widget id="altitude_widget_id" title="Location" label="48.9854054-8.3919125">
+            <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
+          </chart-widget>
         </div>
       </div>
       <footer>
@@ -290,6 +235,84 @@
           type: Object,
           value: null,
           observer: '_updateMQ135ChartValues'
+        },
+        temperature_chart: {
+          type: Object,
+          value: {
+            labels: [],
+            datasets: [{
+              label: "Temperature DHT22",
+              fill: true,
+              backgroundColor: "rgba(220,220,220,0.2)",
+              borderColor: "rgba(220,220,220,1)",
+              borderWidth: 1,
+              data: []
+            },
+            {
+              label: "Temperature BMP280",
+              fill: true,
+              backgroundColor: "rgba(151,187,205,0.2)",
+              borderColor: "rgba(151,187,205,1)",
+              borderWidth: 1,
+              data: []
+            }]
+          }
+        },
+        humidity_chart: {
+          type: Object,
+          value: {
+            labels: [],
+            datasets: [{
+              label: "Humidity",
+              fill: true,
+              backgroundColor: "rgba(220,220,220,0.2)",
+              borderColor: "rgba(220,220,220,1)",
+              borderWidth: 1,
+              data: []
+            }]
+          }
+        },
+        pressure_chart: {
+          type: Object,
+          value: {
+            labels: [],
+            datasets: [{
+              label: "Atmospheric pressure",
+              fill: true,
+              backgroundColor: "rgba(220,220,220,0.2)",
+              borderColor: "rgba(220,220,220,1)",
+              borderWidth: 1,
+              data: []
+            }]
+          }
+        },
+        co2_chart: {
+          type: Object,
+          value: {
+            labels: [],
+            datasets: [{
+              label: "CO2 in Air",
+              fill: true,
+              backgroundColor: "rgba(220,220,220,0.2)",
+              borderColor: "rgba(220,220,220,1)",
+              borderWidth: 1,
+              data: []
+            }]
+          }
+        },
+        options: {
+          type: Object,
+          value: {
+            responsive: true,
+            legend: {
+              display: true,
+              position: 'bottom'
+            }
+          }
+        },
+        max: {
+          type: Number,
+          value: 3
         }
       },
       attached: function() {
@@ -301,21 +324,13 @@
       detached: function() {
         window.removeEventListener('resize', this._updateGridStyles);
       },
-      _toggle: function(event) {
-
-        // TODO
-        //console.log(Polymer.dom(event));
-
-        var args = Polymer.dom(event).path[1].getAttribute('toggle');
-        this.$[args].toggle();
-      },
       _openMQTTSettings: function() {
         this.$.mqtt_dialog.open();
       },
       _connectMQTTBroker: function() {
         console.log("Try to connect to MQTT broker ...");
 
-        // TODO
+        // TODO implement
       },
       _parsePayload: function(...payload) {
         var jsonString = String.fromCharCode.apply(null, new Uint8Array(payload));
@@ -325,91 +340,58 @@
         if (event) {
           console.log(event);
           var json = event.parsedPayload;
-          // initialize chart dataset if unset
-          if (!this.$.temperature_widget_id.data) {
-            this.$.temperature_widget_id.data = {
-              labels: [],
-              datasets: [{
-                label: "Temperature DHT22",
-                fill: true,
-                backgroundColor: "rgba(220,220,220,0.2)",
-                borderColor: "rgba(220,220,220,1)",
-                borderWidth: 1,
-                data: []
-              },
-              {
-                label: "Temperature BMP280",
-                fill: true,
-                backgroundColor: "rgba(151,187,205,0.2)",
-                borderColor: "rgba(151,187,205,1)",
-                borderWidth: 1,
-                data: []
-              }]
-            }
-          }
-          // initialize chart dataset if unset
-          if (!this.$.humidity_widget_id.data) {
-            this.$.humidity_widget_id.data = {
-              labels: [],
-              datasets: [{
-                label: "Humidity",
-                fill: true,
-                backgroundColor: "rgba(220,220,220,0.2)",
-                borderColor: "rgba(220,220,220,1)",
-                borderWidth: 1,
-                data: []
-              }]
-            };
-          }
-          // apply new value(s)
-          this.$.humidity_widget_id.apply([json.humidity]);
-          // apply new value(s)
-          this.$.temperature_widget_id.apply([json.celsius]);
+          this._apply(this.$.temperature_chart_id, this.temperature_chart, this.temperature_chart.datasets[0], json.celsius);
+          this._apply(this.$.humidity_chart_id, this.humidity_chart, this.humidity_chart.datasets[0], json.humidity);
         }
       },
       _updateBMP280ChartValues: function(event) {
         if (event) {
           console.log(event);
           var json = event.parsedPayload;
-          // initialize chart dataset if unset
-          if (!this.$.pressure_widget_id.data) {
-            this.$.pressure_widget_id.data = {
-              labels: [],
-              datasets: [{
-                label: "Atmospheric pressure",
-                fill: true,
-                backgroundColor: "rgba(220,220,220,0.2)",
-                borderColor: "rgba(220,220,220,1)",
-                borderWidth: 1,
-                data: []
-              }]
-            };
-          }
-          // apply new value(s)
-          this.$.pressure_widget_id.apply([json.pascal]);
+          this._apply(this.$.pressure_chart_id, this.pressure_chart, this.pressure_chart.datasets[0], json.pascal);
+          this._apply(this.$.temperature_chart_id, this.temperature_chart, this.temperature_chart.datasets[1], json.celsius);
         }
       },
       _updateMQ135ChartValues: function(event) {
         if (event) {
           console.log(event);
           var json = event.parsedPayload;
-          // initialize chart dataset if unset
-          if (!this.$.co2_widget_id.data) {
-            this.$.co2_widget_id.data = {
-              labels: [],
-              datasets: [{
-                label: "CO2 in Air",
-                fill: true,
-                backgroundColor: "rgba(220,220,220,0.2)",
-                borderColor: "rgba(220,220,220,1)",
-                borderWidth: 1,
-                data: []
-              }]
-            };
-          }
-          // apply new value(s)
-          this.$.co2_widget_id.apply([json.co2]);
+          this._apply(this.$.co2_chart_id, this.co2_chart, this.co2_chart.datasets[0], json.co2);
         }
+      },
+      // TODO rework apply & splice
+      _apply: function(chart_id, chart, dataset, value) {
+        // splice x-axis for new timestamp if not already present
+        this._spliceXAxis(chart, this._getCurrentTime());
+        // add new value to according dataset
+        dataset.data[dataset.data.length - 1] = value;
+        // rerender chart
+        chart_id.updateChart();
+      },
+      _spliceXAxis(chart, newTimestamp) {
+        var labels = chart.labels;
+        var datasets = chart.datasets;
+        //
+        if (newTimestamp !== labels[labels.length - 1]) {
+          if (labels.length > this.max) {
+            labels.shift();
+          }
+          labels.push(newTimestamp);
+          for (var i = 0; i < datasets.length; i++) {
+            if (datasets[i].length > this.max) {
+              datasets[i].data.shift();
+            }
+            datasets[i].data.push('NaN');
+          }
+        }
+      },
+      _getCurrentTime: function() {
+        var now = new Date();
+        return [this._pad(now.getHours()), this._pad(now.getMinutes())].join(':');
+        //return [this._pad(now.getHours()), this._pad(now.getMinutes()), this._pad(now.getSeconds())].join(':');
+      },
+      _pad: function(n) {
+        return n < 10 ? '0' + n.toString(10) : n.toString(10);
       }
     });
   </script>
