@@ -1,0 +1,83 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
+
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<dom-module id="widget-box">
+  <template>
+    <style>
+      :host {
+        display: inline-block;
+      }
+      .widget-header {
+        padding: 10px;
+        background-color: white;
+        border: 1px solid #dedede;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        font-size: 1em;
+        cursor: pointer;
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
+        width: 100%;
+        @apply(--layout-horizontal);
+      }
+      .widget-header-title {
+        padding: 5px 15px 5px 15px;
+        color: var(--paper-blue-grey-700);
+        font-weight: normal;
+        text-align: left;
+        @apply(--layout-flex);
+        @apply(--layout-self-center);
+      }
+      .widget-header-label {
+        margin: 0px 2px 0px 2px;
+        padding: 5px 15px 5px 15px;
+        border-radius: 15px;
+        background-color: var(--paper-red-500);
+        color: white;
+        font-weight: normal;
+        white-space: nowrap;
+      }
+      .widget-body {
+        padding: 10px;
+        border: 1px solid #dedede;
+        border-top: none;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        @apply(--shadow-elevation-2dp);
+        height: 100%;
+      }
+    </style>
+    <div>
+      <button class="widget-header" on-tap="_toggle">
+        <div class="widget-header-title">[[title]]</div>
+        <div class="widget-header-label">[[label]]</div>
+      </button>
+      <iron-collapse id="collapse_id" tabindex="[[tabindex]]">
+        <div class="widget-body">
+          <content></content>
+        </div>
+      </iron-collapse>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'widget-box',
+      properties: {
+        title: {
+          type: String,
+          value: null
+        },
+        label: {
+          type: String,
+          value: null
+        }
+      },
+      _toggle: function() {
+        this.$.collapse_id.toggle();
+      }
+    });
+  </script>
+</dom-module>

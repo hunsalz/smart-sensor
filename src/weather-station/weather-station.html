@@ -22,7 +22,7 @@
 <link rel="import" href="../../bower_components/chart-elements/chart-line.html">
 <link rel="import" href="../../bower_components/mqtt-elements/mqtt-elements.html">
 
-<link rel="import" href="chart-widget.html">
+<link rel="import" href="widget-box.html">
 
 <dom-module id="weather-station">
   <template>
@@ -128,25 +128,25 @@
         <div class="app-grid">
 
           <!-- TODO add tabindex; add last update info -->
-          <chart-widget id="temperature_widget_id" title="Temperature" label="[[last_DHT22_response.parsedPayload.celsius]]°C">
+          <widget-box id="temperature_widget_id" title="Temperature" label="[[last_DHT22_response.parsedPayload.celsius]]°C">
             <chart-line id="temperature_chart_id" class="chart" data="[[temperature_chart]]" options="[[options]]"></chart-line>
-          </chart-widget>
-          <chart-widget id="humidity_widget_id" title="Humidity" label="[[last_DHT22_response.parsedPayload.humidity]]%">
+          </widget-box>
+          <widget-box id="humidity_widget_id" title="Humidity" label="[[last_DHT22_response.parsedPayload.humidity]]%">
             <chart-line id="humidity_chart_id" class="chart" data="[[humidity_chart]]" options="[[options]]"></chart-line>
-          </chart-widget>
-          <chart-widget id="pressure_widget_id" title="Atmospheric pressure" label="[[last_BMP280_response.parsedPayload.pascal]]Pa">
+          </widget-box>
+          <widget-box id="pressure_widget_id" title="Atmospheric pressure" label="[[last_BMP280_response.parsedPayload.pascal]]Pa">
             <chart-line id="pressure_chart_id" class="chart" data="[[pressure_chart]]" options="[[options]]"></chart-line>
-          </chart-widget>
-          <chart-widget id="co2_widget_id" title="CO2 in Air" label="[[last_MQ135_response.parsedPayload.co2]]%">
+          </widget-box>
+          <widget-box id="co2_widget_id" title="CO2 in Air" label="[[last_MQ135_response.parsedPayload.co2]]%">
             <chart-line id="co2_chart_id" class="chart" data="[[co2_chart]]" options="[[options]]"></chart-line>
-          </chart-widget>
+          </widget-box>
           <!-- TODO remove dummy code from subsequent widgets -->
-          <chart-widget id="altitude_widget_id" title="Altitude" label="[[last_BMP280_response.parsedPayload.altitude]]m">
+          <widget-box id="altitude_widget_id" title="Altitude" label="[[last_BMP280_response.parsedPayload.altitude]]m">
             <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
-          </chart-widget>
-          <chart-widget id="altitude_widget_id" title="Location" label="48.9854054-8.3919125">
+          </widget-box>
+          <widget-box id="altitude_widget_id" title="Location" label="48.9854054-8.3919125">
             <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
-          </chart-widget>
+          </widget-box>
         </div>
       </div>
       <footer>
@@ -210,15 +210,15 @@
         },
         mqtt_broker_url: {
           type: String,
-          value: ""
+          value: "wss://m21.cloudmqtt.com:33444"
         },
         mqtt_broker_user: {
           type: String,
-          value: ""
+          value: "freeboard"
         },
         mqtt_broker_password: {
           type: String,
-          value: ""
+          value: "a8EI0-OjjVN5"
         },
         last_DHT22_response: {
           type: Object,
