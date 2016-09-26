@@ -6,6 +6,7 @@
 <link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
 
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
@@ -23,6 +24,7 @@
 <link rel="import" href="../../bower_components/mqtt-elements/mqtt-elements.html">
 
 <link rel="import" href="widget-box.html">
+<link rel="import" href="widget-label.html">
 
 <dom-module id="weather-station">
   <template>
@@ -30,7 +32,6 @@
       :host {
         display: block;
         @apply(--paper-font-common-base);
-        --app-grid-columns: 2;
         --app-grid-gutter: 5px;
         --app-grid-expandible-item-columns: 3;
         --app-grid-item-height: 100%;
@@ -110,6 +111,19 @@
       paper-dialog {
         width: 100%;
       }
+      iron-icon {
+        --iron-icon-height: 10vh;
+        --iron-icon-width: 10vw;
+      }
+      .widget-label {
+        margin: 0px 2px 0px 2px;
+        padding: 5px 15px 5px 15px;
+        border-radius: 15px;
+        background-color: var(--paper-red-500);
+        color: white;
+        font-weight: normal;
+        white-space: nowrap;
+      }
     </style>
     <!-- application -->
     <app-header-layout fullbleed>
@@ -117,7 +131,7 @@
       <app-header condenses fixed
           effects="waterfall resize-snapped-title fade-background"
           effects-config='{"resize-snapped-title": {"startsAt": 0.8, "duration": "100ms"}, "fade-background": {"startsAt": 0.8, "endsAt": 0.9}}'>
-        <app-toolbar>
+        <app-toolbar sticky>
           <div condensed-title>My Weather Station</div>
           <paper-icon-button icon="icons:more-vert" alt="Settings" on-tap="_openMQTTSettings"></paper-icon-button>
         </app-toolbar>
@@ -128,23 +142,31 @@
         <div class="app-grid">
 
           <!-- TODO add tabindex; add last update info -->
-          <widget-box id="temperature_widget_id" title="Temperature" label="[[last_DHT22_response.parsedPayload.celsius]]°C">
+          <widget-box id="temperature_widget_id" title="Temperature">
+            <div class="widget-label">[[last_DHT22_response.parsedPayload.celsius]]°C</div>
+            <div class="widget-label">[[last_BMP280_response.parsedPayload.celsius]]°C</div>
             <chart-line id="temperature_chart_id" class="chart" data="[[temperature_chart]]" options="[[options]]"></chart-line>
           </widget-box>
-          <widget-box id="humidity_widget_id" title="Humidity" label="[[last_DHT22_response.parsedPayload.humidity]]%">
+          <widget-box id="humidity_widget_id" title="Humidity">
+            <div class="widget-label">[[last_DHT22_response.parsedPayload.humidity]]%</div>
             <chart-line id="humidity_chart_id" class="chart" data="[[humidity_chart]]" options="[[options]]"></chart-line>
           </widget-box>
-          <widget-box id="pressure_widget_id" title="Atmospheric pressure" label="[[last_BMP280_response.parsedPayload.pascal]]Pa">
+          <widget-box id="pressure_widget_id" title="Atmospheric pressure">
+            <div class="widget-label">[[last_BMP280_response.parsedPayload.pascal]]Pa</div>
             <chart-line id="pressure_chart_id" class="chart" data="[[pressure_chart]]" options="[[options]]"></chart-line>
           </widget-box>
           <widget-box id="co2_widget_id" title="CO2 in Air" label="[[last_MQ135_response.parsedPayload.co2]]%">
+            <div class="widget-label">[[last_MQ135_response.parsedPayload.co2]]%</div>
             <chart-line id="co2_chart_id" class="chart" data="[[co2_chart]]" options="[[options]]"></chart-line>
           </widget-box>
           <!-- TODO remove dummy code from subsequent widgets -->
-          <widget-box id="altitude_widget_id" title="Altitude" label="[[last_BMP280_response.parsedPayload.altitude]]m">
-            <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
+          <widget-box id="altitude_widget_id" title="Altitude">
+            <div class="widget-label">[[last_BMP280_response.parsedPayload.altitude]]m</div>
+            <iron-icon icon="image:landscape"></iron-icon>
+            <span>[[last_BMP280_response.parsedPayload.altitude]]m</span>
           </widget-box>
-          <widget-box id="altitude_widget_id" title="Location" label="48.9854054-8.3919125">
+          <widget-box id="altitude_widget_id" title="Location">
+            <div class="widget-label">48.9854050 - 8.3941010</div>
             <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
           </widget-box>
         </div>
@@ -210,15 +232,15 @@
         },
         mqtt_broker_url: {
           type: String,
-          value: ""
+          value: "wss://m21.cloudmqtt.com:33444"
         },
         mqtt_broker_user: {
           type: String,
-          value: ""
+          value: "freeboard"
         },
         mqtt_broker_password: {
           type: String,
-          value: ""
+          value: "a8EI0-OjjVN5"
         },
         last_DHT22_response: {
           type: Object,

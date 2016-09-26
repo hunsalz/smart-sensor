@@ -30,15 +30,6 @@
         @apply(--layout-flex);
         @apply(--layout-self-center);
       }
-      .widget-header-label {
-        margin: 0px 2px 0px 2px;
-        padding: 5px 15px 5px 15px;
-        border-radius: 15px;
-        background-color: var(--paper-red-500);
-        color: white;
-        font-weight: normal;
-        white-space: nowrap;
-      }
       .widget-body {
         padding: 10px;
         border: 1px solid #dedede;
@@ -52,10 +43,12 @@
     <div>
       <button class="widget-header" on-tap="_toggle">
         <div class="widget-header-title">[[title]]</div>
-        <div class="widget-header-label">[[label]]</div>
+        <!-- insertion point for any element with a class attribute of 'widget-label' -->
+        <content select=".widget-label"></content>
       </button>
       <iron-collapse id="collapse_id" tabindex="[[tabindex]]">
         <div class="widget-body">
+          <!-- insertion point for any element -->
           <content></content>
         </div>
       </iron-collapse>
@@ -67,10 +60,6 @@
       is: 'widget-box',
       properties: {
         title: {
-          type: String,
-          value: null
-        },
-        label: {
           type: String,
           value: null
         }
