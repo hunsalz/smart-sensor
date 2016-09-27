@@ -5,6 +5,7 @@
 <link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
 
 <link rel="import" href="../../bower_components/iron-icons/image-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
@@ -110,10 +111,6 @@
       paper-dialog {
         width: 100%;
       }
-      iron-icon {
-        --iron-icon-height: 10vh;
-        --iron-icon-width: 10vw;
-      }
       .widget-label {
         margin: 0px 2px 0px 2px;
         padding: 5px 15px 5px 15px;
@@ -123,9 +120,15 @@
         font-size: 1em;
         white-space: nowrap;
       }
-      .small {
-
+      .widget-label-font-small {
         font-size: 0.5em;
+      }
+      .widget-label-iron-icon {
+
+      }
+      .widget-iron-icon {
+        --iron-icon-height: 10vh;
+        --iron-icon-width: 10vw;
       }
     </style>
     <!-- application -->
@@ -147,11 +150,11 @@
           <!-- TODO add tabindex; add last update info -->
           <widget-box id="temperature_widget_id" title="Temperature">
             <div class="widget-label">
-              <span class="small">DHT22</span>
+              <span class="widget-label-font-small">DHT22</span>
               [[last_DHT22_response.parsedPayload.celsius]]°C
             </div>
             <div class="widget-label">
-              <span class="small">BMP280</span>
+              <span class="widget-label-font-small">BMP280</span>
               [[last_BMP280_response.parsedPayload.celsius]]°C
             </div>
             <chart-line id="temperature_chart_id" class="chart" data="[[temperature_chart]]" options="[[options]]"></chart-line>
@@ -170,13 +173,12 @@
           </widget-box>
           <!-- TODO remove dummy code from subsequent widgets -->
           <widget-box id="altitude_widget_id" title="Altitude">
-            <div class="widget-label">[[last_BMP280_response.parsedPayload.altitude]]m</div>
-            <iron-icon icon="image:landscape"></iron-icon>
+            <div class="widget-label">
+              <iron-icon icon="image:landscape"></iron-icon>
+              [[last_BMP280_response.parsedPayload.altitude]]m
+            </div>
+            <iron-icon class="widget-iron-icon" icon="image:landscape"></iron-icon>
             <span>[[last_BMP280_response.parsedPayload.altitude]]m</span>
-          </widget-box>
-          <widget-box id="altitude_widget_id" title="Location">
-            <div class="widget-label">48.9854050 - 8.3941010</div>
-            <div>Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus. Lorem ipsum dolor sit amet, per in nusquam nominavi periculis, sit elit oportere ea, id minim maiestatis incorrupte duo. Dolorum verterem ad ius, his et nullam verterem. Eu alia debet usu, an doming tritani est. Vix ad ponderum petentium suavitate, eum eu tempor populo, graece sententiae constituam vim ex. Cu torquatos reprimique neglegentur nec, voluptua periculis has ut, at eos discere deleniti sensibus.</div>
           </widget-box>
         </div>
       </div>
@@ -187,22 +189,27 @@
     <!-- settings dialog -->
     <paper-dialog id="mqtt_dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" withBackdrop>
       <h2>MQTT settings</h2>
-      <paper-input label="Enter MQTT broker URL"></paper-input>
-      <paper-input label="User"></paper-input>
-      <paper-input label="Password"></paper-input>
-      <paper-toggle-button>Connect</paper-toggle-button>
+      <paper-input label="Enter MQTT broker URL" value="{{mqtt_broker_url}}"></paper-input>
+      <app-localstorage-document key="mqtt_broker_url" data="{{mqtt_broker_url}}" log></app-localstorage-document>
+      <paper-input label="User" value="{{mqtt_broker_user}}"></paper-input>
+      <app-localstorage-document key="mqtt_broker_user" data="{{mqtt_broker_user}}" log></app-localstorage-document>
+      <!-- TODO Think about an alternative approach to keep password secure -->
+      <paper-input label="Password" value="{{mqtt_broker_password}}"></paper-input>
+      <app-localstorage-document key="mqtt_broker_password" data="{{mqtt_broker_password}}" log></app-localstorage-document>
+      <paper-toggle-button on-change="_connectMQTTBroker">Connect</paper-toggle-button>
       <span>[[connected]]<span>
+
       <!--div class="buttons">
         <paper-button on-tap="_connectMQTTBroker">Connect</paper-button>
-      </div>
-    </paper-dialog-->
+      </div-->
+    </paper-dialog>
     <!-- MQTT connection & subscription -->
     <mqtt-connection
-      url="[[mqtt_broker_url]]"
-      username="[[mqtt_broker_user]]"
-      password="[[mqtt_broker_password]]"
+      id="mqtt_broker"
+      url="{{mqtt_broker_url}}"
+      username="{{mqtt_broker_user}}"
+      password="{{mqtt_broker_password}}"
       with-credentials
-      auto
       connected="{{connected}}">
       <mqtt-subscription
         id="dht22_subscription"
@@ -244,15 +251,15 @@
         },
         mqtt_broker_url: {
           type: String,
-          value: ""
+          value: "wss://m21.cloudmqtt.com:33444"
         },
         mqtt_broker_user: {
           type: String,
-          value: ""
+          value: "freeboard"
         },
         mqtt_broker_password: {
           type: String,
-          value: ""
+          value: "a8EI0-OjjVN5"
         },
         last_DHT22_response: {
           type: Object,
@@ -355,6 +362,9 @@
           }.bind(this);
         window.addEventListener('resize', this._updateGridStyles);
       },
+      ready: function() {
+        this._connectMQTTBroker();
+      },
       detached: function() {
         window.removeEventListener('resize', this._updateGridStyles);
       },
@@ -364,7 +374,9 @@
       _connectMQTTBroker: function() {
         console.log("Try to connect to MQTT broker ...");
 
-        // TODO implement
+        if (this.mqtt_broker_url && this.mqtt_broker_user && this.mqtt_broker_password) {
+          this.$.mqtt_broker.connect();
+        }
       },
       _updateDHT22ChartValues: function(event) {
         if (event) {
