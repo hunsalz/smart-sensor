@@ -43,7 +43,7 @@
     <div>
       <button class="widget-header" on-tap="_toggle">
         <div class="widget-header-title">[[title]]</div>
-        <!-- insertion point for any element with a class attribute of 'widget-label' -->
+        <!-- insertion point for elements with class attribute 'widget-label' -->
         <content select=".widget-label"></content>
       </button>
       <iron-collapse id="collapse_id" tabindex="[[tabindex]]">
@@ -54,7 +54,6 @@
       </iron-collapse>
     </div>
   </template>
-
   <script>
     Polymer({
       is: 'widget-box',

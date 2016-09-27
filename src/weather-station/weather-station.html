@@ -24,7 +24,6 @@
 <link rel="import" href="../../bower_components/mqtt-elements/mqtt-elements.html">
 
 <link rel="import" href="widget-box.html">
-<link rel="import" href="widget-label.html">
 
 <dom-module id="weather-station">
   <template>
@@ -143,8 +142,8 @@
 
           <!-- TODO add tabindex; add last update info -->
           <widget-box id="temperature_widget_id" title="Temperature">
-            <div class="widget-label">[[last_DHT22_response.parsedPayload.celsius]]°C</div>
-            <div class="widget-label">[[last_BMP280_response.parsedPayload.celsius]]°C</div>
+            <div class="widget-label">DHT22 = [[last_DHT22_response.parsedPayload.celsius]]°C</div>
+            <div class="widget-label">BMP280 = [[last_BMP280_response.parsedPayload.celsius]]°C</div>
             <chart-line id="temperature_chart_id" class="chart" data="[[temperature_chart]]" options="[[options]]"></chart-line>
           </widget-box>
           <widget-box id="humidity_widget_id" title="Humidity">
@@ -232,15 +231,15 @@
         },
         mqtt_broker_url: {
           type: String,
-          value: "wss://m21.cloudmqtt.com:33444"
+          value: ""
         },
         mqtt_broker_user: {
           type: String,
-          value: "freeboard"
+          value: ""
         },
         mqtt_broker_password: {
           type: String,
-          value: "a8EI0-OjjVN5"
+          value: ""
         },
         last_DHT22_response: {
           type: Object,
@@ -334,7 +333,7 @@
         },
         max: {
           type: Number,
-          value: 3
+          value: 10
         }
       },
       attached: function() {
@@ -362,43 +361,51 @@
         if (event) {
           console.log(event);
           var json = event.parsedPayload;
-          this._apply(this.$.temperature_chart_id, this.temperature_chart, this.temperature_chart.datasets[0], json.celsius);
-          this._apply(this.$.humidity_chart_id, this.humidity_chart, this.humidity_chart.datasets[0], json.humidity);
+          // update temperature chart
+          this._lengthenXAxis(this.temperature_chart, this._getCurrentTime());
+          this.temperature_chart.datasets[0].data[this.temperature_chart.datasets[0].data.length - 1] = json.celsius;
+          this.$.temperature_chart_id.updateChart();
+          // update humidity chart
+          this._lengthenXAxis(this.humidity_chart, this._getCurrentTime());
+          this.humidity_chart.datasets[0].data[this.humidity_chart.datasets[0].data.length - 1] = json.humidity;
+          this.$.humidity_chart_id.updateChart();
         }
       },
       _updateBMP280ChartValues: function(event) {
         if (event) {
           console.log(event);
           var json = event.parsedPayload;
-          this._apply(this.$.pressure_chart_id, this.pressure_chart, this.pressure_chart.datasets[0], json.pascal);
-          this._apply(this.$.temperature_chart_id, this.temperature_chart, this.temperature_chart.datasets[1], json.celsius);
+          // update temperature chart
+          this._lengthenXAxis(this.temperature_chart, this._getCurrentTime());
+          this.temperature_chart.datasets[1].data[this.temperature_chart.datasets[1].data.length - 1] = json.celsius;
+          this.$.temperature_chart_id.updateChart();
+          // update pressure chart
+          this._lengthenXAxis(this.pressure_chart, this._getCurrentTime());
+          this.pressure_chart.datasets[0].data[this.pressure_chart.datasets[0].data.length - 1] = json.pascal;
+          this.$.pressure_chart_id.updateChart();
         }
       },
       _updateMQ135ChartValues: function(event) {
         if (event) {
           console.log(event);
           var json = event.parsedPayload;
-          this._apply(this.$.co2_chart_id, this.co2_chart, this.co2_chart.datasets[0], json.co2);
+          // update CO2 chart
+          this._lengthenXAxis(this.co2_chart, this._getCurrentTime());
+          this.co2_chart.datasets[0].data[this.temperature_chart.datasets[0].data.length - 1] = json.co2;
+          this.$.co2_chart_id.updateChart();
         }
       },
-      // TODO rework apply & splice
-      _apply: function(chart_id, chart, dataset, value) {
-        // splice x-axis for new timestamp if not already present
-        this._spliceXAxis(chart, this._getCurrentTime());
-        // add new value to according dataset
-        dataset.data[dataset.data.length - 1] = value;
-        // rerender chart
-        chart_id.updateChart();
-      },
-      _spliceXAxis(chart, newTimestamp) {
+      _lengthenXAxis(chart) {
+        var now = this._getCurrentTime();
         var labels = chart.labels;
         var datasets = chart.datasets;
-        //
-        if (newTimestamp !== labels[labels.length - 1]) {
+        // lengthen xAxis if 'now' doesn't exist already
+        if (now !== labels[labels.length - 1]) {
           if (labels.length > this.max) {
             labels.shift();
           }
-          labels.push(newTimestamp);
+          labels.push(now);
+          // for 'now' add 'NaN' as placeholder to all datasets
           for (var i = 0; i < datasets.length; i++) {
             if (datasets[i].length > this.max) {
               datasets[i].data.shift();
@@ -410,7 +417,6 @@
       _getCurrentTime: function() {
         var now = new Date();
         return [this._pad(now.getHours()), this._pad(now.getMinutes())].join(':');
-        //return [this._pad(now.getHours()), this._pad(now.getMinutes()), this._pad(now.getSeconds())].join(':');
       },
       _pad: function(n) {
         return n < 10 ? '0' + n.toString(10) : n.toString(10);
