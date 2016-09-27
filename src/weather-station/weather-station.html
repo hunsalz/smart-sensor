@@ -105,7 +105,7 @@
         line-height: 50px;
         text-align: center;
         background-color: white;
-        font-size: 14px;
+        font-size: 1em;
       }
       paper-dialog {
         width: 100%;
@@ -120,8 +120,12 @@
         border-radius: 15px;
         background-color: var(--paper-red-500);
         color: white;
-        font-weight: normal;
+        font-size: 1em;
         white-space: nowrap;
+      }
+      .small {
+
+        font-size: 0.5em;
       }
     </style>
     <!-- application -->
@@ -142,8 +146,14 @@
 
           <!-- TODO add tabindex; add last update info -->
           <widget-box id="temperature_widget_id" title="Temperature">
-            <div class="widget-label">DHT22 = [[last_DHT22_response.parsedPayload.celsius]]°C</div>
-            <div class="widget-label">BMP280 = [[last_BMP280_response.parsedPayload.celsius]]°C</div>
+            <div class="widget-label">
+              <span class="small">DHT22</span>
+              [[last_DHT22_response.parsedPayload.celsius]]°C
+            </div>
+            <div class="widget-label">
+              <span class="small">BMP280</span>
+              [[last_BMP280_response.parsedPayload.celsius]]°C
+            </div>
             <chart-line id="temperature_chart_id" class="chart" data="[[temperature_chart]]" options="[[options]]"></chart-line>
           </widget-box>
           <widget-box id="humidity_widget_id" title="Humidity">
@@ -234,15 +244,15 @@
         },
         mqtt_broker_url: {
           type: String,
-          value: "wss://m21.cloudmqtt.com:33444"
+          value: ""
         },
         mqtt_broker_user: {
           type: String,
-          value: "freeboard"
+          value: ""
         },
         mqtt_broker_password: {
           type: String,
-          value: "a8EI0-OjjVN5"
+          value: ""
         },
         last_DHT22_response: {
           type: Object,
