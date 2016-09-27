@@ -226,20 +226,23 @@
           type: Function,
           readOnly: true,
           value: function () {
-            return this._parsePayload.bind(this);
+            return function() {
+              var jsonString = String.fromCharCode.apply(null, new Uint8Array(arguments));
+              return JSON.parse(jsonString);
+            }
           }
         },
         mqtt_broker_url: {
           type: String,
-          value: ""
+          value: "wss://m21.cloudmqtt.com:33444"
         },
         mqtt_broker_user: {
           type: String,
-          value: ""
+          value: "freeboard"
         },
         mqtt_broker_password: {
           type: String,
-          value: ""
+          value: "a8EI0-OjjVN5"
         },
         last_DHT22_response: {
           type: Object,
@@ -352,10 +355,6 @@
         console.log("Try to connect to MQTT broker ...");
 
         // TODO implement
-      },
-      _parsePayload: function(...payload) {
-        var jsonString = String.fromCharCode.apply(null, new Uint8Array(payload));
-        return JSON.parse(jsonString);
       },
       _updateDHT22ChartValues: function(event) {
         if (event) {
