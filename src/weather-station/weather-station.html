@@ -11,7 +11,6 @@
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
-<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
@@ -35,6 +34,7 @@
         --app-grid-gutter: 5px;
         --app-grid-expandible-item-columns: 3;
         --app-grid-item-height: 100%;
+        --app-grid-columns: 2;
       }
       app-header {
         position: fixed;
@@ -58,10 +58,9 @@
         --paper-icon-button-ink-color: white;
       }
       [main-title] {
+        font-size: 1.5em;
         font-weight: bold;
         text-align: center;
-        overflow: hidden;
-        text-overflow: ellipsis;
       }
       [condensed-title] {
         font-size: 1em;
@@ -70,26 +69,18 @@
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      @media screen and (min-width: 1000px) {
+      @media screen and (min-width: 1200px) {
         :host {
           --app-grid-columns: 3;
-        }
+        },
         [main-title] {
           font-size: 3em;
-        }
-      }
-      @media screen and (min-width: 700px) and (max-width: 1000px) {
-        :host {
-          --app-grid-columns: 2;
-        }
-        [main-title] {
-          font-size: 2em;
         }
       }
       @media screen and (max-width: 700px) {
         :host {
           --app-grid-columns: 1;
-        }
+        },
         [main-title] {
           font-size: 1em;
         }
@@ -123,9 +114,6 @@
       .widget-label-font-small {
         font-size: 0.5em;
       }
-      .widget-label-iron-icon {
-
-      }
       .widget-iron-icon {
         --iron-icon-height: 10vh;
         --iron-icon-width: 10vw;
@@ -138,10 +126,10 @@
           effects="waterfall resize-snapped-title fade-background"
           effects-config='{"resize-snapped-title": {"startsAt": 0.8, "duration": "100ms"}, "fade-background": {"startsAt": 0.8, "endsAt": 0.9}}'>
         <app-toolbar sticky>
+          <div main-title>My Weather Station</div>
           <div condensed-title>My Weather Station</div>
           <paper-icon-button icon="icons:more-vert" alt="Settings" on-tap="_openMQTTSettings"></paper-icon-button>
         </app-toolbar>
-        <div main-title>My Weather Station</div>
       </app-header>
       <!-- content area -->
       <div class="content-area">
@@ -196,21 +184,16 @@
       <!-- TODO Think about an alternative approach to keep password secure -->
       <paper-input label="Password" value="{{mqtt_broker_password}}"></paper-input>
       <app-localstorage-document key="mqtt_broker_password" data="{{mqtt_broker_password}}" log></app-localstorage-document>
-      <paper-toggle-button on-change="_connectMQTTBroker">Connect</paper-toggle-button>
-      <span>[[connected]]<span>
-
-      <!--div class="buttons">
-        <paper-button on-tap="_connectMQTTBroker">Connect</paper-button>
-      </div-->
+      <paper-toggle-button id="toggle_id" checked="[[mqtt_connected]]" on-change="_connectMQTTBroker">[[_isConnected(mqtt_connected)]]</paper-toggle-button>
     </paper-dialog>
     <!-- MQTT connection & subscription -->
     <mqtt-connection
-      id="mqtt_broker"
+      id="mqtt_broker_id"
       url="{{mqtt_broker_url}}"
       username="{{mqtt_broker_user}}"
       password="{{mqtt_broker_password}}"
       with-credentials
-      connected="{{connected}}">
+      connected="{{mqtt_connected}}">
       <mqtt-subscription
         id="dht22_subscription"
         topic="sensor/DHT22"
@@ -260,6 +243,11 @@
         mqtt_broker_password: {
           type: String,
           value: null
+        },
+        mqtt_connected: {
+          type: Boolean,
+          value: false,
+          notify: true
         },
         last_DHT22_response: {
           type: Object,
@@ -363,7 +351,17 @@
         window.addEventListener('resize', this._updateGridStyles);
       },
       ready: function() {
-        this._connectMQTTBroker();
+        // wait until app-storgage is able to load persisted preferences
+        this.async(function() {
+          // try to connect with MQTT broker
+          this._connectMQTTBroker();
+          // show mqtt settings if automatic connect wasn't possible
+          if (!this.mqtt_connected) {
+            console.log(this.mqtt_connected);
+            // TODO
+            //this._openMQTTSettings();
+          }
+        }.bind(this), 500);
       },
       detached: function() {
         window.removeEventListener('resize', this._updateGridStyles);
@@ -371,12 +369,17 @@
       _openMQTTSettings: function() {
         this.$.mqtt_dialog.open();
       },
-      _connectMQTTBroker: function() {
-        console.log("Try to connect to MQTT broker ...");
+      _connectMQTTBroker: function(event) {
 
+        console.log(event);
+
+        console.log("Trying to connect to MQTT broker ...");
         if (this.mqtt_broker_url && this.mqtt_broker_user && this.mqtt_broker_password) {
-          this.$.mqtt_broker.connect();
+          this.$.mqtt_broker_id.connect();
         }
+      },
+      _isConnected: function(connected) {
+        return connected === true ? "on" : "off";
       },
       _updateDHT22ChartValues: function(event) {
         if (event) {
@@ -404,6 +407,9 @@
           this._lengthenXAxis(this.pressure_chart, this._getCurrentTime());
           this.pressure_chart.datasets[0].data[this.pressure_chart.datasets[0].data.length - 1] = json.pascal;
           this.$.pressure_chart_id.updateChart();
+
+
+          console.log(this.pressure_chart);
         }
       },
       _updateMQ135ChartValues: function(event) {
