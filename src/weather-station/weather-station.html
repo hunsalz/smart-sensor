@@ -8,6 +8,7 @@
 <link rel="import" href="../../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
 
 <link rel="import" href="../../bower_components/iron-icons/image-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/maps-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
@@ -22,6 +23,9 @@
 
 <link rel="import" href="../../bower_components/chart-elements/chart-line.html">
 <link rel="import" href="../../bower_components/mqtt-elements/mqtt-elements.html">
+
+<link rel="import" href="../../bower_components/google-map/google-map.html">
+<link rel="import" href="../../bower_components/google-map/google-map-marker.html">
 
 <link rel="import" href="widget-box.html">
 
@@ -60,12 +64,11 @@
       [main-title] {
         font-size: 1.5em;
         font-weight: bold;
-        text-align: center;
+        padding-bottom: 10vh; /* keep some padding in mobile landscape view */
       }
       [condensed-title] {
         font-size: 1em;
         font-weight: normal;
-        text-align: center;
         overflow: hidden;
         text-overflow: ellipsis;
       }
@@ -88,9 +91,13 @@
       .content-area {
         background-color: white;
       }
-      .chart {
+      chart-line {
         width: 100%;
         height: 100%;
+      }
+      google-map {
+        width: 100%;
+        height: 40vh;
       }
       footer {
         height: 50px;
@@ -126,9 +133,11 @@
           effects="waterfall resize-snapped-title fade-background"
           effects-config='{"resize-snapped-title": {"startsAt": 0.8, "duration": "100ms"}, "fade-background": {"startsAt": 0.8, "endsAt": 0.9}}'>
         <app-toolbar sticky>
-          <div main-title>My Weather Station</div>
           <div condensed-title>My Weather Station</div>
           <paper-icon-button icon="icons:more-vert" alt="Settings" on-tap="_openMQTTSettings"></paper-icon-button>
+        </app-toolbar>
+        <app-toolbar class="tall">
+          <div main-title>My Weather Station</div>
         </app-toolbar>
       </app-header>
       <!-- content area -->
@@ -136,7 +145,7 @@
         <div class="app-grid">
 
           <!-- TODO add tabindex; add last update info -->
-          <widget-box id="temperature_widget_id" title="Temperature">
+          <widget-box title="Temperature">
             <div class="widget-label">
               <span class="widget-label-font-small">DHT22</span>
               [[last_DHT22_response.parsedPayload.celsius]]°C
@@ -147,26 +156,35 @@
             </div>
             <chart-line id="temperature_chart_id" class="chart" data="[[temperature_chart]]" options="[[options]]"></chart-line>
           </widget-box>
-          <widget-box id="humidity_widget_id" title="Humidity">
+          <widget-box title="Humidity">
             <div class="widget-label">[[last_DHT22_response.parsedPayload.humidity]]%</div>
-            <chart-line id="humidity_chart_id" class="chart" data="[[humidity_chart]]" options="[[options]]"></chart-line>
+            <chart-line id="humidity_chart_id" data="[[humidity_chart]]" options="[[options]]"></chart-line>
           </widget-box>
-          <widget-box id="pressure_widget_id" title="Atmospheric pressure">
+          <widget-box title="Atmospheric pressure">
             <div class="widget-label">[[last_BMP280_response.parsedPayload.pascal]]Pa</div>
-            <chart-line id="pressure_chart_id" class="chart" data="[[pressure_chart]]" options="[[options]]"></chart-line>
+            <chart-line id="pressure_chart_id" data="[[pressure_chart]]" options="[[options]]"></chart-line>
           </widget-box>
-          <widget-box id="co2_widget_id" title="CO2 in Air" label="[[last_MQ135_response.parsedPayload.co2]]%">
+          <widget-box title="CO2 in Air" label="[[last_MQ135_response.parsedPayload.co2]]%">
             <div class="widget-label">[[last_MQ135_response.parsedPayload.co2]]%</div>
-            <chart-line id="co2_chart_id" class="chart" data="[[co2_chart]]" options="[[options]]"></chart-line>
+            <chart-line id="co2_chart_id" data="[[co2_chart]]" options="[[options]]"></chart-line>
           </widget-box>
           <!-- TODO remove dummy code from subsequent widgets -->
-          <widget-box id="altitude_widget_id" title="Altitude">
+          <widget-box title="Altitude">
             <div class="widget-label">
               <iron-icon icon="image:landscape"></iron-icon>
               [[last_BMP280_response.parsedPayload.altitude]]m
             </div>
             <iron-icon class="widget-iron-icon" icon="image:landscape"></iron-icon>
             <span>[[last_BMP280_response.parsedPayload.altitude]]m</span>
+          </widget-box>
+          <widget-box title="Location">
+            <div class="widget-label">
+              <iron-icon icon="maps:place"></iron-icon>
+              <span>48.998648, 8.3919072</span>
+            </div>
+            <google-map latitude="48.998648" longitude="8.377365" api-key="[[google_map_api_key]]" fit-to-markers>
+              <google-map-marker latitude="48.998648" longitude="8.377365" title="My Weather Station"></google-map-marker>
+            </google-map>
           </widget-box>
         </div>
       </div>
@@ -197,21 +215,21 @@
       <mqtt-subscription
         id="dht22_subscription"
         topic="sensor/DHT22"
-        number-of-messages="Infinity"
+        number-of-messages="[[mqtt_max_number_of_messages]]"
         payload-type="Custom"
         payload-parse-function="[[_payloadParseFunc]]"
         last-message="{{last_DHT22_response}}">
       </mqtt-subscription>
       <mqtt-subscription
         topic="sensor/BMP280"
-        number-of-messages="Infinity"
+        number-of-messages="[[mqtt_max_number_of_messages]]"
         payload-type="Custom"
         payload-parse-function="[[_payloadParseFunc]]"
         last-message="{{last_BMP280_response}}">
       </mqtt-subscription>
       <mqtt-subscription
         topic="sensor/MQ135"
-        number-of-messages="Infinity"
+        number-of-messages="[[mqtt_max_number_of_messages]]"
         payload-type="Custom"
         payload-parse-function="[[_payloadParseFunc]]"
         last-message="{{last_MQ135_response}}">
@@ -248,6 +266,10 @@
           type: Boolean,
           value: false,
           notify: true
+        },
+        mqtt_max_number_of_messages: {
+          type: Number,
+          value: 10
         },
         last_DHT22_response: {
           type: Object,
@@ -342,6 +364,10 @@
         max: {
           type: Number,
           value: 10
+        },
+        google_map_api_key: {
+          type: String,
+          value: 'AIzaSyA2QZSQj4nimOBBNG7ZNfY6MKD3lW8-OiI' // API key is restricted to specific URL; TODO change to your own
         }
       },
       attached: function() {
@@ -349,19 +375,10 @@
           this.updateStyles();
           }.bind(this);
         window.addEventListener('resize', this._updateGridStyles);
-      },
-      ready: function() {
-        // wait until app-storgage is able to load persisted preferences
+        // try to connect automatically with MQTT broker
         this.async(function() {
-          // try to connect with MQTT broker
           this._connectMQTTBroker();
-          // show mqtt settings if automatic connect wasn't possible
-          if (!this.mqtt_connected) {
-            console.log(this.mqtt_connected);
-            // TODO
-            //this._openMQTTSettings();
-          }
-        }.bind(this), 500);
+        });
       },
       detached: function() {
         window.removeEventListener('resize', this._updateGridStyles);
@@ -369,11 +386,8 @@
       _openMQTTSettings: function() {
         this.$.mqtt_dialog.open();
       },
-      _connectMQTTBroker: function(event) {
-
-        console.log(event);
-
-        console.log("Trying to connect to MQTT broker ...");
+      _connectMQTTBroker: function() {
+        console.log("Trying to connect to [" + this.mqtt_broker_url + "] ...");
         if (this.mqtt_broker_url && this.mqtt_broker_user && this.mqtt_broker_password) {
           this.$.mqtt_broker_id.connect();
         }

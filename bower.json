@@ -16,7 +16,8 @@
     "paper-toggle-button": "PolymerElements/paper-toggle-button#latest",
     "neon-animation": "PolymerElements/neon-animation#latest",
     "chart-elements": "robdodson/chart-elements#latest",
-    "mqtt-elements": "mqttjs/mqtt-elements#latest"
+    "mqtt-elements": "mqttjs/mqtt-elements#latest",
+    "google-map": "GoogleWebComponents/google-map#latest"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
