@@ -91,6 +91,13 @@
       .content-area {
         background-color: white;
       }
+      .footer {
+        padding-top: 2vh;
+        font-size: 1em;
+        text-align: center;
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+      }
       chart-line {
         width: 100%;
         height: 100%;
@@ -98,13 +105,6 @@
       google-map {
         width: 100%;
         height: 40vh;
-      }
-      footer {
-        height: 50px;
-        line-height: 50px;
-        text-align: center;
-        background-color: white;
-        font-size: 1em;
       }
       paper-dialog {
         width: 100%;
@@ -188,9 +188,7 @@
           </widget-box>
         </div>
       </div>
-      <footer>
-        &copy; Build with Polymer
-      </footer>
+      <div class="footer">&copy; Build with Polymer</div>
     </app-header-layout>
     <!-- settings dialog -->
     <paper-dialog id="mqtt_dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" withBackdrop>
