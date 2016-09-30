@@ -136,11 +136,11 @@
           effects="waterfall resize-snapped-title fade-background"
           effects-config='{"resize-snapped-title": {"startsAt": 0.8, "duration": "100ms"}, "fade-background": {"startsAt": 0.8, "endsAt": 0.9}}'>
         <app-toolbar sticky>
-          <div condensed-title>My Weather Station</div>
+          <div condensed-title>[[app_title]]</div>
           <paper-icon-button icon="icons:more-vert" alt="Settings" on-tap="_openMQTTSettings"></paper-icon-button>
         </app-toolbar>
         <app-toolbar class="tall">
-          <div spacer main-title>My Weather Station</div>
+          <div spacer main-title>[[app_title]]</div>
         </app-toolbar>
       </app-header>
       <!-- content area -->
@@ -157,19 +157,19 @@
               <span class="widget-label-font-small">BMP280</span>
               [[last_BMP280_response.parsedPayload.celsius]]°C
             </div>
-            <chart-line id="temperature_chart_id" class="chart" data="[[temperature_chart]]" options="[[options]]"></chart-line>
+            <chart-line id="temperature_chart_id" class="chart" data="[[temperature_chart]]" options="[[chart_options]]"></chart-line>
           </widget-box>
           <widget-box title="Humidity">
             <div class="widget-label">[[last_DHT22_response.parsedPayload.humidity]]%</div>
-            <chart-line id="humidity_chart_id" data="[[humidity_chart]]" options="[[options]]"></chart-line>
+            <chart-line id="humidity_chart_id" data="[[humidity_chart]]" options="[[chart_options]]"></chart-line>
           </widget-box>
           <widget-box title="Atmospheric pressure">
             <div class="widget-label">[[last_BMP280_response.parsedPayload.pascal]]Pa</div>
-            <chart-line id="pressure_chart_id" data="[[pressure_chart]]" options="[[options]]"></chart-line>
+            <chart-line id="pressure_chart_id" data="[[pressure_chart]]" options="[[chart_options]]"></chart-line>
           </widget-box>
           <widget-box title="CO2 in Air" label="[[last_MQ135_response.parsedPayload.co2]]%">
             <div class="widget-label">[[last_MQ135_response.parsedPayload.co2]]%</div>
-            <chart-line id="co2_chart_id" data="[[co2_chart]]" options="[[options]]"></chart-line>
+            <chart-line id="co2_chart_id" data="[[co2_chart]]" options="[[chart_options]]"></chart-line>
           </widget-box>
           <!-- TODO remove dummy code from subsequent widgets -->
           <widget-box title="Altitude">
@@ -185,8 +185,8 @@
               <iron-icon icon="maps:place"></iron-icon>
               <span>48.998648, 8.3919072</span>
             </div>
-            <google-map latitude="48.998648" longitude="8.377365" api-key="[[google_map_api_key]]" fit-to-markers>
-              <google-map-marker latitude="48.998648" longitude="8.377365" title="My Weather Station"></google-map-marker>
+            <google-map latitude="[[location.latitude]]" longitude="[[location.longitude]]" api-key="[[google_map_api_key]]" fit-to-markers>
+              <google-map-marker latitude="[[location.latitude]]" longitude="[[location.longitude]]" title="[[app_title]]"></google-map-marker>
             </google-map>
           </widget-box>
         </div>
@@ -250,6 +250,10 @@
               return JSON.parse(jsonString);
             }
           }
+        },
+        app_title: {
+          type: String,
+          value: 'My Weather Station'
         },
         mqtt_broker_url: {
           type: String,
@@ -352,7 +356,7 @@
             }]
           }
         },
-        options: {
+        chart_options: {
           type: Object,
           value: {
             responsive: true,
@@ -362,13 +366,20 @@
             }
           }
         },
-        max: {
+        chart_max_data_points: {
           type: Number,
           value: 10
         },
         google_map_api_key: {
           type: String,
           value: 'AIzaSyA2QZSQj4nimOBBNG7ZNfY6MKD3lW8-OiI' // API key is restricted to specific URL; TODO change to your own
+        },
+        location: {
+          type: Object,
+          value: {
+            latitude: '48.998648',
+            longitude: '8.377365'
+          }
         }
       },
       attached: function() {
@@ -443,13 +454,13 @@
         var datasets = chart.datasets;
         // lengthen xAxis if 'now' doesn't exist already
         if (now !== labels[labels.length - 1]) {
-          if (labels.length > this.max) {
+          if (labels.length > this.chart_max_data_points) {
             labels.shift();
           }
           labels.push(now);
           // for 'now' add 'NaN' as placeholder to all datasets
           for (var i = 0; i < datasets.length; i++) {
-            if (datasets[i].length > this.max) {
+            if (datasets[i].length > this.chart_max_data_points) {
               datasets[i].data.shift();
             }
             datasets[i].data.push('NaN');
