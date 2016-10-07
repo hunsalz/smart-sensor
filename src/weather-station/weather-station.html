@@ -166,7 +166,7 @@
             <div class="widget-label">[[last_BMP280_response.parsedPayload.pascal]]Pa</div>
             <chart-line id="pressure_chart_id" data="[[pressure_chart]]" options="[[chart_options]]"></chart-line>
           </widget-box>
-          <widget-box title="CO2 in Air" label="[[last_MQ135_response.parsedPayload.co2]]%">
+          <widget-box title="CO2 in Air">
             <div class="widget-label">[[last_MQ135_response.parsedPayload.co2]]%</div>
             <chart-line id="co2_chart_id" data="[[co2_chart]]" options="[[chart_options]]"></chart-line>
           </widget-box>
@@ -187,6 +187,19 @@
               <google-map-marker latitude="[[location.latitude]]" longitude="[[location.longitude]]" title="[[app_title]]"></google-map-marker>
             </google-map>
           </widget-box>
+
+          <widget-box title="Test data">
+            <div class="widget-label">
+              <span class="widget-label-font-small">A</span>
+              [[last_test_response.parsedPayload.celsiusA]]°C
+            </div>
+            <div class="widget-label">
+              <span class="widget-label-font-small">B</span>
+              [[last_test_response.parsedPayload.celsiusB]]°C
+            </div>
+            <chart-line id="test_chart_id" data="[[test_chart]]" options="[[chart_options]]"></chart-line>
+          </widget-box>
+
         </div>
       </div>
       <div class="footer">&copy; Build with Polymer</div>
@@ -233,6 +246,15 @@
         payload-parse-function="[[_payloadParseFunc]]"
         last-message="{{last_MQ135_response}}">
       </mqtt-subscription>
+
+      <mqtt-subscription
+        topic="sensor/data"
+        number-of-messages="[[mqtt_max_number_of_messages]]"
+        payload-type="Custom"
+        payload-parse-function="[[_payloadParseFunc]]"
+        last-message="{{last_test_response}}">
+      </mqtt-subscription>
+
     </mqtt-connection>
   </template>
   <script>
@@ -290,6 +312,13 @@
           value: null,
           observer: '_updateMQ135ChartValues'
         },
+
+        last_test_response: {
+          type: Object,
+          value: null,
+          observer: '_updateTestChartValues'
+        },
+
         temperature_chart: {
           type: Object,
           value: {
@@ -300,7 +329,7 @@
               backgroundColor: "rgba(220,220,220,0.2)",
               borderColor: "rgba(220,220,220,1)",
               borderWidth: 1,
-              data: [null]
+              data: ['NaN']
             },
             {
               label: "Temperature BMP280",
@@ -308,7 +337,7 @@
               backgroundColor: "rgba(151,187,205,0.2)",
               borderColor: "rgba(151,187,205,1)",
               borderWidth: 1,
-              data: [null]
+              data: ['NaN']
             }]
           }
         },
@@ -322,7 +351,7 @@
               backgroundColor: "rgba(220,220,220,0.2)",
               borderColor: "rgba(220,220,220,1)",
               borderWidth: 1,
-              data: [null]
+              data: ['NaN']
             }]
           }
         },
@@ -336,7 +365,7 @@
               backgroundColor: "rgba(220,220,220,0.2)",
               borderColor: "rgba(220,220,220,1)",
               borderWidth: 1,
-              data: [null]
+              data: ['NaN']
             }]
           }
         },
@@ -350,10 +379,34 @@
               backgroundColor: "rgba(220,220,220,0.2)",
               borderColor: "rgba(220,220,220,1)",
               borderWidth: 1,
-              data: [null]
+              data: ['NaN']
             }]
           }
         },
+
+        test_chart: {
+          type: Object,
+          value: {
+            labels: [''],
+            datasets: [{
+              label: "celsiusA",
+              fill: true,
+              backgroundColor: "rgba(220,220,220,0.2)",
+              borderColor: "rgba(220,220,220,1)",
+              borderWidth: 1,
+              data: ['NaN']
+            },
+            {
+              label: "celsiusB",
+              fill: true,
+              backgroundColor: "rgba(151,187,205,0.2)",
+              borderColor: "rgba(151,187,205,1)",
+              borderWidth: 1,
+              data: ['NaN']
+            }]
+          }
+        },
+
         chart_options: {
           type: Object,
           value: {
@@ -366,7 +419,7 @@
         },
         chart_max_data_points: {
           type: Number,
-          value: 10
+          value: 4
         },
         google_map_api_key: {
           type: String,
@@ -446,22 +499,39 @@
           this.$.co2_chart_id.updateChart();
         }
       },
+
+      _updateTestChartValues: function(event) {
+        if (event) {
+          console.log(event);
+          var json = event.parsedPayload;
+          // update CO2 chart
+          this._lengthenXAxis(this.test_chart, json.timestamp);
+          this.test_chart.datasets[0].data[this.test_chart.datasets[0].data.length - 1] = json.celsiusA;
+          this.test_chart.datasets[1].data[this.test_chart.datasets[1].data.length - 1] = json.celsiusB;
+          this.$.test_chart_id.updateChart();
+        }
+      },
+
       _lengthenXAxis(chart, timestamp) {
-        var datetime = this._formatTimestamp(timestamp);
+        var label = this._formatTimestamp(timestamp);
         var labels = chart.labels;
         var datasets = chart.datasets;
-        // lengthen xAxis if 'datetime' doesn't exist already
-        if (datetime !== labels[labels.length - 1]) {
-          if (labels.length > this.chart_max_data_points) {
+        // add new label if last label isn't identic
+        if (label !== labels[labels.length - 1]) {
+          // shrink x-axis if max data points is reached
+          if (labels.length >= this.chart_max_data_points) {
             labels.shift();
           }
-          labels.push(datetime);
-          // for 'datetime' add 'NaN' as placeholder to all datasets
+          // add new label
+          labels.push(label);
+          // check for each dataset as well
           for (var i = 0; i < datasets.length; i++) {
-            if (datasets[i].length > this.chart_max_data_points) {
+            // shrink x-axis if max data points is reached
+            if (datasets[i].data.length >= this.chart_max_data_points) {
               datasets[i].data.shift();
             }
-            datasets[i].data.push(null);
+            // add dummy value that's not displayed
+            datasets[i].data.push('NaN');
           }
         }
       },
