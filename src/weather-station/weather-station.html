@@ -146,7 +146,6 @@
       <!-- content area -->
       <div class="content-area">
         <div class="app-grid">
-
           <!-- TODO add tabindex; add last update info -->
           <widget-box title="Temperature">
             <div class="widget-label">
@@ -171,7 +170,6 @@
             <div class="widget-label">[[last_MQ135_response.parsedPayload.co2]]%</div>
             <chart-line id="co2_chart_id" data="[[co2_chart]]" options="[[chart_options]]"></chart-line>
           </widget-box>
-          <!-- TODO remove dummy code from subsequent widgets -->
           <widget-box title="Altitude">
             <div class="widget-label">
               <iron-icon icon="image:landscape"></iron-icon>
@@ -200,7 +198,7 @@
       <app-localstorage-document key="mqtt_broker_url" data="{{mqtt_broker_url}}" log></app-localstorage-document>
       <paper-input label="User" value="{{mqtt_broker_user}}"></paper-input>
       <app-localstorage-document key="mqtt_broker_user" data="{{mqtt_broker_user}}" log></app-localstorage-document>
-      <!-- TODO Think about an alternative approach to keep password secure -->
+      <!-- TODO think about an alternative approach to keep password secure -->
       <paper-input label="Password" value="{{mqtt_broker_password}}"></paper-input>
       <app-localstorage-document key="mqtt_broker_password" data="{{mqtt_broker_password}}" log></app-localstorage-document>
       <paper-toggle-button id="toggle_id" checked="[[mqtt_connected]]" on-change="_connectMQTTBroker">[[_isConnected(mqtt_connected)]]</paper-toggle-button>
@@ -295,14 +293,14 @@
         temperature_chart: {
           type: Object,
           value: {
-            labels: [],
+            labels: [''],
             datasets: [{
               label: "Temperature DHT22",
               fill: true,
               backgroundColor: "rgba(220,220,220,0.2)",
               borderColor: "rgba(220,220,220,1)",
               borderWidth: 1,
-              data: []
+              data: [null]
             },
             {
               label: "Temperature BMP280",
@@ -310,49 +308,49 @@
               backgroundColor: "rgba(151,187,205,0.2)",
               borderColor: "rgba(151,187,205,1)",
               borderWidth: 1,
-              data: []
+              data: [null]
             }]
           }
         },
         humidity_chart: {
           type: Object,
           value: {
-            labels: [],
+            labels: [''],
             datasets: [{
               label: "Humidity",
               fill: true,
               backgroundColor: "rgba(220,220,220,0.2)",
               borderColor: "rgba(220,220,220,1)",
               borderWidth: 1,
-              data: []
+              data: [null]
             }]
           }
         },
         pressure_chart: {
           type: Object,
           value: {
-            labels: [],
+            labels: [''],
             datasets: [{
               label: "Atmospheric pressure",
               fill: true,
               backgroundColor: "rgba(220,220,220,0.2)",
               borderColor: "rgba(220,220,220,1)",
               borderWidth: 1,
-              data: []
+              data: [null]
             }]
           }
         },
         co2_chart: {
           type: Object,
           value: {
-            labels: [],
+            labels: [''],
             datasets: [{
               label: "CO2 in Air",
               fill: true,
               backgroundColor: "rgba(220,220,220,0.2)",
               borderColor: "rgba(220,220,220,1)",
               borderWidth: 1,
-              data: []
+              data: [null]
             }]
           }
         },
@@ -412,11 +410,11 @@
           console.log(event);
           var json = event.parsedPayload;
           // update temperature chart
-          this._lengthenXAxis(this.temperature_chart, this._getCurrentTime());
+          this._lengthenXAxis(this.temperature_chart, json.timestamp);
           this.temperature_chart.datasets[0].data[this.temperature_chart.datasets[0].data.length - 1] = json.celsius;
           this.$.temperature_chart_id.updateChart();
           // update humidity chart
-          this._lengthenXAxis(this.humidity_chart, this._getCurrentTime());
+          this._lengthenXAxis(this.humidity_chart, json.timestamp);
           this.humidity_chart.datasets[0].data[this.humidity_chart.datasets[0].data.length - 1] = json.humidity;
           this.$.humidity_chart_id.updateChart();
         }
@@ -426,11 +424,11 @@
           console.log(event);
           var json = event.parsedPayload;
           // update temperature chart
-          this._lengthenXAxis(this.temperature_chart, this._getCurrentTime());
+          this._lengthenXAxis(this.temperature_chart, json.timestamp);
           this.temperature_chart.datasets[1].data[this.temperature_chart.datasets[1].data.length - 1] = json.celsius;
           this.$.temperature_chart_id.updateChart();
           // update pressure chart
-          this._lengthenXAxis(this.pressure_chart, this._getCurrentTime());
+          this._lengthenXAxis(this.pressure_chart, json.timestamp);
           this.pressure_chart.datasets[0].data[this.pressure_chart.datasets[0].data.length - 1] = json.pascal;
           this.$.pressure_chart_id.updateChart();
 
@@ -443,33 +441,33 @@
           console.log(event);
           var json = event.parsedPayload;
           // update CO2 chart
-          this._lengthenXAxis(this.co2_chart, this._getCurrentTime());
+          this._lengthenXAxis(this.co2_chart, json.timestamp);
           this.co2_chart.datasets[0].data[this.temperature_chart.datasets[0].data.length - 1] = json.co2;
           this.$.co2_chart_id.updateChart();
         }
       },
-      _lengthenXAxis(chart) {
-        var now = this._getCurrentTime();
+      _lengthenXAxis(chart, timestamp) {
+        var datetime = this._formatTimestamp(timestamp);
         var labels = chart.labels;
         var datasets = chart.datasets;
-        // lengthen xAxis if 'now' doesn't exist already
-        if (now !== labels[labels.length - 1]) {
+        // lengthen xAxis if 'datetime' doesn't exist already
+        if (datetime !== labels[labels.length - 1]) {
           if (labels.length > this.chart_max_data_points) {
             labels.shift();
           }
-          labels.push(now);
-          // for 'now' add 'NaN' as placeholder to all datasets
+          labels.push(datetime);
+          // for 'datetime' add 'NaN' as placeholder to all datasets
           for (var i = 0; i < datasets.length; i++) {
             if (datasets[i].length > this.chart_max_data_points) {
               datasets[i].data.shift();
             }
-            datasets[i].data.push('NaN');
+            datasets[i].data.push(null);
           }
         }
       },
-      _getCurrentTime: function() {
-        var now = new Date();
-        return [this._pad(now.getHours()), this._pad(now.getMinutes())].join(':');
+      _formatTimestamp: function(timestamp) {
+        var value = new Date(timestamp * 1000);
+        return [this._pad(value.getHours()), this._pad(value.getMinutes()), this._pad(value.getSeconds())].join(':');
       },
       _pad: function(n) {
         return n < 10 ? '0' + n.toString(10) : n.toString(10);
