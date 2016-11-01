@@ -91,7 +91,7 @@
       .content-area {
         background-color: white;
       }
-      .footer {
+      .content-footer {
         padding-top: 2vh;
         font-size: 1em;
         text-align: center;
@@ -128,6 +128,14 @@
         --iron-icon-height: 10vh;
         --iron-icon-width: 10vw;
       }
+      .widget-datetime {
+        font-size: 0.75em;
+        font-weight: bold;
+        color: grey;
+        text-align: center;
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
     </style>
     <!-- application -->
     <app-header-layout fullbleed>
@@ -146,37 +154,40 @@
       <!-- content area -->
       <div class="content-area">
         <div class="app-grid">
-          <!-- TODO add tabindex; add last update info -->
           <widget-box title="Temperature">
             <div class="widget-label">
               <span class="widget-label-font-small">DHT22</span>
-              [[last_DHT22_response.parsedPayload.celsius]]°C
+              [[_getLastItem(temperature_values.DHT22_celsius.*)]]°C
             </div>
             <div class="widget-label">
               <span class="widget-label-font-small">BMP280</span>
-              [[last_BMP280_response.parsedPayload.celsius]]°C
+              [[_getLastItem(temperature_values.BMP280_celsius.*)]]°C
             </div>
+            <div class="widget-datetime">Last updated on [[temperature_values.last_updated]]</div>
             <chart-line id="temperature_chart_id" class="chart" data="[[temperature_chart]]" options="[[chart_options]]"></chart-line>
           </widget-box>
           <widget-box title="Humidity">
-            <div class="widget-label">[[last_DHT22_response.parsedPayload.humidity]]%</div>
+            <div class="widget-label">[[_getLastItem(humidity_values.humidity.*)]]%</div>
+            <div class="widget-datetime">Last updated on [[humidity_values.last_updated]]</div>
             <chart-line id="humidity_chart_id" data="[[humidity_chart]]" options="[[chart_options]]"></chart-line>
           </widget-box>
           <widget-box title="Atmospheric pressure">
-            <div class="widget-label">[[last_BMP280_response.parsedPayload.pascal]]Pa</div>
+            <div class="widget-label">[[_getLastItem(pressure_values.pascal.*)]]Pa</div>
+            <div class="widget-datetime">Last updated on [[pressure_values.last_updated]]</div>
             <chart-line id="pressure_chart_id" data="[[pressure_chart]]" options="[[chart_options]]"></chart-line>
           </widget-box>
           <widget-box title="CO2 in Air">
-            <div class="widget-label">[[last_MQ135_response.parsedPayload.co2]]%</div>
+            <div class="widget-label">[[_getLastItem(co2_values.co2.*)]]%</div>
+            <div class="widget-datetime">Last updated on [[co2_values.last_updated]]</div>
             <chart-line id="co2_chart_id" data="[[co2_chart]]" options="[[chart_options]]"></chart-line>
           </widget-box>
           <widget-box title="Altitude">
             <div class="widget-label">
               <iron-icon icon="image:landscape"></iron-icon>
-              [[last_BMP280_response.parsedPayload.altitude]]m
+              [[_getLastItem(altitude_values.altitude.*)]]m
             </div>
             <iron-icon class="widget-iron-icon" icon="image:landscape"></iron-icon>
-            <span>[[last_BMP280_response.parsedPayload.altitude]]m</span>
+            <span>[[_getLastItem(altitude_values.altitude.*)]]m</span>
           </widget-box>
           <widget-box title="Location">
             <div class="widget-label">
@@ -187,33 +198,32 @@
               <google-map-marker latitude="[[location.latitude]]" longitude="[[location.longitude]]" title="[[app_title]]"></google-map-marker>
             </google-map>
           </widget-box>
-
           <widget-box title="Test data">
             <div class="widget-label">
               <span class="widget-label-font-small">A</span>
-              [[last_test_response.parsedPayload.celsiusA]]°C
+              [[_getLastItem(test_values.celsiusA.*)]]°C
             </div>
             <div class="widget-label">
               <span class="widget-label-font-small">B</span>
-              [[last_test_response.parsedPayload.celsiusB]]°C
+              [[_getLastItem(test_values.celsiusB.*)]]°C
             </div>
-            <chart-line id="test_chart_id" data="[[test_chart]]" options="[[chart_options]]"></chart-line>
+            <div class="widget-datetime">Last updated on [[test_values.last_updated]]</div>
+            <chart-line id="test_chart_id" data="{{test_chart}}" options="[[chart_options]]"></chart-line>
           </widget-box>
-
         </div>
       </div>
-      <div class="footer">&copy; Build with Polymer</div>
+      <div class="content-footer">&copy; Build with Polymer</div>
     </app-header-layout>
     <!-- settings dialog -->
     <paper-dialog id="mqtt_dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" withBackdrop>
       <h2>MQTT settings</h2>
       <paper-input label="Enter MQTT broker URL" value="{{mqtt_broker_url}}"></paper-input>
-      <app-localstorage-document key="mqtt_broker_url" data="{{mqtt_broker_url}}" log></app-localstorage-document>
+      <app-localstorage-document key="mqtt_broker_url" data="{{mqtt_broker_url}}"></app-localstorage-document>
       <paper-input label="User" value="{{mqtt_broker_user}}"></paper-input>
-      <app-localstorage-document key="mqtt_broker_user" data="{{mqtt_broker_user}}" log></app-localstorage-document>
-      <!-- TODO think about an alternative approach to keep password secure -->
+      <app-localstorage-document key="mqtt_broker_user" data="{{mqtt_broker_user}}"></app-localstorage-document>
+      <!-- TODO think about an alternative approach to keep the password secure -->
       <paper-input label="Password" value="{{mqtt_broker_password}}"></paper-input>
-      <app-localstorage-document key="mqtt_broker_password" data="{{mqtt_broker_password}}" log></app-localstorage-document>
+      <app-localstorage-document key="mqtt_broker_password" data="{{mqtt_broker_password}}"></app-localstorage-document>
       <paper-toggle-button id="toggle_id" checked="[[mqtt_connected]]" on-change="_connectMQTTBroker">[[_isConnected(mqtt_connected)]]</paper-toggle-button>
     </paper-dialog>
     <!-- MQTT connection & subscription -->
@@ -230,32 +240,36 @@
         number-of-messages="[[mqtt_max_number_of_messages]]"
         payload-type="Custom"
         payload-parse-function="[[_payloadParseFunc]]"
-        last-message="{{last_DHT22_response}}">
+        on-mqtt-subscription-message="_updateDHT22Values">
       </mqtt-subscription>
       <mqtt-subscription
         topic="sensor/BMP280"
         number-of-messages="[[mqtt_max_number_of_messages]]"
         payload-type="Custom"
         payload-parse-function="[[_payloadParseFunc]]"
-        last-message="{{last_BMP280_response}}">
+        on-mqtt-subscription-message="_updateBMP280Values">
       </mqtt-subscription>
       <mqtt-subscription
         topic="sensor/MQ135"
         number-of-messages="[[mqtt_max_number_of_messages]]"
         payload-type="Custom"
         payload-parse-function="[[_payloadParseFunc]]"
-        last-message="{{last_MQ135_response}}">
+        on-mqtt-subscription-message="_updateMQ135Values">
       </mqtt-subscription>
-
       <mqtt-subscription
         topic="sensor/data"
         number-of-messages="[[mqtt_max_number_of_messages]]"
         payload-type="Custom"
         payload-parse-function="[[_payloadParseFunc]]"
-        last-message="{{last_test_response}}">
+        on-mqtt-subscription-message="_updateTestValues">
       </mqtt-subscription>
-
     </mqtt-connection>
+    <app-localstorage-document key="temperature_values" data="{{temperature_values}}" log></app-localstorage-document>
+    <app-localstorage-document key="humidity_values" data="{{humidity_values}}" log></app-localstorage-document>
+    <app-localstorage-document key="pressure_values" data="{{pressure_values}}" log></app-localstorage-document>
+    <app-localstorage-document key="altitude_values" data="{{altitude_values}}" log></app-localstorage-document>
+    <app-localstorage-document key="co2_values" data="{{co2_values}}" log></app-localstorage-document>
+    <app-localstorage-document key="test_values" data="{{test_values}}" log></app-localstorage-document>
   </template>
   <script>
     Polymer({
@@ -296,29 +310,62 @@
           type: Number,
           value: 10
         },
-        last_DHT22_response: {
+        temperature_values: {
           type: Object,
-          value: null,
-          notify: true,
-          observer: '_updateDHT22ChartValues'
+          value: {
+            last_updated: null,
+            labels: [],
+            DHT22_celsius: [],
+            BMP280_celsius: []
+          },
+          notify: true
         },
-        last_BMP280_response: {
+        humidity_values: {
           type: Object,
-          value: null,
-          observer: '_updateBMP280ChartValues'
+          value: {
+            last_updated: null,
+            labels: [],
+            humidity: []
+          },
+          notify: true
         },
-        last_MQ135_response: {
+        pressure_values: {
           type: Object,
-          value: null,
-          observer: '_updateMQ135ChartValues'
+          value: {
+            last_updated: null,
+            labels: [],
+            pascal: []
+          },
+          notify: true
         },
-
-        last_test_response: {
+        altitude_values: {
           type: Object,
-          value: null,
-          observer: '_updateTestChartValues'
+          value: {
+            last_updated: null,
+            labels: [],
+            altitude: []
+          },
+          notify: true
         },
-
+        co2_values: {
+          type: Object,
+          value: {
+            last_updated: null,
+            labels: [],
+            co2: []
+          },
+          notify: true
+        },
+        test_values: {
+          type: Object,
+          value: {
+            last_updated: null,
+            labels: [],
+            celsiusA: [],
+            celsiusB: [],
+          },
+          notify: true
+        },
         temperature_chart: {
           type: Object,
           value: {
@@ -383,7 +430,6 @@
             }]
           }
         },
-
         test_chart: {
           type: Object,
           value: {
@@ -406,7 +452,6 @@
             }]
           }
         },
-
         chart_options: {
           type: Object,
           value: {
@@ -417,9 +462,9 @@
             }
           }
         },
-        chart_max_data_points: {
+        max_chart_view: {
           type: Number,
-          value: 4
+          value: 5
         },
         google_map_api_key: {
           type: String,
@@ -431,6 +476,13 @@
             latitude: '48.998648',
             longitude: '8.377365'
           }
+        },
+        /**
+         * when true perform detail logging
+         */
+        log: {
+          type: Boolean,
+          value: true
         }
       },
       attached: function() {
@@ -458,89 +510,234 @@
       _isConnected: function(connected) {
         return connected === true ? "on" : "off";
       },
-      _updateDHT22ChartValues: function(event) {
+
+      _abc: function(value_path) {
+
+        var values = this.get(value_path);
+
+        var label = this._formatTimestamp(json.timestamp);
+        // sort and put message into right data structure
+        if (values.labels[values.length - 1] === label) {
+          this._log("Skipping value for an existing label.", json);
+        } else {
+          this._log("Adding new value.", json);
+          if (this.values.labels.length > this.max_chart_view) {
+            // no need to notify 'shift'-operation explicit; 'push'-opertion follows shortly afterwards
+            this.values.labels.shift();
+            this.values.DHT22_celsius.shift();
+          }
+          this.push(value_path + '.labels', label);
+          this.push(value_path + '.DHT22_celsius', json.celsius);
+        }
+
+      },
+
+      _updateDHT22Values: function(event) {
         if (event) {
-          console.log(event);
-          var json = event.parsedPayload;
-          // update temperature chart
-          this._lengthenXAxis(this.temperature_chart, json.timestamp);
-          this.temperature_chart.datasets[0].data[this.temperature_chart.datasets[0].data.length - 1] = json.celsius;
+          var json = event.detail.parsedPayload;
+
+          this.set('temperature_values.last_updated', new Date(json.timestamp * 1000));
+          this.set('humidity_values.last_updated', new Date(json.timestamp * 1000));
+
+
+
+          var label = this._formatTimestamp(json.timestamp);
+
+
+          // sort and put message into right data structure
+          if (this.temperature_values.labels[this.temperature_values.labels.length - 1] === label) {
+            this._log("Skipping value for an existing label.", json);
+          } else {
+            this._log("Adding new value.", json);
+            if (this.temperature_values.labels.length > this.max_chart_view) {
+              // no need to notify 'shift'-operation explicit; 'push'-opertion follows shortly afterwards
+              this.temperature_values.labels.shift();
+              this.temperature_values.DHT22_celsius.shift();
+            }
+            this.push('temperature_values.labels', label);
+            this.push('temperature_values.DHT22_celsius', json.celsius);
+          }
+          // update chart
+          this.temperature_chart.labels = this.temperature_values.labels;
+          this.temperature_chart.datasets[0].data = this.temperature_values.DHT22_celsius;
           this.$.temperature_chart_id.updateChart();
-          // update humidity chart
-          this._lengthenXAxis(this.humidity_chart, json.timestamp);
-          this.humidity_chart.datasets[0].data[this.humidity_chart.datasets[0].data.length - 1] = json.humidity;
+
+
+          // sort and put message into right data structure
+          if (this.humidity_values.labels[this.humidity_values.labels.length - 1] === label) {
+            this._log("Skipping value for an existing label.", json);
+          } else {
+            this._log("Adding new value.", json);
+            if (this.humidity_values.labels.length > this.max_chart_view) {
+              // no need to notify 'shift'-operation explicit; 'push'-opertion follows shortly afterwards
+              this.humidity_values.labels.shift();
+              this.humidity_values.humidity.shift();
+            }
+            this.push('humidity_values.labels', label);
+            this.push('humidity_values.humidity', json.humidity);
+          }
+          // update chart
+          this.humidity_chart.labels = this.humidity_values.labels;
+          this.humidity_chart.datasets[0].data = this.humidity_values.humidity;
           this.$.humidity_chart_id.updateChart();
+
         }
       },
-      _updateBMP280ChartValues: function(event) {
+      _updateBMP280Values: function(event) {
         if (event) {
-          console.log(event);
-          var json = event.parsedPayload;
-          // update temperature chart
-          this._lengthenXAxis(this.temperature_chart, json.timestamp);
-          this.temperature_chart.datasets[1].data[this.temperature_chart.datasets[1].data.length - 1] = json.celsius;
+          var json = event.detail.parsedPayload;
+
+          this.set('temperature_values.last_updated', new Date(json.timestamp * 1000));
+          this.set('pressure_values.last_updated', new Date(json.timestamp * 1000));
+          this.set('altitude_values.last_updated', new Date(json.timestamp * 1000));
+
+          // TODO update altitude
+
+          var label = this._formatTimestamp(json.timestamp);
+
+
+          // sort and put message into right data structure
+          var index = this.temperature_values.labels.length - 1;
+          if (this.temperature_values.labels[index] === label) {
+            this._log("Overriding value for an existing label.", json);
+            this.set('temperature_values.BMP280_celsius.' + index, json.celsius);
+          } else {
+            this._log("Adding new value.", json);
+            if (this.temperature_values.labels.length > this.max_chart_view) {
+              // no need to notify 'shift'-operation explicit; 'push'-opertion follows shortly afterwards
+              this.temperature_values.labels.shift();
+              this.temperature_values.BMP280_celsius.shift();
+            }
+            this.push('temperature_values.labels', label);
+            this.push('temperature_values.BMP280_celsius', json.celsius);
+          }
+
+          // update chart
+          this.temperature_chart.labels = this.temperature_values.labels;
+          this.temperature_chart.datasets[1].data = this.temperature_values.BMP280_celsius;
           this.$.temperature_chart_id.updateChart();
-          // update pressure chart
-          this._lengthenXAxis(this.pressure_chart, json.timestamp);
-          this.pressure_chart.datasets[0].data[this.pressure_chart.datasets[0].data.length - 1] = json.pascal;
+
+
+          // sort and put message into right data structure
+          if (this.pressure_values.labels[this.pressure_values.labels.length - 1] === label) {
+            this._log("Skipping value for an existing label.", json);
+          } else {
+            this._log("Adding new value.", json);
+            if (this.pressure_values.labels.length > this.max_chart_view) {
+              // no need to notify 'shift'-operation explicit; 'push'-opertion follows shortly afterwards
+              this.pressure_values.labels.shift();
+              this.pressure_values.pascal.shift();
+            }
+            this.push('pressure_values.labels', label);
+            this.push('pressure_values.pascal', json.pascal);
+          }
+          // update chart
+          this.pressure_chart.labels = this.pressure_values.labels;
+          this.pressure_chart.datasets[0].data = this.pressure_values.pascal;
           this.$.pressure_chart_id.updateChart();
 
 
-          console.log(this.pressure_chart);
+
+
+
+
         }
       },
-      _updateMQ135ChartValues: function(event) {
+      _updateMQ135Values: function(event) {
         if (event) {
-          console.log(event);
-          var json = event.parsedPayload;
-          // update CO2 chart
-          this._lengthenXAxis(this.co2_chart, json.timestamp);
-          this.co2_chart.datasets[0].data[this.temperature_chart.datasets[0].data.length - 1] = json.co2;
+          var json = event.detail.parsedPayload;
+
+          this.set('co2_values.last_updated', new Date(json.timestamp * 1000));
+          var label = this._formatTimestamp(json.timestamp);
+          // sort and put message into right data structure
+          if (this.co2_values.labels[this.co2_values.labels.length - 1] === label) {
+            this._log("Skipping value for an existing label.", json);
+          } else {
+            this._log("Adding new value.", json);
+            if (this.co2_values.labels.length > this.max_chart_view) {
+              // no need to notify 'shift'-operation explicit; 'push'-opertion follows shortly afterwards
+              this.co2_values.labels.shift();
+              this.co2_values.co2.shift();
+            }
+            this.push('co2_values.labels', label);
+            this.push('co2_values.co2', json.co2);
+          }
+          // update chart
+          this.co2_chart.labels = this.co2_values.labels;
+          this.co2_chart.datasets[0].data = this.co2_values.co2;
           this.$.co2_chart_id.updateChart();
         }
       },
-
-      _updateTestChartValues: function(event) {
+      _updateTestValues: function(event) {
         if (event) {
-          console.log(event);
-          var json = event.parsedPayload;
-          // update CO2 chart
-          this._lengthenXAxis(this.test_chart, json.timestamp);
-          this.test_chart.datasets[0].data[this.test_chart.datasets[0].data.length - 1] = json.celsiusA;
-          this.test_chart.datasets[1].data[this.test_chart.datasets[1].data.length - 1] = json.celsiusB;
+          var json = event.detail.parsedPayload;
+
+          this.set('test_values.last_updated', new Date(json.timestamp * 1000));
+          var label = this._formatTimestamp(json.timestamp);
+          // sort and put message into right data structure
+          if (this.test_values.labels[this.test_values.labels.length - 1] === label) {
+            this._log("Skipping value for an existing label.", json);
+          } else {
+            this._log("Adding new value.", json);
+            if (this.test_values.labels.length > this.max_chart_view) {
+              // no need to notify 'shift'-operation explicit; 'push'-opertion follows shortly afterwards
+              this.test_values.labels.shift();
+              this.test_values.celsiusA.shift();
+              this.test_values.celsiusB.shift();
+            }
+            this.push('test_values.labels', label);
+            this.push('test_values.celsiusA', json.celsiusA);
+            this.push('test_values.celsiusB', json.celsiusB);
+          }
+          // update chart
+          this.test_chart.labels = this.test_values.labels;
+          this.test_chart.datasets[0].data = this.test_values.celsiusA;
+          this.test_chart.datasets[1].data = this.test_values.celsiusB;
           this.$.test_chart_id.updateChart();
         }
       },
-
-      _lengthenXAxis(chart, timestamp) {
-        var label = this._formatTimestamp(timestamp);
-        var labels = chart.labels;
-        var datasets = chart.datasets;
-        // add new label if last label isn't identic
-        if (label !== labels[labels.length - 1]) {
-          // shrink x-axis if max data points is reached
-          if (labels.length >= this.chart_max_data_points) {
-            labels.shift();
-          }
-          // add new label
-          labels.push(label);
-          // check for each dataset as well
-          for (var i = 0; i < datasets.length; i++) {
-            // shrink x-axis if max data points is reached
-            if (datasets[i].data.length >= this.chart_max_data_points) {
-              datasets[i].data.shift();
-            }
-            // add dummy value that's not displayed
-            datasets[i].data.push('NaN');
-          }
-        }
+      /**_arrayItem: function(change, index, path) {
+        return this.get(path, change.base[index]);
+      },*/
+      _getLastItem: function(change) {
+        return change.base[change.base.length - 1];
       },
+      /**
+       * TODO
+       */
       _formatTimestamp: function(timestamp) {
         var value = new Date(timestamp * 1000);
         return [this._pad(value.getHours()), this._pad(value.getMinutes()), this._pad(value.getSeconds())].join(':');
       },
+      /**
+       * TODO
+       */
       _pad: function(n) {
         return n < 10 ? '0' + n.toString(10) : n.toString(10);
+      },
+      /**
+       * A wrapper around `console.log`.
+       */
+      _log: function() {
+        if (this.log) {
+          console.log.apply(console, arguments);
+        }
+      },
+      /**
+       * A wrapper around `console.group`.
+       */
+      _group: function() {
+        if (this.log) {
+          console.group.apply(console, arguments);
+        }
+      },
+      /**
+       * A wrapper around `console.groupEnd`.
+       */
+      _groupEnd: function() {
+        if (this.log) {
+          console.groupEnd.apply(console, arguments);
+        }
       }
     });
   </script>
