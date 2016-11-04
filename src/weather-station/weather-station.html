@@ -27,7 +27,9 @@
 <link rel="import" href="../../bower_components/google-map/google-map.html">
 <link rel="import" href="../../bower_components/google-map/google-map-marker.html">
 
-<link rel="import" href="widget-box.html">
+<link rel="import" href="widget-layout.html">
+<link rel="import" href="chart-line-widget.html">
+<link rel="import" href="comparison-chart-line-widget.html">
 
 <dom-module id="weather-station">
   <template>
@@ -98,7 +100,11 @@
         @apply(--layout-vertical);
         @apply(--layout-center);
       }
-      chart-line {
+      comparison-chart-line-widget {
+        width: 100%;
+        height: 100%;
+      }
+      chart-line-widget {
         width: 100%;
         height: 100%;
       }
@@ -128,14 +134,6 @@
         --iron-icon-height: 10vh;
         --iron-icon-width: 10vw;
       }
-      .widget-datetime {
-        font-size: 0.75em;
-        font-weight: bold;
-        color: grey;
-        text-align: center;
-        padding-top: 10px;
-        padding-bottom: 10px;
-      }
     </style>
     <!-- application -->
     <app-header-layout fullbleed>
@@ -154,42 +152,52 @@
       <!-- content area -->
       <div class="content-area">
         <div class="app-grid">
-          <widget-box title="Temperature">
+          <widget-layout title="Temperature">
             <div class="widget-label">
               <span class="widget-label-font-small">DHT22</span>
-              [[_getLastItem(temperature_values.DHT22_celsius.*)]]°C
+              [[last_DHT22_message.parsedPayload.celsius]]°C
             </div>
             <div class="widget-label">
               <span class="widget-label-font-small">BMP280</span>
-              [[_getLastItem(temperature_values.BMP280_celsius.*)]]°C
+              [[last_BMP280_message.parsedPayload.celsius]]°C
             </div>
-            <div class="widget-datetime">Last updated on [[temperature_values.last_updated]]</div>
-            <chart-line id="temperature_chart_id" class="chart" data="[[temperature_chart]]" options="[[chart_options]]"></chart-line>
-          </widget-box>
-          <widget-box title="Humidity">
-            <div class="widget-label">[[_getLastItem(humidity_values.humidity.*)]]%</div>
-            <div class="widget-datetime">Last updated on [[humidity_values.last_updated]]</div>
-            <chart-line id="humidity_chart_id" data="[[humidity_chart]]" options="[[chart_options]]"></chart-line>
-          </widget-box>
-          <widget-box title="Atmospheric pressure">
-            <div class="widget-label">[[_getLastItem(pressure_values.pascal.*)]]Pa</div>
-            <div class="widget-datetime">Last updated on [[pressure_values.last_updated]]</div>
-            <chart-line id="pressure_chart_id" data="[[pressure_chart]]" options="[[chart_options]]"></chart-line>
-          </widget-box>
-          <widget-box title="CO2 in Air">
-            <div class="widget-label">[[_getLastItem(co2_values.co2.*)]]%</div>
-            <div class="widget-datetime">Last updated on [[co2_values.last_updated]]</div>
-            <chart-line id="co2_chart_id" data="[[co2_chart]]" options="[[chart_options]]"></chart-line>
-          </widget-box>
-          <widget-box title="Altitude">
+            <comparison-chart-line-widget
+              id="temperature"
+              label1="DHT22"
+              last-message1="{{last_DHT22_message}}"
+              property1="celsius"
+              label2="BMP280"
+              last-message2="{{last_BMP280_message}}"
+              property2="celsius">
+            </comparison-chart-line-widget>
+          </widget-layout>
+          <widget-layout title="Humidity">
+            <div class="widget-label">
+              [[last_DHT22_message.parsedPayload.humidity]]%
+            </div>
+            <chart-line-widget id="humidity" label="Celsius" last-message="{{last_DHT22_message}}" property="humidity"></chart-line-widget>
+          </widget-layout>
+          <widget-layout title="Atmospheric pressure">
+            <div class="widget-label">
+              [[last_BMP280_message.parsedPayload.pascal]]Pa
+            </div>
+            <chart-line-widget id="pressure" label="Pascal" last-message="{{last_BMP280_message}}" property="pascal"></chart-line-widget>
+          </widget-layout>
+          <widget-layout title="CO2 in Air">
+            <div class="widget-label">
+              [[last_MQ135_message.parsedPayload.co2]]%
+            </div>
+            <chart-line-widget id="co2" label="CO2 in Air" last-message="{{last_MQ135_message}}" property="co2"></chart-line-widget>
+          </widget-layout>
+          <widget-layout title="Altitude">
             <div class="widget-label">
               <iron-icon icon="image:landscape"></iron-icon>
-              [[_getLastItem(altitude_values.altitude.*)]]m
+              [[last_BMP280_message.parsedPayload.altitude]]m
             </div>
             <iron-icon class="widget-iron-icon" icon="image:landscape"></iron-icon>
-            <span>[[_getLastItem(altitude_values.altitude.*)]]m</span>
-          </widget-box>
-          <widget-box title="Location">
+            <span>[[last_BMP280_message.parsedPayload.altitude]]m</span>
+          </widget-layout>
+          <widget-layout title="Location">
             <div class="widget-label">
               <iron-icon icon="maps:place"></iron-icon>
               <span>48.998648, 8.3919072</span>
@@ -197,19 +205,40 @@
             <google-map latitude="[[location.latitude]]" longitude="[[location.longitude]]" api-key="[[google_map_api_key]]" fit-to-markers>
               <google-map-marker latitude="[[location.latitude]]" longitude="[[location.longitude]]" title="[[app_title]]"></google-map-marker>
             </google-map>
-          </widget-box>
-          <widget-box title="Test data">
+          </widget-layout>
+          <!--widget-layout title="Test1">
             <div class="widget-label">
               <span class="widget-label-font-small">A</span>
-              [[_getLastItem(test_values.celsiusA.*)]]°C
+              [[last_A_message.parsedPayload.celsius]]°C
+            </div>
+            <chart-line-widget id="test1" label="Celsius A" last-message="{{last_A_message}}" property="celsius"></chart-line-widget>
+          </widget-layout>
+          <widget-layout title="Test2">
+            <div class="widget-label">
+              <span class="widget-label-font-small">A</span>
+              [[last_B_message.parsedPayload.celsius]]°C
+            </div>
+            <chart-line-widget id="test2" label="Celsius B" last-message="{{last_B_message}}" property="celsius"></chart-line-widget>
+          </widget-layout-->
+          <widget-layout title="Test2">
+            <div class="widget-label">
+              <span class="widget-label-font-small">A</span>
+              [[last_A_message.parsedPayload.celsius]]°C
             </div>
             <div class="widget-label">
               <span class="widget-label-font-small">B</span>
-              [[_getLastItem(test_values.celsiusB.*)]]°C
+              [[last_B_message.parsedPayload.celsius]]°C
             </div>
-            <div class="widget-datetime">Last updated on [[test_values.last_updated]]</div>
-            <chart-line id="test_chart_id" data="{{test_chart}}" options="[[chart_options]]"></chart-line>
-          </widget-box>
+            <comparison-chart-line-widget
+              id="test3"
+              label1="Sensor A"
+              last-message1="{{last_A_message}}"
+              property1="celsius"
+              label2="Sensor B"
+              last-message2="{{last_B_message}}"
+              property2="celsius">
+            </comparison-chart-line-widget>
+          </widget-layout>
         </div>
       </div>
       <div class="content-footer">&copy; Build with Polymer</div>
@@ -240,36 +269,37 @@
         number-of-messages="[[mqtt_max_number_of_messages]]"
         payload-type="Custom"
         payload-parse-function="[[_payloadParseFunc]]"
-        on-mqtt-subscription-message="_updateDHT22Values">
+        last-message="{{last_DHT22_message}}">
       </mqtt-subscription>
       <mqtt-subscription
         topic="sensor/BMP280"
         number-of-messages="[[mqtt_max_number_of_messages]]"
         payload-type="Custom"
         payload-parse-function="[[_payloadParseFunc]]"
-        on-mqtt-subscription-message="_updateBMP280Values">
+        last-message="{{last_BMP280_message}}">
       </mqtt-subscription>
       <mqtt-subscription
         topic="sensor/MQ135"
         number-of-messages="[[mqtt_max_number_of_messages]]"
         payload-type="Custom"
         payload-parse-function="[[_payloadParseFunc]]"
-        on-mqtt-subscription-message="_updateMQ135Values">
+        last-message="{{last_MQ135_message}}">
       </mqtt-subscription>
       <mqtt-subscription
-        topic="sensor/data"
+        topic="sensor/A"
         number-of-messages="[[mqtt_max_number_of_messages]]"
         payload-type="Custom"
         payload-parse-function="[[_payloadParseFunc]]"
-        on-mqtt-subscription-message="_updateTestValues">
+        last-message="{{last_A_message}}">
+      </mqtt-subscription>
+      <mqtt-subscription
+          topic="sensor/B"
+          number-of-messages="[[mqtt_max_number_of_messages]]"
+          payload-type="Custom"
+          payload-parse-function="[[_payloadParseFunc]]"
+          last-message="{{last_B_message}}">
       </mqtt-subscription>
     </mqtt-connection>
-    <app-localstorage-document key="temperature_values" data="{{temperature_values}}" log></app-localstorage-document>
-    <app-localstorage-document key="humidity_values" data="{{humidity_values}}" log></app-localstorage-document>
-    <app-localstorage-document key="pressure_values" data="{{pressure_values}}" log></app-localstorage-document>
-    <app-localstorage-document key="altitude_values" data="{{altitude_values}}" log></app-localstorage-document>
-    <app-localstorage-document key="co2_values" data="{{co2_values}}" log></app-localstorage-document>
-    <app-localstorage-document key="test_values" data="{{test_values}}" log></app-localstorage-document>
   </template>
   <script>
     Polymer({
@@ -310,162 +340,6 @@
           type: Number,
           value: 10
         },
-        temperature_values: {
-          type: Object,
-          value: {
-            last_updated: null,
-            labels: [],
-            DHT22_celsius: [],
-            BMP280_celsius: []
-          },
-          notify: true
-        },
-        humidity_values: {
-          type: Object,
-          value: {
-            last_updated: null,
-            labels: [],
-            humidity: []
-          },
-          notify: true
-        },
-        pressure_values: {
-          type: Object,
-          value: {
-            last_updated: null,
-            labels: [],
-            pascal: []
-          },
-          notify: true
-        },
-        altitude_values: {
-          type: Object,
-          value: {
-            last_updated: null,
-            labels: [],
-            altitude: []
-          },
-          notify: true
-        },
-        co2_values: {
-          type: Object,
-          value: {
-            last_updated: null,
-            labels: [],
-            co2: []
-          },
-          notify: true
-        },
-        test_values: {
-          type: Object,
-          value: {
-            last_updated: null,
-            labels: [],
-            celsiusA: [],
-            celsiusB: [],
-          },
-          notify: true
-        },
-        temperature_chart: {
-          type: Object,
-          value: {
-            labels: [''],
-            datasets: [{
-              label: "Temperature DHT22",
-              fill: true,
-              backgroundColor: "rgba(220,220,220,0.2)",
-              borderColor: "rgba(220,220,220,1)",
-              borderWidth: 1,
-              data: ['NaN']
-            },
-            {
-              label: "Temperature BMP280",
-              fill: true,
-              backgroundColor: "rgba(151,187,205,0.2)",
-              borderColor: "rgba(151,187,205,1)",
-              borderWidth: 1,
-              data: ['NaN']
-            }]
-          }
-        },
-        humidity_chart: {
-          type: Object,
-          value: {
-            labels: [''],
-            datasets: [{
-              label: "Humidity",
-              fill: true,
-              backgroundColor: "rgba(220,220,220,0.2)",
-              borderColor: "rgba(220,220,220,1)",
-              borderWidth: 1,
-              data: ['NaN']
-            }]
-          }
-        },
-        pressure_chart: {
-          type: Object,
-          value: {
-            labels: [''],
-            datasets: [{
-              label: "Atmospheric pressure",
-              fill: true,
-              backgroundColor: "rgba(220,220,220,0.2)",
-              borderColor: "rgba(220,220,220,1)",
-              borderWidth: 1,
-              data: ['NaN']
-            }]
-          }
-        },
-        co2_chart: {
-          type: Object,
-          value: {
-            labels: [''],
-            datasets: [{
-              label: "CO2 in Air",
-              fill: true,
-              backgroundColor: "rgba(220,220,220,0.2)",
-              borderColor: "rgba(220,220,220,1)",
-              borderWidth: 1,
-              data: ['NaN']
-            }]
-          }
-        },
-        test_chart: {
-          type: Object,
-          value: {
-            labels: [''],
-            datasets: [{
-              label: "celsiusA",
-              fill: true,
-              backgroundColor: "rgba(220,220,220,0.2)",
-              borderColor: "rgba(220,220,220,1)",
-              borderWidth: 1,
-              data: ['NaN']
-            },
-            {
-              label: "celsiusB",
-              fill: true,
-              backgroundColor: "rgba(151,187,205,0.2)",
-              borderColor: "rgba(151,187,205,1)",
-              borderWidth: 1,
-              data: ['NaN']
-            }]
-          }
-        },
-        chart_options: {
-          type: Object,
-          value: {
-            responsive: true,
-            legend: {
-              display: true,
-              position: 'bottom'
-            }
-          }
-        },
-        max_chart_view: {
-          type: Number,
-          value: 5
-        },
         google_map_api_key: {
           type: String,
           value: 'AIzaSyA2QZSQj4nimOBBNG7ZNfY6MKD3lW8-OiI' // API key is restricted to specific URL; TODO change to your own
@@ -482,7 +356,7 @@
          */
         log: {
           type: Boolean,
-          value: true
+          value: false
         }
       },
       attached: function() {
@@ -509,211 +383,6 @@
       },
       _isConnected: function(connected) {
         return connected === true ? "on" : "off";
-      },
-
-      _abc: function(value_path) {
-
-        var values = this.get(value_path);
-
-        var label = this._formatTimestamp(json.timestamp);
-        // sort and put message into right data structure
-        if (values.labels[values.length - 1] === label) {
-          this._log("Skipping value for an existing label.", json);
-        } else {
-          this._log("Adding new value.", json);
-          if (this.values.labels.length > this.max_chart_view) {
-            // no need to notify 'shift'-operation explicit; 'push'-opertion follows shortly afterwards
-            this.values.labels.shift();
-            this.values.DHT22_celsius.shift();
-          }
-          this.push(value_path + '.labels', label);
-          this.push(value_path + '.DHT22_celsius', json.celsius);
-        }
-
-      },
-
-      _updateDHT22Values: function(event) {
-        if (event) {
-          var json = event.detail.parsedPayload;
-
-          this.set('temperature_values.last_updated', new Date(json.timestamp * 1000));
-          this.set('humidity_values.last_updated', new Date(json.timestamp * 1000));
-
-
-
-          var label = this._formatTimestamp(json.timestamp);
-
-
-          // sort and put message into right data structure
-          if (this.temperature_values.labels[this.temperature_values.labels.length - 1] === label) {
-            this._log("Skipping value for an existing label.", json);
-          } else {
-            this._log("Adding new value.", json);
-            if (this.temperature_values.labels.length > this.max_chart_view) {
-              // no need to notify 'shift'-operation explicit; 'push'-opertion follows shortly afterwards
-              this.temperature_values.labels.shift();
-              this.temperature_values.DHT22_celsius.shift();
-            }
-            this.push('temperature_values.labels', label);
-            this.push('temperature_values.DHT22_celsius', json.celsius);
-          }
-          // update chart
-          this.temperature_chart.labels = this.temperature_values.labels;
-          this.temperature_chart.datasets[0].data = this.temperature_values.DHT22_celsius;
-          this.$.temperature_chart_id.updateChart();
-
-
-          // sort and put message into right data structure
-          if (this.humidity_values.labels[this.humidity_values.labels.length - 1] === label) {
-            this._log("Skipping value for an existing label.", json);
-          } else {
-            this._log("Adding new value.", json);
-            if (this.humidity_values.labels.length > this.max_chart_view) {
-              // no need to notify 'shift'-operation explicit; 'push'-opertion follows shortly afterwards
-              this.humidity_values.labels.shift();
-              this.humidity_values.humidity.shift();
-            }
-            this.push('humidity_values.labels', label);
-            this.push('humidity_values.humidity', json.humidity);
-          }
-          // update chart
-          this.humidity_chart.labels = this.humidity_values.labels;
-          this.humidity_chart.datasets[0].data = this.humidity_values.humidity;
-          this.$.humidity_chart_id.updateChart();
-
-        }
-      },
-      _updateBMP280Values: function(event) {
-        if (event) {
-          var json = event.detail.parsedPayload;
-
-          this.set('temperature_values.last_updated', new Date(json.timestamp * 1000));
-          this.set('pressure_values.last_updated', new Date(json.timestamp * 1000));
-          this.set('altitude_values.last_updated', new Date(json.timestamp * 1000));
-
-          // TODO update altitude
-
-          var label = this._formatTimestamp(json.timestamp);
-
-
-          // sort and put message into right data structure
-          var index = this.temperature_values.labels.length - 1;
-          if (this.temperature_values.labels[index] === label) {
-            this._log("Overriding value for an existing label.", json);
-            this.set('temperature_values.BMP280_celsius.' + index, json.celsius);
-          } else {
-            this._log("Adding new value.", json);
-            if (this.temperature_values.labels.length > this.max_chart_view) {
-              // no need to notify 'shift'-operation explicit; 'push'-opertion follows shortly afterwards
-              this.temperature_values.labels.shift();
-              this.temperature_values.BMP280_celsius.shift();
-            }
-            this.push('temperature_values.labels', label);
-            this.push('temperature_values.BMP280_celsius', json.celsius);
-          }
-
-          // update chart
-          this.temperature_chart.labels = this.temperature_values.labels;
-          this.temperature_chart.datasets[1].data = this.temperature_values.BMP280_celsius;
-          this.$.temperature_chart_id.updateChart();
-
-
-          // sort and put message into right data structure
-          if (this.pressure_values.labels[this.pressure_values.labels.length - 1] === label) {
-            this._log("Skipping value for an existing label.", json);
-          } else {
-            this._log("Adding new value.", json);
-            if (this.pressure_values.labels.length > this.max_chart_view) {
-              // no need to notify 'shift'-operation explicit; 'push'-opertion follows shortly afterwards
-              this.pressure_values.labels.shift();
-              this.pressure_values.pascal.shift();
-            }
-            this.push('pressure_values.labels', label);
-            this.push('pressure_values.pascal', json.pascal);
-          }
-          // update chart
-          this.pressure_chart.labels = this.pressure_values.labels;
-          this.pressure_chart.datasets[0].data = this.pressure_values.pascal;
-          this.$.pressure_chart_id.updateChart();
-
-
-
-
-
-
-        }
-      },
-      _updateMQ135Values: function(event) {
-        if (event) {
-          var json = event.detail.parsedPayload;
-
-          this.set('co2_values.last_updated', new Date(json.timestamp * 1000));
-          var label = this._formatTimestamp(json.timestamp);
-          // sort and put message into right data structure
-          if (this.co2_values.labels[this.co2_values.labels.length - 1] === label) {
-            this._log("Skipping value for an existing label.", json);
-          } else {
-            this._log("Adding new value.", json);
-            if (this.co2_values.labels.length > this.max_chart_view) {
-              // no need to notify 'shift'-operation explicit; 'push'-opertion follows shortly afterwards
-              this.co2_values.labels.shift();
-              this.co2_values.co2.shift();
-            }
-            this.push('co2_values.labels', label);
-            this.push('co2_values.co2', json.co2);
-          }
-          // update chart
-          this.co2_chart.labels = this.co2_values.labels;
-          this.co2_chart.datasets[0].data = this.co2_values.co2;
-          this.$.co2_chart_id.updateChart();
-        }
-      },
-      _updateTestValues: function(event) {
-        if (event) {
-          var json = event.detail.parsedPayload;
-
-          this.set('test_values.last_updated', new Date(json.timestamp * 1000));
-          var label = this._formatTimestamp(json.timestamp);
-          // sort and put message into right data structure
-          if (this.test_values.labels[this.test_values.labels.length - 1] === label) {
-            this._log("Skipping value for an existing label.", json);
-          } else {
-            this._log("Adding new value.", json);
-            if (this.test_values.labels.length > this.max_chart_view) {
-              // no need to notify 'shift'-operation explicit; 'push'-opertion follows shortly afterwards
-              this.test_values.labels.shift();
-              this.test_values.celsiusA.shift();
-              this.test_values.celsiusB.shift();
-            }
-            this.push('test_values.labels', label);
-            this.push('test_values.celsiusA', json.celsiusA);
-            this.push('test_values.celsiusB', json.celsiusB);
-          }
-          // update chart
-          this.test_chart.labels = this.test_values.labels;
-          this.test_chart.datasets[0].data = this.test_values.celsiusA;
-          this.test_chart.datasets[1].data = this.test_values.celsiusB;
-          this.$.test_chart_id.updateChart();
-        }
-      },
-      /**_arrayItem: function(change, index, path) {
-        return this.get(path, change.base[index]);
-      },*/
-      _getLastItem: function(change) {
-        return change.base[change.base.length - 1];
-      },
-      /**
-       * TODO
-       */
-      _formatTimestamp: function(timestamp) {
-        var value = new Date(timestamp * 1000);
-        return [this._pad(value.getHours()), this._pad(value.getMinutes()), this._pad(value.getSeconds())].join(':');
-      },
-      /**
-       * TODO
-       */
-      _pad: function(n) {
-        return n < 10 ? '0' + n.toString(10) : n.toString(10);
       },
       /**
        * A wrapper around `console.log`.

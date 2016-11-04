@@ -1,0 +1,180 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
+
+<link rel="import" href="../../bower_components/chart-elements/chart-line.html">
+
+<dom-module id="chart-line-widget">
+  <template>
+    <style>
+      :host {
+        display: inline-block;
+      }
+      chart-line {
+        width: 100%;
+        height: 100%;
+      }
+      .last-updated {
+        font-size: 0.75em;
+        font-weight: 400;
+        color: grey;
+        text-align: center;
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+    </style>
+    <div class="last-updated">
+      <div>Last updated on [[_getDatetime(lastMessage.parsedPayload.timestamp)]]</div>
+    </div>
+    <chart-line id="chart_id" data="[[_chart]]" options="[[_options]]"></chart-line>
+    <app-localstorage-document key="{{id}}" data="{{_data}}" log></app-localstorage-document-->
+  </template>
+  <script>
+    Polymer({
+      is: 'chart-line-widget',
+      properties: {
+        id: {
+          type: String,
+          value: null
+        },
+        label: {
+          type: String,
+          value: null
+        },
+        lastMessage: {
+          type: Object,
+          value: null,
+          notify: true,
+          observer: 'processMessage'
+        },
+        property: {
+          type: String,
+          value: null
+        },
+        _data: {
+          type: Object,
+          value: function() {
+            return {
+              labels: [],
+              values: []
+            };
+          },
+          notify: true
+        },
+        _chart: {
+          type: Object,
+          value: function() {
+            return {
+              labels: [],
+              datasets: [{
+                label: null,
+                fill: true,
+                backgroundColor: "rgba(220,220,220,0.2)",
+                borderColor: "rgba(220,220,220,1)",
+                borderWidth: 1,
+                data: []
+              }]
+            };
+          }
+        },
+        _options: {
+          type: Object,
+          value: {
+            responsive: true,
+            legend: {
+              display: true,
+              position: 'bottom'
+            }
+          }
+        },
+        max_chart_view: {
+          type: Number,
+          value: 5
+        },
+        /**
+         * when true perform detail logging
+         */
+        log: {
+          type: Boolean,
+          value: true
+        }
+      },
+      attached: function() {
+        // link properies and chart representation together
+        this._chart.datasets[0].label = this.label;
+        this._chart.labels = this._data.labels;
+        this._chart.datasets[0].data = this._data.values;
+      },
+      processMessage: function(event) {
+        if (event) {
+          var json = event.parsedPayload;
+          var label = this._formatTimestamp(json.timestamp);
+          var index = this._adjustXAxis(label);
+          // assign new value
+          this._data.values[index] = json[this.property];
+          // update chart
+          this.$.chart_id.updateChart();
+          // force data system to pick up array mutations; necessary to force locale storage updates
+          // see https://www.polymer-project.org/1.0/docs/devguide/model-data#override-dirty-check
+          var array = this._data;
+          this._data = [];
+          this._data = array;
+
+          //this._log("processMessage", this._labels);
+          //this._log("processMessage", this._values);
+        }
+      },
+      _adjustXAxis: function(label) {
+        var index = this._data.labels.lastIndexOf(label);
+        // add new label if label isn't assigend so far
+        if (index === -1) {
+          this._data.labels.push(label);
+          // continue data values linear with latest known value
+          this._data.values.push(this._data.values[this._data.values.length - 1]);
+          // if max chart view is reached, shrink arrays at the beginning
+          if (this._data.labels.length > this.max_chart_view) {
+            this._data.labels.shift();
+            this._data.values.shift();
+          }
+          index = this._data.labels.length - 1;
+        }
+        // return label position
+        return index;
+      },
+      _getDatetime: function(timestamp) {
+        return new Date(timestamp * 1000);
+      },
+      _formatTimestamp: function(timestamp) {
+        var value = new Date(timestamp * 1000);
+        return [this._pad(value.getHours()), this._pad(value.getMinutes()), this._pad(value.getSeconds())].join(':');
+      },
+      _pad: function(n) {
+        return n < 10 ? '0' + n.toString(10) : n.toString(10);
+      },
+      /**
+       * A wrapper around `console.log`.
+       */
+      _log: function() {
+        if (this.log) {
+          console.log.apply(console, arguments);
+        }
+      },
+      /**
+       * A wrapper around `console.group`.
+       */
+      _group: function() {
+        if (this.log) {
+          console.group.apply(console, arguments);
+        }
+      },
+      /**
+       * A wrapper around `console.groupEnd`.
+       */
+      _groupEnd: function() {
+        if (this.log) {
+          console.groupEnd.apply(console, arguments);
+        }
+      }
+    });
+  </script>
+</dom-module>
