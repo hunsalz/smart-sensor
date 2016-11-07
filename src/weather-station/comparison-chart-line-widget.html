@@ -4,35 +4,26 @@
 
 <link rel="import" href="../../bower_components/chart-elements/chart-line.html">
 
+<link rel="import" href="chart-widget-behavior.html">
+<link rel="import" href="widget-style.html">
+
 <dom-module id="comparison-chart-line-widget">
   <template>
-    <style>
-      :host {
-        display: inline-block;
-      }
-      chart-line {
-        width: 100%;
-        height: 100%;
-      }
-      .last-updated {
-        font-size: 0.75em;
-        font-weight: 400;
-        color: grey;
-        text-align: center;
-        padding-top: 10px;
-        padding-bottom: 10px;
-      }
+    <style include="widget-style">
     </style>
     <div class="last-updated">
       <div>Last updated A on [[_getDatetime(lastMessage1.parsedPayload.timestamp)]]</div>
       <div>Last updated B on [[_getDatetime(lastMessage2.parsedPayload.timestamp)]]</div>
     </div>
-    <chart-line id="chart_id" data="[[_chart]]" options="[[_options]]"></chart-line>
+    <chart-line id="chart_id" data="[[_chart]]" options="[[_chart_options]]"></chart-line>
     <app-localstorage-document key="{{id}}" data="{{_data}}" log></app-localstorage-document>
   </template>
   <script>
     Polymer({
       is: 'comparison-chart-line-widget',
+      behaviors: [
+        AppBehaviors.ChartWidgetBehavior
+      ],
       properties: {
         id: {
           type: String,
@@ -52,6 +43,12 @@
           notify: true,
           observer: 'processMessage1'
         },
+        lastMessage2: {
+          type: Object,
+          value: null,
+          notify: true,
+          observer: 'processMessage2'
+        },
         property1: {
           type: String,
           value: null
@@ -59,12 +56,6 @@
         property2: {
           type: String,
           value: null
-        },
-        lastMessage2: {
-          type: Object,
-          value: null,
-          notify: true,
-          observer: 'processMessage2'
         },
         _data: {
           type: Object,
@@ -101,7 +92,7 @@
             };
           }
         },
-        _options: {
+        _chart_options: {
           type: Object,
           value: {
             responsive: true,
@@ -110,17 +101,6 @@
               position: 'bottom'
             }
           }
-        },
-        max_chart_view: {
-          type: Number,
-          value: 5
-        },
-        /**
-         * when true perform detail logging
-         */
-        log: {
-          type: Boolean,
-          value: true
         }
       },
       attached: function() {
@@ -140,11 +120,7 @@
           this._data.value1[index] = json[this.property1];
           // update chart
           this.$.chart_id.updateChart();
-          // force data system to pick up array mutations; necessary to force locale storage updates
-          // see https://www.polymer-project.org/1.0/docs/devguide/model-data#override-dirty-check
-          var array = this._data;
-          this._data = [];
-          this._data = array;
+          this._notifyArrayMutation();
 
           //this._log("updateMessage 1", this._data.labels);
           //this._log("updateMessage 1", this._data.value1);
@@ -160,11 +136,7 @@
           this._data.value2[index] = json[this.property2];
           // update chart
           this.$.chart_id.updateChart();
-          // force data system to pick up array mutations; necessary to force locale storage updates
-          // see https://www.polymer-project.org/1.0/docs/devguide/model-data#override-dirty-check
-          var array = this._data;
-          this._data = [];
-          this._data = array;
+          this._notifyArrayMutation();
 
           //this._log("updateMessage 2", this._data.labels);
           //this._log("updateMessage 2", this._data.value1);
@@ -173,7 +145,7 @@
       },
       _adjustXAxis: function(label) {
         var index = this._data.labels.lastIndexOf(label);
-        // add new label if label isn't assigend so far
+        // add new label if label isn't assigned so far
         if (index === -1) {
           this._data.labels.push(label);
           // continue data values linear with latest known values
@@ -187,42 +159,8 @@
           }
           index = this._data.labels.length - 1;
         }
-        // return label position
+        // return latest inserted label index
         return index;
-      },
-      _getDatetime: function(timestamp) {
-        return new Date(timestamp * 1000);
-      },
-      _formatTimestamp: function(timestamp) {
-        var value = new Date(timestamp * 1000);
-        return [this._pad(value.getHours()), this._pad(value.getMinutes()), this._pad(value.getSeconds())].join(':');
-      },
-      _pad: function(n) {
-        return n < 10 ? '0' + n.toString(10) : n.toString(10);
-      },
-      /**
-       * A wrapper around `console.log`.
-       */
-      _log: function() {
-        if (this.log) {
-          console.log.apply(console, arguments);
-        }
-      },
-      /**
-       * A wrapper around `console.group`.
-       */
-      _group: function() {
-        if (this.log) {
-          console.group.apply(console, arguments);
-        }
-      },
-      /**
-       * A wrapper around `console.groupEnd`.
-       */
-      _groupEnd: function() {
-        if (this.log) {
-          console.groupEnd.apply(console, arguments);
-        }
       }
     });
   </script>

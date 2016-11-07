@@ -1,0 +1,59 @@
+<script>
+  var AppBehaviors = AppBehaviors || {};
+  AppBehaviors.ChartWidgetBehavior = {
+    properties: {
+      max_chart_view: {
+        type: Number,
+        value: 5
+      },
+      /**
+       * when true perform detail logging
+       */
+      log: {
+        type: Boolean,
+        value: true
+      }
+    },
+    _getDatetime: function(timestamp) {
+      return new Date(timestamp * 1000);
+    },
+    _formatTimestamp: function(timestamp) {
+      var value = new Date(timestamp * 1000);
+      return [this._pad(value.getHours()), this._pad(value.getMinutes()), this._pad(value.getSeconds())].join(':');
+    },
+    _pad: function(n) {
+      return n < 10 ? '0' + n.toString(10) : n.toString(10);
+    },
+    _notifyArrayMutation: function() {
+      // force data system to pick up array mutations; necessary to force locale storage updates
+      // see https://www.polymer-project.org/1.0/docs/devguide/model-data#override-dirty-check
+      var array = this._data;
+      this._data = [];
+      this._data = array;
+    },
+    /**
+     * A wrapper around `console.log`.
+     */
+    _log: function() {
+      if (this.log) {
+        console.log.apply(console, arguments);
+      }
+    },
+    /**
+     * A wrapper around `console.group`.
+     */
+    _group: function() {
+      if (this.log) {
+        console.group.apply(console, arguments);
+      }
+    },
+    /**
+     * A wrapper around `console.groupEnd`.
+     */
+    _groupEnd: function() {
+      if (this.log) {
+        console.groupEnd.apply(console, arguments);
+      }
+    }
+  };
+</script>

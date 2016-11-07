@@ -41,7 +41,7 @@
       }
     </style>
     <div>
-      <button class="widget-header" on-tap="_toggle">
+      <button class="widget-header" on-tap="toggle">
         <div class="widget-header-title">[[title]]</div>
         <!-- insertion point for elements with class attribute 'widget-label' -->
         <content select=".widget-label"></content>
@@ -63,7 +63,10 @@
           value: null
         }
       },
-      _toggle: function() {
+      collapse: function(collapse) {
+        this.$.collapse_id.opened = !collapse;
+      },
+      toggle: function() {
         this.$.collapse_id.toggle();
       }
     });
