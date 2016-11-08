@@ -1,5 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="../../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
+
 <link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
 
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
@@ -46,12 +48,13 @@
         <!-- insertion point for elements with class attribute 'widget-label' -->
         <content select=".widget-label"></content>
       </button>
-      <iron-collapse id="collapse_id" tabindex="[[tabindex]]">
+      <iron-collapse id="collapse_id" tabindex="[[tabindex]]" opened="{{opened}}">
         <div class="widget-body">
           <!-- insertion point for any element -->
           <content></content>
         </div>
       </iron-collapse>
+      <app-localstorage-document key="{{id}}" data="{{opened}}" log></app-localstorage-document>
     </div>
   </template>
   <script>
@@ -63,9 +66,15 @@
           value: null
         }
       },
+      /**
+       * collapse widget more or less
+       */
       collapse: function(collapse) {
         this.$.collapse_id.opened = !collapse;
       },
+      /**
+       * toggle between extend widget more or less
+       */
       toggle: function() {
         this.$.collapse_id.toggle();
       }

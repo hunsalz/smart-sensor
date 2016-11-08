@@ -25,10 +25,6 @@
         AppBehaviors.ChartWidgetBehavior
       ],
       properties: {
-        id: {
-          type: String,
-          value: null
-        },
         label1: {
           type: String,
           value: null
@@ -41,13 +37,13 @@
           type: Object,
           value: null,
           notify: true,
-          observer: 'processMessage1'
+          observer: '_processMessage1'
         },
         lastMessage2: {
           type: Object,
           value: null,
           notify: true,
-          observer: 'processMessage2'
+          observer: '_processMessage2'
         },
         property1: {
           type: String,
@@ -111,39 +107,40 @@
         this._chart.datasets[0].data = this._data.value1;
         this._chart.datasets[1].data = this._data.value2;
       },
-      processMessage1: function(event) {
+      /**
+       * process lastMessage1 with a timestamp and a variable property value
+       */
+      _processMessage1: function(event) {
         if (event) {
           var json = event.parsedPayload;
           var label = this._formatTimestamp(json.timestamp);
-          var index = this._adjustXAxis(label);
+          var index = this._extendXAxis(label);
           // assign new value
           this._data.value1[index] = json[this.property1];
           // update chart
           this.$.chart_id.updateChart();
           this._notifyArrayMutation();
-
-          //this._log("updateMessage 1", this._data.labels);
-          //this._log("updateMessage 1", this._data.value1);
-          //this._log("updateMessage 1", this._data.value2);
         }
       },
-      processMessage2: function(event) {
+      /**
+       * process lastMessage2 with a timestamp and a variable property value
+       */
+      _processMessage2: function(event) {
         if (event) {
           var json = event.parsedPayload;
           var label = this._formatTimestamp(json.timestamp);
-          var index = this._adjustXAxis(label);
+          var index = this._extendXAxis(label);
           // assign new value
           this._data.value2[index] = json[this.property2];
           // update chart
           this.$.chart_id.updateChart();
           this._notifyArrayMutation();
-
-          //this._log("updateMessage 2", this._data.labels);
-          //this._log("updateMessage 2", this._data.value1);
-          //this._log("updateMessage 2", this._data.value2);
         }
       },
-      _adjustXAxis: function(label) {
+      /**
+       * extend x-axis with label
+       */
+      _extendXAxis: function(label) {
         var index = this._data.labels.lastIndexOf(label);
         // add new label if label isn't assigned so far
         if (index === -1) {
@@ -151,15 +148,15 @@
           // continue data values linear with latest known values
           this._data.value1.push(this._data.value1[this._data.value1.length - 1]);
           this._data.value2.push(this._data.value2[this._data.value2.length - 1]);
-          // if max chart view is reached, shrink arrays at the beginning
-          if (this._data.labels.length > this.max_chart_view) {
+          // shrink arrays at the beginning if chart line limit is reached
+          if (this._data.labels.length > this.chart_line_limit) {
             this._data.labels.shift();
             this._data.value1.shift();
             this._data.value2.shift();
           }
           index = this._data.labels.length - 1;
         }
-        // return latest inserted label index
+        // return latest index of assigned label
         return index;
       }
     });

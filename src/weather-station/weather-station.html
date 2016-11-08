@@ -21,7 +21,6 @@
 
 <link rel="import" href="../../bower_components/neon-animation/neon-animations.html">
 
-<link rel="import" href="../../bower_components/chart-elements/chart-line.html">
 <link rel="import" href="../../bower_components/mqtt-elements/mqtt-elements.html">
 
 <link rel="import" href="../../bower_components/google-map/google-map.html">
@@ -153,7 +152,7 @@
       <!-- content area -->
       <div class="content-area">
         <div class="app-grid">
-          <!--widget-layout title="Temperature">
+          <!--widget-layout id="widget_temperature_id" title="Temperature">
             <div class="widget-label">
               <span class="widget-label-font-small">DHT22</span>
               [[last_DHT22_message.parsedPayload.celsius]]°C
@@ -172,25 +171,25 @@
               property2="celsius">
             </comparison-chart-line-widget>
           </widget-layout>
-          <widget-layout title="Humidity">
+          <widget-layout id="widget_humidity_id" title="Humidity">
             <div class="widget-label">
               [[last_DHT22_message.parsedPayload.humidity]]%
             </div>
             <chart-line-widget id="humidity" label="Celsius" last-message="{{last_DHT22_message}}" property="humidity"></chart-line-widget>
           </widget-layout>
-          <widget-layout title="Atmospheric pressure">
+          <widget-layout id="widget_pressure_id" title="Atmospheric pressure">
             <div class="widget-label">
               [[last_BMP280_message.parsedPayload.pascal]]Pa
             </div>
             <chart-line-widget id="pressure" label="Pascal" last-message="{{last_BMP280_message}}" property="pascal"></chart-line-widget>
           </widget-layout>
-          <widget-layout title="CO2 in Air">
+          <widget-layout id="widget_co2_id" title="CO2 in Air">
             <div class="widget-label">
               [[last_MQ135_message.parsedPayload.co2]]%
             </div>
             <chart-line-widget id="co2" label="CO2 in Air" last-message="{{last_MQ135_message}}" property="co2"></chart-line-widget>
           </widget-layout>
-          <widget-layout title="Altitude">
+          <widget-layout id="widget_altitude_id" title="Altitude">
             <div class="widget-label">
               <iron-icon icon="image:landscape"></iron-icon>
               [[last_BMP280_message.parsedPayload.altitude]]m
@@ -198,7 +197,7 @@
             <iron-icon class="widget-iron-icon" icon="image:landscape"></iron-icon>
             <span>[[last_BMP280_message.parsedPayload.altitude]]m</span>
           </widget-layout>
-          <widget-layout title="Location">
+          <widget-layout id="widget_location_id" title="Location">
             <div class="widget-label">
               <iron-icon icon="maps:place"></iron-icon>
               <span>48.998648, 8.3919072</span>
@@ -376,6 +375,15 @@
       },
       _toggleWidgets: function() {
         this.collapsed = !this.collapsed;
+
+        /**
+        this.$.widget_temperature_id.collapse(this.collapsed);
+        this.$.widget_humidity_id.collapse(this.collapsed);
+        this.$.widget_pressure_id.collapse(this.collapsed);
+        this.$.widget_co2_id.collapse(this.collapsed);
+        this.$.widget_altitude_id.collapse(this.collapsed);
+        this.$.widget_location_id.collapse(this.collapsed);
+        */
 
         this.$.widget_test1_id.collapse(this.collapsed);
         this.$.widget_test2_id.collapse(this.collapsed);

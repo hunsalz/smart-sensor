@@ -2,56 +2,70 @@
   var AppBehaviors = AppBehaviors || {};
   AppBehaviors.ChartWidgetBehavior = {
     properties: {
-      max_chart_view: {
+      /**
+       * limit of data points per chart line
+       */
+      chart_line_limit: {
         type: Number,
         value: 5
       },
       /**
-       * when true perform detail logging
+       * perform detail logging when true
        */
-      log: {
+      verbose: {
         type: Boolean,
         value: true
       }
     },
+    /**
+     * return datetime from timestamp
+     */
     _getDatetime: function(timestamp) {
       return new Date(timestamp * 1000);
     },
+    /**
+     * return a timestamp in format hh:mm:ss
+     */
     _formatTimestamp: function(timestamp) {
       var value = new Date(timestamp * 1000);
       return [this._pad(value.getHours()), this._pad(value.getMinutes()), this._pad(value.getSeconds())].join(':');
     },
+    /**
+     * fill with '0' to get always double digit numbers
+     */
     _pad: function(n) {
       return n < 10 ? '0' + n.toString(10) : n.toString(10);
     },
+    /**
+     * force data system to pick up array mutations; necessary to force locale storage updates
+     * see https://www.polymer-project.org/1.0/docs/devguide/model-data#override-dirty-check
+     */
     _notifyArrayMutation: function() {
-      // force data system to pick up array mutations; necessary to force locale storage updates
-      // see https://www.polymer-project.org/1.0/docs/devguide/model-data#override-dirty-check
       var array = this._data;
       this._data = [];
       this._data = array;
     },
     /**
-     * A wrapper around `console.log`.
+     * a wrapper around `console.log`.
      */
     _log: function() {
-      if (this.log) {
+      if (this.verbose) {
         console.log.apply(console, arguments);
       }
     },
     /**
-     * A wrapper around `console.group`.
+     * a wrapper around `console.group`.
      */
     _group: function() {
-      if (this.log) {
+      if (this.verbose) {
         console.group.apply(console, arguments);
       }
     },
     /**
-     * A wrapper around `console.groupEnd`.
+     * a wrapper around `console.groupEnd`.
      */
     _groupEnd: function() {
-      if (this.log) {
+      if (this.verbose) {
         console.groupEnd.apply(console, arguments);
       }
     }

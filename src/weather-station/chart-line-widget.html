@@ -24,10 +24,6 @@
         AppBehaviors.ChartWidgetBehavior
       ],
       properties: {
-        id: {
-          type: String,
-          value: null
-        },
         label: {
           type: String,
           value: null
@@ -36,7 +32,7 @@
           type: Object,
           value: null,
           notify: true,
-          observer: 'processMessage'
+          observer: '_processMessage'
         },
         property: {
           type: String,
@@ -85,36 +81,39 @@
         this._chart.labels = this._data.labels;
         this._chart.datasets[0].data = this._data.values;
       },
-      processMessage: function(event) {
+      /**
+       * process lastMessage with a timestamp and a variable property value
+       */
+      _processMessage: function(event) {
         if (event) {
           var json = event.parsedPayload;
           var label = this._formatTimestamp(json.timestamp);
-          var index = this._adjustXAxis(label);
+          var index = this._extendXAxis(label);
           // assign new value
           this._data.values[index] = json[this.property];
           // update chart
           this.$.chart_id.updateChart();
           this._notifyArrayMutation();
-
-          //this._log("processMessage", this._labels);
-          //this._log("processMessage", this._values);
         }
       },
-      _adjustXAxis: function(label) {
+      /**
+       * extend x-axis with label
+       */
+      _extendXAxis: function(label) {
         var index = this._data.labels.lastIndexOf(label);
         // add new label if label isn't assigned so far
         if (index === -1) {
           this._data.labels.push(label);
           // continue data values linear with latest known value
           this._data.values.push(this._data.values[this._data.values.length - 1]);
-          // if max chart view is reached, shrink arrays at the beginning
-          if (this._data.labels.length > this.max_chart_view) {
+          // shrink arrays at the beginning if chart line limit is reached
+          if (this._data.labels.length > this.chart_line_limit) {
             this._data.labels.shift();
             this._data.values.shift();
           }
           index = this._data.labels.length - 1;
         }
-        // return latest inserted label index
+        // return latest index of assigned label
         return index;
       }
     });
