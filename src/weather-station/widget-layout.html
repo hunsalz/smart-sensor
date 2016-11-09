@@ -6,6 +6,8 @@
 
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 
+<link rel="import" href="log-behavior.html">
+
 <dom-module id="widget-layout">
   <template>
     <style>
@@ -54,12 +56,15 @@
           <content></content>
         </div>
       </iron-collapse>
-      <app-localstorage-document key="{{id}}" data="{{opened}}" log></app-localstorage-document>
+      <app-localstorage-document key="{{id}}" data="{{opened}}" log$={{verbose}}></app-localstorage-document>
     </div>
   </template>
   <script>
     Polymer({
       is: 'widget-layout',
+      behaviors: [
+        AppBehaviors.LogBehavior
+      ],
       properties: {
         title: {
           type: String,

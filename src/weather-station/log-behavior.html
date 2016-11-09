@@ -1,0 +1,39 @@
+<script>
+  var AppBehaviors = AppBehaviors || {};
+  AppBehaviors.LogBehavior = {
+    properties: {
+      /**
+       * perform detail logging when true
+       */
+      verbose: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true
+      }
+    },
+    /**
+     * a wrapper around `console.log`.
+     */
+    _log: function() {
+      if (this.verbose) {
+        console.log.apply(console, arguments);
+      }
+    },
+    /**
+     * a wrapper around `console.group`.
+     */
+    _group: function() {
+      if (this.verbose) {
+        console.group.apply(console, arguments);
+      }
+    },
+    /**
+     * a wrapper around `console.groupEnd`.
+     */
+    _groupEnd: function() {
+      if (this.verbose) {
+        console.groupEnd.apply(console, arguments);
+      }
+    }
+  };
+</script>

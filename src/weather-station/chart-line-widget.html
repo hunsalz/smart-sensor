@@ -5,6 +5,7 @@
 <link rel="import" href="../../bower_components/chart-elements/chart-line.html">
 
 <link rel="import" href="chart-widget-behavior.html">
+<link rel="import" href="log-behavior.html">
 <link rel="import" href="widget-style.html">
 
 <dom-module id="chart-line-widget">
@@ -15,13 +16,14 @@
       <div>Last updated on [[_getDatetime(lastMessage.parsedPayload.timestamp)]]</div>
     </div>
     <chart-line id="chart_id" data="[[_chart]]" options="[[_chart_options]]"></chart-line>
-    <app-localstorage-document key="{{id}}" data="{{_data}}" log></app-localstorage-document-->
+    <app-localstorage-document key="{{id}}" data="{{_data}}" log$={{verbose}}></app-localstorage-document-->
   </template>
   <script>
     Polymer({
       is: 'chart-line-widget',
       behaviors: [
-        AppBehaviors.ChartWidgetBehavior
+        AppBehaviors.ChartWidgetBehavior,
+        AppBehaviors.LogBehavior
       ],
       properties: {
         label: {

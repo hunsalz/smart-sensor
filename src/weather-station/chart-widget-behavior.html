@@ -8,13 +8,6 @@
       chart_line_limit: {
         type: Number,
         value: 5
-      },
-      /**
-       * perform detail logging when true
-       */
-      verbose: {
-        type: Boolean,
-        value: true
       }
     },
     /**
@@ -44,30 +37,6 @@
       var array = this._data;
       this._data = [];
       this._data = array;
-    },
-    /**
-     * a wrapper around `console.log`.
-     */
-    _log: function() {
-      if (this.verbose) {
-        console.log.apply(console, arguments);
-      }
-    },
-    /**
-     * a wrapper around `console.group`.
-     */
-    _group: function() {
-      if (this.verbose) {
-        console.group.apply(console, arguments);
-      }
-    },
-    /**
-     * a wrapper around `console.groupEnd`.
-     */
-    _groupEnd: function() {
-      if (this.verbose) {
-        console.groupEnd.apply(console, arguments);
-      }
     }
   };
 </script>

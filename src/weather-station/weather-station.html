@@ -26,9 +26,10 @@
 <link rel="import" href="../../bower_components/google-map/google-map.html">
 <link rel="import" href="../../bower_components/google-map/google-map-marker.html">
 
-<link rel="import" href="widget-layout.html">
 <link rel="import" href="chart-line-widget.html">
 <link rel="import" href="comparison-chart-line-widget.html">
+<link rel="import" href="log-behavior.html">
+<link rel="import" href="widget-layout.html">
 
 <dom-module id="weather-station">
   <template>
@@ -48,7 +49,7 @@
         width: 100%;
         height: 30vh;
         color: #fff;
-        background-image: url(../img/header.png);
+        background-image: url(../img/header2.png);
         background-position: bottom center;
         background-size: cover;
         z-index: 1; /* added z-index to avoid that the chart.js canvas shine through the header */
@@ -304,6 +305,9 @@
   <script>
     Polymer({
       is: 'weather-station',
+      behaviors: [
+        AppBehaviors.LogBehavior
+      ],
       properties: {
         _payloadParseFunc: {
           type: Function,
@@ -393,7 +397,7 @@
         this.$.mqtt_dialog.open();
       },
       _connectMQTTBroker: function() {
-        console.log("Trying to connect to [" + this.mqtt_broker_url + "] ...");
+        this._log("MQTT connection: ", "Trying to connect to [" + this.mqtt_broker_url + "] ...");
         if (this.mqtt_broker_url && this.mqtt_broker_user && this.mqtt_broker_password) {
           this.$.mqtt_broker_id.connect();
         }
