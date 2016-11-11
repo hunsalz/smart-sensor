@@ -153,7 +153,7 @@
       <!-- content area -->
       <div class="content-area">
         <div class="app-grid">
-          <!--widget-layout id="widget_temperature_id" title="Temperature">
+          <widget-layout id="widget_temperature_id" title="Temperature">
             <div class="widget-label">
               <span class="widget-label-font-small">DHT22</span>
               [[last_DHT22_message.parsedPayload.celsius]]°C
@@ -206,8 +206,11 @@
             <google-map latitude="[[location.latitude]]" longitude="[[location.longitude]]" api-key="[[google_map_api_key]]" fit-to-markers>
               <google-map-marker latitude="[[location.latitude]]" longitude="[[location.longitude]]" title="[[app_title]]"></google-map-marker>
             </google-map>
-          </widget-layout-->
-          <widget-layout id="widget_test1_id" title="Test1">
+          </widget-layout>
+          <!--
+          for testing purposes only
+          -->
+          <!--widget-layout id="widget_test1_id" title="Test1">
             <div class="widget-label">
               <span class="widget-label-font-small">A</span>
               [[last_A_message.parsedPayload.celsius]]°C
@@ -239,10 +242,12 @@
               last-message2="{{last_B_message}}"
               property2="celsius">
             </comparison-chart-line-widget>
-          </widget-layout>
+          </widget-layout-->
         </div>
       </div>
-      <div class="content-footer">&copy; Build with Polymer</div>
+      <div class="content-footer">
+        <p>&copy; Build with <a href="https://www.polymer-project.org">Polymer</a></p>
+      </div>
     </app-header-layout>
     <!-- settings dialog -->
     <paper-dialog id="mqtt_dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" withBackdrop>
@@ -325,15 +330,15 @@
         },
         mqtt_broker_url: {
           type: String,
-          value: "wss://"
+          value: "wss://m21.cloudmqtt.com:33444" // TODO change to your own
         },
         mqtt_broker_user: {
           type: String,
-          value: null
+          value: "dashboard" // TODO change to your own
         },
         mqtt_broker_password: {
           type: String,
-          value: null
+          value: "password" // TODO change to your own
         },
         mqtt_connected: {
           type: Boolean,
@@ -380,18 +385,21 @@
       _toggleWidgets: function() {
         this.collapsed = !this.collapsed;
 
-        /**
         this.$.widget_temperature_id.collapse(this.collapsed);
         this.$.widget_humidity_id.collapse(this.collapsed);
         this.$.widget_pressure_id.collapse(this.collapsed);
         this.$.widget_co2_id.collapse(this.collapsed);
         this.$.widget_altitude_id.collapse(this.collapsed);
         this.$.widget_location_id.collapse(this.collapsed);
-        */
 
+        /**
+         * for testing purposes only
+         */
+        /**
         this.$.widget_test1_id.collapse(this.collapsed);
         this.$.widget_test2_id.collapse(this.collapsed);
         this.$.widget_test3_id.collapse(this.collapsed);
+        */
       },
       _openMQTTSettings: function() {
         this.$.mqtt_dialog.open();
