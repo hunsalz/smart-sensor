@@ -27,16 +27,20 @@ All details about source code, hardware layout and infrastructure setup can be f
 
 ##### Prerequisites
 
+Install [bower](https://bower.io/):
+
+    npm install -g bower
+
 Install [polymer-cli](https://github.com/Polymer/polymer-cli):
 
     npm install -g polymer-cli
 
-##### Install [bower](https://bower.io/)
+### Load dependencies and start the development server
 
-    npm install -g bower
+Loading all dependencies:
 
-### Start the development server
+    bower install
 
-This command serves the app at `http://localhost:8080` and provides basic URL routing for the app:
+Starting the app at `http://localhost:8080`:
 
     polymer serve
