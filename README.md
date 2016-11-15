@@ -29,7 +29,7 @@
 
 All details about source code, hardware layout and infrastructure setup can be found [here](https://github.com/hunsalz/ESP8266/tree/master/WeatherStation).
 
-## Setup
+## Setup Weather Station
 
 ### Prerequisites
 
