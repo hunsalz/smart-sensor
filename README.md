@@ -14,6 +14,10 @@
 * Upgrade sources to Polymer 2.0
 * Secure MQTT credentials; rethink authentication
 
+## Live demo
+
+Find a live demo [here](https://fir-testing-50442.firebaseapp.com/index.html)
+
 ## Impressions
 
 ### Desktop view
