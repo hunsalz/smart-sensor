@@ -1,4 +1,4 @@
-# Weather-Station is a Polymer App for my small LEGO house with various sensors
+# Weather-Station is a Polymer App showing various sensor data
 
 **Key features**
 
@@ -8,7 +8,7 @@
 * Service worker enabled
 * Easy to extend with other sensor data and/or complete new widgets
 
-Open issues
+**Open issues**
 
 * Browser compatibility with Firefox
 * Upgrade sources to Polymer 2.0
@@ -16,8 +16,14 @@ Open issues
 
 **Impressions**
 
-TBD - picture of the LEGO house
-TBD - picture of the Weather Station App
+### Desktop view
+![weather-station-desktop view](https://cloud.githubusercontent.com/assets/16960855/20327330/e07c3480-ab8c-11e6-9270-0f31b35fc313.png)
+
+### Mobile portrait view
+![weather-station-mobile-portrait-view](https://cloud.githubusercontent.com/assets/16960855/20327369/0e7733e4-ab8d-11e6-8887-3b5e636c3d24.png)
+
+### Mobile landscape view
+![weather-station-mobile-landscape-view](https://cloud.githubusercontent.com/assets/16960855/20327350/f86fa34c-ab8c-11e6-8bf3-dff82b49c139.png)
 
 **The Weather-Station source code, hardware layout and infrastructure setup**
 
