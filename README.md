@@ -14,7 +14,7 @@
 * Upgrade sources to Polymer 2.0
 * Secure MQTT credentials; rethink authentication
 
-**Impressions**
+## Impressions
 
 ### Desktop view
 ![weather-station-desktop view](https://cloud.githubusercontent.com/assets/16960855/20327330/e07c3480-ab8c-11e6-9270-0f31b35fc313.png)
@@ -25,13 +25,13 @@
 ### Mobile landscape view
 ![weather-station-mobile-landscape-view](https://cloud.githubusercontent.com/assets/16960855/20327350/f86fa34c-ab8c-11e6-8bf3-dff82b49c139.png)
 
-**The Weather-Station source code, hardware layout and infrastructure setup**
+##The Weather-Station source code, hardware layout and infrastructure setup
 
 All details about source code, hardware layout and infrastructure setup can be found [here](https://github.com/hunsalz/ESP8266/tree/master/WeatherStation).
 
-### Setup
+## Setup
 
-##### Prerequisites
+### Prerequisites
 
 Install [bower](https://bower.io/):
 
