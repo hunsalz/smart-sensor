@@ -3,6 +3,7 @@
 <link rel="import" href="../../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
 
 <link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 
@@ -21,34 +22,39 @@
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
         font-size: 1em;
+        color: var(--paper-blue-grey-700);
+        font-weight: normal;
         cursor: pointer;
         -webkit-tap-highlight-color: rgba(0,0,0,0);
         width: 100%;
-        @apply(--layout-horizontal);
       }
-      .widget-header-title {
-        padding: 5px 15px 5px 15px;
-        color: var(--paper-blue-grey-700);
-        font-weight: normal;
-        text-align: left;
-        @apply(--layout-flex);
-        @apply(--layout-self-center);
+      .container {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        width: 100%;
       }
       .widget-body {
         padding: 10px;
-        border: 1px solid #dedede;
+        border: 1px solid var(--paper-grey-100);
         border-top: none;
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
         @apply(--shadow-elevation-2dp);
         height: 100%;
       }
+      .spacer {
+        @apply(--layout-flex);
+        width: 100%;
+      }
     </style>
     <div>
       <button class="widget-header" on-tap="toggle">
-        <div class="widget-header-title">[[title]]</div>
-        <!-- insertion point for elements with class attribute 'widget-label' -->
-        <content select=".widget-label"></content>
+        <div class="container">
+          <span>[[title]]</span>
+          <span class="spacer"></span>
+          <!-- insertion point for elements with class attribute 'widget-label' -->
+          <content select=".widget-label"></content>
+        </div>
       </button>
       <iron-collapse id="collapse_id" tabindex="[[tabindex]]" opened="{{opened}}">
         <div class="widget-body">

@@ -154,14 +154,14 @@
       <div class="content-area">
         <div class="app-grid">
           <widget-layout id="widget_temperature_id" title="Temperature">
-            <div class="widget-label">
+            <span class="widget-label">
               <span class="widget-label-font-small">DHT22</span>
               [[last_DHT22_message.parsedPayload.celsius]]°C
-            </div>
-            <div class="widget-label">
+            </span>
+            <span class="widget-label">
               <span class="widget-label-font-small">BMP280</span>
               [[last_BMP280_message.parsedPayload.celsius]]°C
-            </div>
+            </span>
             <comparison-chart-line-widget
               id="temperature"
               label1="DHT22"
@@ -173,15 +173,15 @@
             </comparison-chart-line-widget>
           </widget-layout>
           <widget-layout id="widget_humidity_id" title="Humidity">
-            <div class="widget-label">
+            <span class="widget-label">
               [[last_DHT22_message.parsedPayload.humidity]]%
-            </div>
+            </span>
             <chart-line-widget id="humidity" label="Celsius" last-message="{{last_DHT22_message}}" property="humidity"></chart-line-widget>
           </widget-layout>
           <widget-layout id="widget_pressure_id" title="Atmospheric pressure">
-            <div class="widget-label">
+            <span class="widget-label">
               [[last_BMP280_message.parsedPayload.pascal]]Pa
-            </div>
+            </span>
             <chart-line-widget id="pressure" label="Pascal" last-message="{{last_BMP280_message}}" property="pascal"></chart-line-widget>
           </widget-layout>
           <widget-layout id="widget_co2_id" title="CO2 in Air">
@@ -191,18 +191,18 @@
             <chart-line-widget id="co2" label="CO2 in Air" last-message="{{last_MQ135_message}}" property="co2"></chart-line-widget>
           </widget-layout>
           <widget-layout id="widget_altitude_id" title="Altitude">
-            <div class="widget-label">
+            <span class="widget-label">
               <iron-icon icon="image:landscape"></iron-icon>
               [[last_BMP280_message.parsedPayload.altitude]]m
-            </div>
+            </span>
             <iron-icon class="widget-iron-icon" icon="image:landscape"></iron-icon>
             <span>[[last_BMP280_message.parsedPayload.altitude]]m</span>
           </widget-layout>
           <widget-layout id="widget_location_id" title="Location">
-            <div class="widget-label">
+            <span class="widget-label">
               <iron-icon icon="maps:place"></iron-icon>
               <span>48.998648, 8.3919072</span>
-            </div>
+            </span>
             <google-map latitude="[[location.latitude]]" longitude="[[location.longitude]]" api-key="[[google_map_api_key]]" fit-to-markers>
               <google-map-marker latitude="[[location.latitude]]" longitude="[[location.longitude]]" title="[[app_title]]"></google-map-marker>
             </google-map>
@@ -211,28 +211,28 @@
           for testing purposes only
           -->
           <!--widget-layout id="widget_test1_id" title="Test1">
-            <div class="widget-label">
+            <span class="widget-label">
               <span class="widget-label-font-small">A</span>
               [[last_A_message.parsedPayload.celsius]]°C
-            </div>
+            </span>
             <chart-line-widget id="chart_test1_id" label="Celsius A" last-message="{{last_A_message}}" property="celsius"></chart-line-widget>
           </widget-layout>
           <widget-layout id="widget_test2_id" title="Test2">
-            <div class="widget-label">
+            <span class="widget-label">
               <span class="widget-label-font-small">A</span>
               [[last_B_message.parsedPayload.celsius]]°C
-            </div>
+            </span>
             <chart-line-widget id="chart_test2_id" label="Celsius B" last-message="{{last_B_message}}" property="celsius"></chart-line-widget>
           </widget-layout>
           <widget-layout id="widget_test3_id" title="Test3">
-            <div class="widget-label">
+            <span class="widget-label">
               <span class="widget-label-font-small">A</span>
               [[last_A_message.parsedPayload.celsius]]°C
-            </div>
-            <div class="widget-label">
+            </span>
+            <span class="widget-label">
               <span class="widget-label-font-small">B</span>
               [[last_B_message.parsedPayload.celsius]]°C
-            </div>
+            </span>
             <comparison-chart-line-widget
               id="chart_test3_id"
               label1="Sensor A"
@@ -299,11 +299,11 @@
         last-message="{{last_A_message}}">
       </mqtt-subscription>
       <mqtt-subscription
-          topic="sensor/B"
-          number-of-messages="[[mqtt_max_number_of_messages]]"
-          payload-type="Custom"
-          payload-parse-function="[[_payloadParseFunc]]"
-          last-message="{{last_B_message}}">
+        topic="sensor/B"
+        number-of-messages="[[mqtt_max_number_of_messages]]"
+        payload-type="Custom"
+        payload-parse-function="[[_payloadParseFunc]]"
+        last-message="{{last_B_message}}">
       </mqtt-subscription>
     </mqtt-connection>
   </template>
