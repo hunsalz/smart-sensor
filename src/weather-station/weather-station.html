@@ -370,6 +370,9 @@
           notify: true
         }
       },
+      listeners: {
+        'toggle': '_applyToggleIcon'
+      },
       attached: function() {
         this._updateGridStyles = this._updateGridStyles || function() {
             this.updateStyles();
@@ -386,16 +389,43 @@
       _isCollapsed: function(collapsed) {
         return collapsed ? 'icons:expand-more' : 'icons:expand-less';
       },
-      _toggleWidgets: function() {
-        this.collapsed = !this.collapsed;
+      _applyToggleIcon: function(event) {
 
+        i = 0;
+        i += this.$.widget_temperature_id.isCollapsed();
+        i += this.$.widget_humidity_id.isCollapsed();
+        i += this.$.widget_pressure_id.isCollapsed();
+        i += this.$.widget_co2_id.isCollapsed();
+        i += this.$.widget_altitude_id.isCollapsed();
+        i += this.$.widget_location_id.isCollapsed();
+        /**
+         * for testing purposes only - change 6 to 9 too
+         */
+        /**
+        i += this.$.widget_test1_id.isCollapsed();
+        i += this.$.widget_test2_id.isCollapsed();
+        i += this.$.widget_test3_id.isCollapsed();
+        */
+        switch (i) {
+          case 0:
+            // expand less
+            this.collapsed = false;
+            break;
+          case 6:
+            // expand more
+            this.collapsed = true;
+            break;
+        }
+      },
+      _toggleWidgets: function() {
+
+        this.collapsed = !this.collapsed;
         this.$.widget_temperature_id.collapse(this.collapsed);
         this.$.widget_humidity_id.collapse(this.collapsed);
         this.$.widget_pressure_id.collapse(this.collapsed);
         this.$.widget_co2_id.collapse(this.collapsed);
         this.$.widget_altitude_id.collapse(this.collapsed);
         this.$.widget_location_id.collapse(this.collapsed);
-
         /**
          * for testing purposes only
          */

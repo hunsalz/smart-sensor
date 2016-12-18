@@ -78,16 +78,23 @@
         }
       },
       /**
+       * is true if widget is collapsed
+       */
+      isCollapsed: function() {
+        return !this.$.collapse_id.opened;
+      },
+      /**
        * collapse widget more or less
        */
       collapse: function(collapse) {
         this.$.collapse_id.opened = !collapse;
       },
       /**
-       * toggle between extend widget more or less
+       * toggle between expand widget more or less
        */
       toggle: function() {
         this.$.collapse_id.toggle();
+        this.fire('toggle', this.isCollapsed());
       }
     });
   </script>
