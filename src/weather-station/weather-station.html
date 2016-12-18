@@ -48,7 +48,7 @@
         left: 0;
         width: 100%;
         height: 30vh;
-        color: #fff;
+        color: white;
         background-image: url(../img/header2.png);
         background-position: bottom center;
         background-size: cover;
@@ -121,11 +121,15 @@
       .widget-label {
         margin: 0px 2px 0px 2px;
         padding: 5px 15px 5px 15px;
-        border-radius: 15px;
+        border-radius: 20px;
         background-color: var(--paper-red-500);
         color: white;
         font-size: 1em;
+        font-weight: 500;
+        line-height: 1.5em;
         white-space: nowrap;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
       }
       .widget-label-font-small {
         font-size: 0.5em;
@@ -368,7 +372,7 @@
       },
       attached: function() {
         this._updateGridStyles = this._updateGridStyles || function() {
-          this.updateStyles();
+            this.updateStyles();
           }.bind(this);
         window.addEventListener('resize', this._updateGridStyles);
         // try to connect automatically with MQTT broker
