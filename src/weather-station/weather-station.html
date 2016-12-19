@@ -180,7 +180,7 @@
             <span class="widget-label">
               [[last_DHT22_message.parsedPayload.humidity]]%
             </span>
-            <chart-line-widget id="humidity" label="Celsius" last-message="{{last_DHT22_message}}" property="humidity"></chart-line-widget>
+            <chart-line-widget id="humidity" label="Humidity" last-message="{{last_DHT22_message}}" property="humidity"></chart-line-widget>
           </widget-layout>
           <widget-layout id="widget_pressure_id" title="Atmospheric pressure">
             <span class="widget-label">
@@ -192,7 +192,7 @@
             <div class="widget-label">
               [[last_MQ135_message.parsedPayload.co2]]%
             </div>
-            <chart-line-widget id="co2" label="CO2 in Air" last-message="{{last_MQ135_message}}" property="co2"></chart-line-widget>
+            <chart-line-widget id="co2" label="Percent CO2 in Air" last-message="{{last_MQ135_message}}" property="co2"></chart-line-widget>
           </widget-layout>
           <widget-layout id="widget_altitude_id" title="Altitude">
             <span class="widget-label">
