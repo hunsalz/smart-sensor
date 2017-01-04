@@ -1,0 +1,110 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
+
+<link rel="import" href="../../bower_components/paper-styles/color.html">
+
+<link rel="import" href="../../bower_components/chart-elements/chart-line.html">
+
+<link rel="import" href="line-chart-item.html">
+<link rel="import" href="log-behavior.html">
+<link rel="import" href="widget-style.html">
+
+<dom-module id="line-chart">
+  <template strip-whitespace>
+    <style include="widget-style">
+    </style>
+    <div class="last-updated">
+      <div>Last updated on [[_getDatetime(lastMessage.parsedPayload.timestamp)]]</div>
+    </div>
+    <chart-line id="chart_id" data="[[_computeChart(labels, datasets)]]" options="[[options]]"></chart-line>
+    <!--app-localstorage-document key="{{id}}" data="{{_data}}" log$={{verbose}}></app-localstorage-document-->
+  </template>
+  <script>
+    Polymer({
+      is: 'line-chart',
+      behaviors: [
+        AppBehaviors.LogBehavior
+      ],
+      properties: {
+        labels: {
+          type: Array,
+          value: function() {
+            return [];
+          },
+          notify: true
+        },
+        datasets: {
+          type: Array,
+          value: function() {
+            return [];
+          },
+          notify: true
+        },
+        options: {
+          type: Object,
+          value: {
+            responsive: true,
+            legend: {
+              display: true,
+              position: 'bottom'
+            }
+          }
+        },
+        maxLabels: {
+          type: Number,
+          value: 5
+        }
+      },
+      ready: function() {
+
+        // query all <line-chart-item> childs
+        var items = this.queryAllEffectiveChildren('line-chart-item');
+        // declare an appropriate array of datasets
+        this.datasets = [items.length];
+        // instantiate dataset data arrays and add listeners
+        for (var i = 0; i < items.length; i++) {
+          this.datasets[i] = {
+            data: []
+          };
+          // listen to all <line-chart-item> childs
+          this.listen(items[i], 'chart-update', '_processMessage');
+        }
+      },
+      /**
+       * process message
+       */
+      _processMessage: function(event) {
+
+        if (event) {
+          // skip first label(s) to keep limit of max labels
+          while (this.labels.length > this.maxLabels) {
+            this.labels.shift();
+          }
+          // align all datasets
+          for (var i = 0; i < this.datasets.length; i++) {
+            // extend datasets in straight-line ...
+            while (this.datasets[i].data.length < this.labels.length) {
+              console.log("push dataset " + this.datasets[i].data[this.datasets[i].data.length - 1]);
+              this.datasets[i].data.push(this.datasets[i].data[this.datasets[i].data.length - 1]);
+            }
+            // shorten datasets ...
+            while (this.datasets[i].data.length > this.labels.length) {
+              console.log("shift dataset" + this.datasets[i].data[0]);
+              this.datasets[i].data.shift();
+            }
+          }
+
+          console.log(this.labels);
+          console.log(this.datasets);
+
+          // update chart
+          this.$.chart_id.updateChart();
+        }
+      },
+      _computeChart: function(_labels, _datasets) {
+        return { labels: _labels, datasets: _datasets }
+      }
+    });
+  </script>
+</dom-module>

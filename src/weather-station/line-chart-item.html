@@ -1,0 +1,101 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="format-behavior.html">
+<link rel="import" href="log-behavior.html">
+
+<dom-module id="line-chart-item">
+  <template strip-whitespace>
+    <style>
+    </style>
+  </template>
+  <script>
+    Polymer({
+      is: 'line-chart-item',
+      behaviors: [
+        AppBehaviors.FormatBehavior,
+        AppBehaviors.LogBehavior
+      ],
+      properties: {
+        label: {
+          type: String,
+          value: 'undefined'
+        },
+        backgroundColor: {
+          type: String,
+          value: "rgba(220,220,220,0.2)"
+        },
+        borderColor: {
+          type: String,
+          value: "rgba(220,220,220,1)"
+        },
+        pointBackgroundColor: {
+          type: String,
+          value: "rgba(220,220,220,1)"
+        },
+        pointBorderColor: {
+          type: String,
+          value: "rgba(255,255,255,1)"
+        },
+        labels: {
+          type: Array,
+          notify: true
+        },
+        dataset: {
+          type: Object,
+          notify: true
+        },
+        lastMessage: {
+          type: Object,
+          value: null,
+          notify: true,
+          observer: '_processMessage'
+        }
+      },
+      ready: function() {
+
+        // configure dataset properties - http://www.chartjs.org/docs/#line-chart-dataset-structure
+        this.async(function() {
+          this.dataset.label = this.label;
+          this.dataset.fill = true;
+          this.dataset.backgroundColor = this.backgroundColor;
+          this.dataset.borderWidth = 1;
+          this.dataset.borderColor = this.borderColor;
+          this.dataset.pointBackgroundColor = this.pointBackgroundColor;
+          this.dataset.pointBorderColor = this.pointBorderColor;
+        });
+      },
+      /**
+       * process incoming messages
+       */
+       _processMessage: function(message) {
+
+         this.async(function() {
+           if (message) {
+             // use timestamp as label
+             var label = this.formatHHMMSS(message.timestamp);
+             // place and determine label index
+             var index = this._place(label);
+             // update value at corresponding index
+             this.dataset.data[index] = message.value;
+             // notify parent element <line-chart>
+             this.fire('chart-update');
+           }
+         });
+       },
+      /**
+       * place label to x-axis and return index on x-axis
+       */
+      _place: function(label) {
+
+        var index = this.labels.lastIndexOf(label);
+        // push new label if label isn't available so far -- don't care of any natural label order
+        if (index === -1) {
+          this.labels.push(label);
+          index = this.labels.length - 1;
+        }
+        // return index of passed label
+        return index;
+      }
+    });
+  </script>
+</dom-module>

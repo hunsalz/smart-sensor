@@ -1,0 +1,31 @@
+<script>
+  var AppBehaviors = AppBehaviors || {};
+  AppBehaviors.FormatBehavior = {
+    /**
+     * return a timestamp in format hh:mm
+     */
+    formatHHMM: function(timestamp) {
+      var value = new Date(timestamp * 1000);
+      return [this._pad(value.getHours()), this._pad(value.getMinutes())].join(':');
+    },
+    /**
+     * return a timestamp in format hh:mm:ss
+     */
+    formatHHMMSS: function(timestamp) {
+      var value = new Date(timestamp * 1000);
+      return [this._pad(value.getHours()), this._pad(value.getMinutes()), this._pad(value.getSeconds())].join(':');
+    },
+    /**
+     * return datetime from timestamp
+     */
+    _getDatetime: function(timestamp) {
+      return new Date(timestamp * 1000);
+    },
+    /**
+     * fill with '0' to get always double digit numbers
+     */
+    _pad: function(n) {
+      return n < 10 ? '0' + n.toString(10) : n.toString(10);
+    }
+  };
+</script>
