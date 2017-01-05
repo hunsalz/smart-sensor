@@ -2,23 +2,36 @@
 
 <link rel="import" href="../../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
 
-<link rel="import" href="../../bower_components/paper-styles/color.html">
-
 <link rel="import" href="../../bower_components/chart-elements/chart-line.html">
 
 <link rel="import" href="line-chart-item.html">
 <link rel="import" href="log-behavior.html">
-<link rel="import" href="widget-style.html">
 
 <dom-module id="line-chart">
   <template strip-whitespace>
-    <style include="widget-style">
+    <style>
+      :host {
+        display: inline-block;
+        font: inherit;
+      }
+      chart-line {
+        width: 100%;
+        height: 100%;
+      }
+      .last-updated {
+        font-size: 0.75em;
+        font-weight: 400;
+        color: grey;
+        text-align: center;
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
     </style>
     <div class="last-updated">
       <div>Last updated on [[_getDatetime(lastMessage.parsedPayload.timestamp)]]</div>
     </div>
     <chart-line id="chart_id" data="[[_computeChart(labels, datasets)]]" options="[[options]]"></chart-line>
-    <!--app-localstorage-document key="{{id}}" data="{{_data}}" log$={{verbose}}></app-localstorage-document-->
+    <!--app-localstorage-document key=[[id]] data="{{datasets}}" log$={{verbose}}></app-localstorage-document-->
   </template>
   <script>
     Polymer({
@@ -57,7 +70,6 @@
         }
       },
       ready: function() {
-
         // query all <line-chart-item> childs
         var items = this.queryAllEffectiveChildren('line-chart-item');
         // declare an appropriate array of datasets
@@ -83,26 +95,25 @@
           }
           // align all datasets
           for (var i = 0; i < this.datasets.length; i++) {
-            // extend datasets in straight-line ...
+            var path = 'datasets.' + i + '.data';
+            // extend each dataset to current labels length in a straight-line
             while (this.datasets[i].data.length < this.labels.length) {
-              console.log("push dataset " + this.datasets[i].data[this.datasets[i].data.length - 1]);
-              this.datasets[i].data.push(this.datasets[i].data[this.datasets[i].data.length - 1]);
+              this.push(path, this.datasets[i].data[this.datasets[i].data.length - 1]);
             }
-            // shorten datasets ...
+            // shorten each dataset to current labels length
             while (this.datasets[i].data.length > this.labels.length) {
-              console.log("shift dataset" + this.datasets[i].data[0]);
-              this.datasets[i].data.shift();
+              this.shift(path);
             }
           }
-
-          console.log(this.labels);
-          console.log(this.datasets);
-
           // update chart
           this.$.chart_id.updateChart();
         }
       },
       _computeChart: function(_labels, _datasets) {
+
+        console.log(_datasets);
+        console.log(JSON.stringify(_datasets));
+
         return { labels: _labels, datasets: _datasets }
       }
     });
