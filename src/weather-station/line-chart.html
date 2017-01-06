@@ -7,6 +7,8 @@
 <link rel="import" href="line-chart-item.html">
 <link rel="import" href="log-behavior.html">
 
+<script src="label.js"></script>
+
 <dom-module id="line-chart">
   <template strip-whitespace>
     <style>
@@ -28,10 +30,10 @@
       }
     </style>
     <div class="last-updated">
-      <div>Last updated on [[_getDatetime(lastMessage.parsedPayload.timestamp)]]</div>
+      <div>Last updated on [[_lastUpdated]]</div>
     </div>
     <chart-line id="chart_id" data="[[_computeChart(labels, datasets)]]" options="[[options]]"></chart-line>
-    <!--app-localstorage-document key=[[id]] data="{{datasets}}" log$={{verbose}}></app-localstorage-document-->
+    <app-localstorage-document key="[[id]]" data="{{labels}}" log$={{verbose}}></app-localstorage-document>
   </template>
   <script>
     Polymer({
@@ -64,57 +66,77 @@
             }
           }
         },
-        maxLabels: {
+        maxValues: {
           type: Number,
           value: 5
+        },
+        _lastUpdated: {
+          type: Object,
+          notify: true
         }
       },
       ready: function() {
-        // query all <line-chart-item> childs
-        var items = this.queryAllEffectiveChildren('line-chart-item');
-        // declare an appropriate array of datasets
-        this.datasets = [items.length];
-        // instantiate dataset data arrays and add listeners
+        // get all child elements
+        var items = this._getAllLineChartItems();
+        // setup each child element
         for (var i = 0; i < items.length; i++) {
+          // assign an unique id
+          items[i].id = this.id + '#' + i;
+          // declare basic dataset
           this.datasets[i] = {
             data: []
           };
-          // listen to all <line-chart-item> childs
-          this.listen(items[i], 'chart-update', '_processMessage');
+          // listen to updates from all <line-chart-item> childs
+          this.listen(items[i], 'chart-update', '_processUpdates');
         }
       },
+      _getAllLineChartItems: function() {
+        return this.queryAllEffectiveChildren('line-chart-item');
+      },
       /**
-       * process message
+       * process chart updates
        */
-      _processMessage: function(event) {
-
+      _processUpdates: function(event) {
         if (event) {
-          // skip first label(s) to keep limit of max labels
-          while (this.labels.length > this.maxLabels) {
-            this.labels.shift();
+          // get id of origin event source
+          var sourceId = event.detail.id;
+          // get all child elements
+          var items = this._getAllLineChartItems();
+          // notify all siblings to interpolate all lines
+          for (var i = 0; i < items.length; i++) {
+            if (items[i].id !== sourceId) {
+              items[i].interpolate();
+            }
           }
-          // align all datasets
+          // save latest update
+          this._lastUpdated = this.labels[this.labels.length - 1];
+
+          console.log(event);
+          console.log(this.labels);
           for (var i = 0; i < this.datasets.length; i++) {
-            var path = 'datasets.' + i + '.data';
-            // extend each dataset to current labels length in a straight-line
-            while (this.datasets[i].data.length < this.labels.length) {
-              this.push(path, this.datasets[i].data[this.datasets[i].data.length - 1]);
-            }
-            // shorten each dataset to current labels length
-            while (this.datasets[i].data.length > this.labels.length) {
-              this.shift(path);
-            }
+            console.log(this.datasets[i].data);
           }
+
           // update chart
           this.$.chart_id.updateChart();
         }
       },
+      /**
+       * return compound object expected by Chart.js
+       */
       _computeChart: function(_labels, _datasets) {
-
-        console.log(_datasets);
-        console.log(JSON.stringify(_datasets));
-
+        /**
+        for (var i = 0; i < _labels.length; i++) {
+          _labels[i] = new Label(_labels[i].timestamp);
+        }
+        */
         return { labels: _labels, datasets: _datasets }
+      },
+      _computeLabelsId: function(id) {
+        return 'labels.' + id;
+      },
+      _computeDatasetsId: function(id) {
+        return 'dataset.' + id;
       }
     });
   </script>

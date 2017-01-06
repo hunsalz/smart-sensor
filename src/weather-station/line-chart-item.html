@@ -2,12 +2,11 @@
 
 <link rel="import" href="../../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
 
-<link rel="import" href="format-behavior.html">
 <link rel="import" href="log-behavior.html">
 
 <dom-module id="line-chart-item">
   <template strip-whitespace>
-    <!--app-localstorage-document key="test_id" data="{{labels}}" log$={{verbose}}></app-localstorage-document-->
+    <app-localstorage-document key="[[id]]" data="{{dataset.data}}" log$={{verbose}}></app-localstorage-document-->
   </template>
   <script>
     Polymer({
@@ -22,19 +21,19 @@
         },
         backgroundColor: {
           type: String,
-          value: "rgba(220,220,220,0.2)"
+          value: 'rgba(220,220,220,0.2)'
         },
         borderColor: {
           type: String,
-          value: "rgba(220,220,220,1)"
+          value: 'rgba(220,220,220,1)'
         },
         pointBackgroundColor: {
           type: String,
-          value: "rgba(220,220,220,1)"
+          value: 'rgba(220,220,220,1)'
         },
         pointBorderColor: {
           type: String,
-          value: "rgba(255,255,255,1)"
+          value: 'rgba(255,255,255,1)'
         },
         labels: {
           type: Array,
@@ -46,16 +45,15 @@
         },
         lastMessage: {
           type: Object,
-          value: null,
           notify: true,
           observer: '_processMessage'
+        },
+        _maxValues: {
+          type: Number,
+          value: 5
         }
       },
       ready: function() {
-
-        //var Base64={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",encode:function(e){var t="";var n,r,i,s,o,u,a;var f=0;e=Base64._utf8_encode(e);while(f<e.length){n=e.charCodeAt(f++);r=e.charCodeAt(f++);i=e.charCodeAt(f++);s=n>>2;o=(n&3)<<4|r>>4;u=(r&15)<<2|i>>6;a=i&63;if(isNaN(r)){u=a=64}else if(isNaN(i)){a=64}t=t+this._keyStr.charAt(s)+this._keyStr.charAt(o)+this._keyStr.charAt(u)+this._keyStr.charAt(a)}return t},decode:function(e){var t="";var n,r,i;var s,o,u,a;var f=0;e=e.replace(/[^A-Za-z0-9\+\/\=]/g,"");while(f<e.length){s=this._keyStr.indexOf(e.charAt(f++));o=this._keyStr.indexOf(e.charAt(f++));u=this._keyStr.indexOf(e.charAt(f++));a=this._keyStr.indexOf(e.charAt(f++));n=s<<2|o>>4;r=(o&15)<<4|u>>2;i=(u&3)<<6|a;t=t+String.fromCharCode(n);if(u!=64){t=t+String.fromCharCode(r)}if(a!=64){t=t+String.fromCharCode(i)}}t=Base64._utf8_decode(t);return t},_utf8_encode:function(e){e=e.replace(/\r\n/g,"\n");var t="";for(var n=0;n<e.length;n++){var r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r)}else if(r>127&&r<2048){t+=String.fromCharCode(r>>6|192);t+=String.fromCharCode(r&63|128)}else{t+=String.fromCharCode(r>>12|224);t+=String.fromCharCode(r>>6&63|128);t+=String.fromCharCode(r&63|128)}}return t},_utf8_decode:function(e){var t="";var n=0;var r=c1=c2=0;while(n<e.length){r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r);n++}else if(r>191&&r<224){c2=e.charCodeAt(n+1);t+=String.fromCharCode((r&31)<<6|c2&63);n+=2}else{c2=e.charCodeAt(n+1);c3=e.charCodeAt(n+2);t+=String.fromCharCode((r&15)<<12|(c2&63)<<6|c3&63);n+=3}}return t}}
-        //console.log(Base64.encode("Hallo--"));
-
         // configure dataset properties - http://www.chartjs.org/docs/#line-chart-dataset-structure
         this.async(function() {
           this.dataset.label = this.label;
@@ -70,26 +68,48 @@
       /**
        * process incoming messages
        */
-       _processMessage: function(message) {
-         this.async(function() {
-           if (message) {
+      _processMessage: function(message) {
+        this.async(function() {
+          if (message) {
              // place and determine label index
              var index = this._place(message.timestamp);
-             // update value at corresponding index
-             this.dataset.data[index] = message.value;
+             // push value at corresponding index
+             // TODO log lane
+             this._log("push value=" + message.value + " at index=" + index + ", label=" + this.labels[index]);
+
+             //this.splice('dataset.data', index, 1, message.value);
+             this.set('dataset.data.' + index, message.value);
+
+             //var interpolate = index == this.maxValues ?
              // notify parent element <line-chart>
-             this.fire('chart-update');
-           }
-         });
+             this.fire('chart-update', {'id': this.id, 'interpolate': true});
+          }
+        });
+      },
+      interpolate: function() {
+         var path = 'dataset.data';
+         if (this.dataset.data.length >= this._maxValues) {
+           this.shift(path);
+         }
+         this.push(path, this.dataset.data[this.dataset.data.length - 1]);
        },
       /**
        * place timestamp as new label to x-axis and return index on x-axis
        */
       _place: function(timestamp) {
-        var label = this._createLabel(timestamp);
-        var index = this._lastIndexOf(label);
+        var label = timestamp;
+        var index = this.labels.lastIndexOf(timestamp);
+        //var label = new Label(timestamp);
+        //var index = this._lastIndexOf(label);
         // push new label if label isn't available so far -- don't care of any natural (re-)order
         if (index === -1) {
+          // shift labels & dataset(s) to gain space if value limit is already reached
+          console.log("... labels");
+          if (this.labels.length >= this._maxValues) {
+            this.shift('labels');
+            this.shift('dataset.data');
+          }
+          // push a new label to the labels end
           this.push('labels', label);
           index = this.labels.length - 1;
         }
@@ -97,47 +117,11 @@
         return index;
       },
       /**
-       * return a new Label object
-       */
-      _createLabel: function(timestamp) {
-
-        var Label = function(timestamp) {
-          this.timestamp = timestamp;
-        };
-        /**
-         * override toString() with custom format
-         */
-        Label.prototype.toString = function() {
-          return this.format(this.timestamp);
-        };
-        /**
-         * format timestamp in custom format
-         */
-        Label.prototype.format = function(timestamp) {
-          var value = new Date(timestamp * 1000);
-          return [this._pad(value.getHours()), this._pad(value.getMinutes()), this._pad(value.getSeconds())].join(':');
-        };
-        /**
-         * return datetime object from timestamp
-         */
-        Label.prototype._getDatetime = function(timestamp) {
-          return new Date(timestamp * 1000);
-        };
-        /**
-         * return always double digits even though the number is singular
-         */
-        Label.prototype._pad = function(value) {
-          return value < 10 ? '0' + value.toString(10) : value.toString(10);
-        };
-
-        return new Label(timestamp);
-      },
-      /**
         * return the last index at which the label can be found, or -1 if it isn't present
         */
       _lastIndexOf: function(label) {
         var index = -1;
-        // search x-axis backwards
+        // search x-axis backward for an equal entry
         for (var i = this.labels.length - 1; i > -1; i--) {
           // break if a similar timestamp is found
           if (this.labels[i].timestamp === label.timestamp) {
@@ -145,7 +129,6 @@
             break;
           }
         }
-
         return index;
       }
     });
