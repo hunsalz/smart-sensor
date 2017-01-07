@@ -82,14 +82,20 @@
         for (var i = 0; i < items.length; i++) {
           // assign an unique id
           items[i].id = this.id + '#' + i;
+          // propagate property settings
+          items[i].properties._maxValues = 5;
           // declare basic dataset
           this.datasets[i] = {
-            data: []
+            data: [],
+            maxValues: this.maxValues
           };
           // listen to updates from all <line-chart-item> childs
           this.listen(items[i], 'chart-update', '_processUpdates');
         }
       },
+      /**
+       * return all <line-chart-item> sub-elements
+       **/
       _getAllLineChartItems: function() {
         return this.queryAllEffectiveChildren('line-chart-item');
       },
@@ -98,45 +104,38 @@
        */
       _processUpdates: function(event) {
         if (event) {
-          // get id of origin event source
-          var sourceId = event.detail.id;
-          // get all child elements
-          var items = this._getAllLineChartItems();
-          // notify all siblings to interpolate all lines
-          for (var i = 0; i < items.length; i++) {
-            if (items[i].id !== sourceId) {
-              items[i].interpolate();
+          // if true force interpolation
+          if (event.detail.interpolate) {
+            // get id of original event source
+            var sourceId = event.detail.id;
+            // get all child elements
+            var items = this._getAllLineChartItems();
+            // notify all siblings to interpolate corresponding lines
+            for (var i = 0; i < items.length; i++) {
+              if (items[i].id !== sourceId) {
+                this._log("Interpolate: " + items[i].id);
+                items[i].interpolate();
+              }
             }
           }
           // save latest update
           this._lastUpdated = this.labels[this.labels.length - 1];
-
-          console.log(event);
-          console.log(this.labels);
-          for (var i = 0; i < this.datasets.length; i++) {
-            console.log(this.datasets[i].data);
-          }
-
           // update chart
           this.$.chart_id.updateChart();
         }
       },
       /**
        * return compound object expected by Chart.js
+       *
+       * computed function is called only once because Polymer doesn't register property effects
+       * see https://www.polymer-project.org/1.0/docs/devguide/model-data#override-dirty-check
        */
       _computeChart: function(_labels, _datasets) {
-        /**
+        // recreate label objects from serialized JSON objects
         for (var i = 0; i < _labels.length; i++) {
           _labels[i] = new Label(_labels[i].timestamp);
         }
-        */
         return { labels: _labels, datasets: _datasets }
-      },
-      _computeLabelsId: function(id) {
-        return 'labels.' + id;
-      },
-      _computeDatasetsId: function(id) {
-        return 'dataset.' + id;
       }
     });
   </script>

@@ -15,6 +15,20 @@
         AppBehaviors.LogBehavior
       ],
       properties: {
+        options: {
+          type: Object,
+          value: function() {
+            return {
+              label: 'undefined',
+              backgroundColor: 'rgba(220,220,220,0.2)',
+              borderColor: 'rgba(220,220,220,1)',
+              pointBackgroundColor: 'rgba(220,220,220,1)',
+              pointBorderColor: 'rgba(255,255,255,1)'
+            };
+          },
+        },
+
+
         label: {
           type: String,
           value: 'undefined'
@@ -35,6 +49,9 @@
           type: String,
           value: 'rgba(255,255,255,1)'
         },
+
+
+
         labels: {
           type: Array,
           notify: true
@@ -47,10 +64,6 @@
           type: Object,
           notify: true,
           observer: '_processMessage'
-        },
-        _maxValues: {
-          type: Number,
-          value: 5
         }
       },
       ready: function() {
@@ -69,53 +82,43 @@
        * process incoming messages
        */
       _processMessage: function(message) {
-        this.async(function() {
-          if (message) {
-             // place and determine label index
-             var index = this._place(message.timestamp);
-             // push value at corresponding index
-             // TODO log lane
-             this._log("push value=" + message.value + " at index=" + index + ", label=" + this.labels[index]);
-
-             //this.splice('dataset.data', index, 1, message.value);
-             this.set('dataset.data.' + index, message.value);
-
-             //var interpolate = index == this.maxValues ?
-             // notify parent element <line-chart>
-             this.fire('chart-update', {'id': this.id, 'interpolate': true});
-          }
-        });
+        if (message) {
+          this.async(function() {
+            var interpolate = false;
+            // create Label object
+            var label = new Label(message.timestamp);
+            // search for last label entry
+            var index = this._lastIndexOf(label);
+            // if label isn't available push new label to x-axis -- don't care of any natural (re-)order
+            if (index === -1) {
+              // if value limit is reached, shift labels & dataset to gain new space
+              if (this.labels.length >= this.dataset.maxValues) {
+                this.shift('labels');
+                this.shift('dataset.data');
+              }
+              // push a new label to the labels end
+              this.push('labels', label);
+              index = this.labels.length - 1;
+              // force interpolation for sibling elements
+              interpolate = true;
+            }
+            // push value at corresponding index
+            this._log("Setting dataset.data." + index + ": " + message.value + " at label: " + this.labels[index]);
+            this.set('dataset.data.' + index, message.value);
+            // notify parent element
+            this.fire('chart-update', {'id': this.id, 'interpolate': interpolate});
+          });
+        }
       },
       interpolate: function() {
          var path = 'dataset.data';
-         if (this.dataset.data.length >= this._maxValues) {
+         // if value limit is reached, shift dataset to gain new space
+         if (this.dataset.data.length >= this.dataset.maxValues) {
            this.shift(path);
          }
+         // interpolate with latest known value
          this.push(path, this.dataset.data[this.dataset.data.length - 1]);
        },
-      /**
-       * place timestamp as new label to x-axis and return index on x-axis
-       */
-      _place: function(timestamp) {
-        var label = timestamp;
-        var index = this.labels.lastIndexOf(timestamp);
-        //var label = new Label(timestamp);
-        //var index = this._lastIndexOf(label);
-        // push new label if label isn't available so far -- don't care of any natural (re-)order
-        if (index === -1) {
-          // shift labels & dataset(s) to gain space if value limit is already reached
-          console.log("... labels");
-          if (this.labels.length >= this._maxValues) {
-            this.shift('labels');
-            this.shift('dataset.data');
-          }
-          // push a new label to the labels end
-          this.push('labels', label);
-          index = this.labels.length - 1;
-        }
-        // return index of passed label
-        return index;
-      },
       /**
         * return the last index at which the label can be found, or -1 if it isn't present
         */
