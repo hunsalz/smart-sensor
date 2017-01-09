@@ -15,43 +15,6 @@
         AppBehaviors.LogBehavior
       ],
       properties: {
-        options: {
-          type: Object,
-          value: function() {
-            return {
-              label: 'undefined',
-              backgroundColor: 'rgba(220,220,220,0.2)',
-              borderColor: 'rgba(220,220,220,1)',
-              pointBackgroundColor: 'rgba(220,220,220,1)',
-              pointBorderColor: 'rgba(255,255,255,1)'
-            };
-          },
-        },
-
-
-        label: {
-          type: String,
-          value: 'undefined'
-        },
-        backgroundColor: {
-          type: String,
-          value: 'rgba(220,220,220,0.2)'
-        },
-        borderColor: {
-          type: String,
-          value: 'rgba(220,220,220,1)'
-        },
-        pointBackgroundColor: {
-          type: String,
-          value: 'rgba(220,220,220,1)'
-        },
-        pointBorderColor: {
-          type: String,
-          value: 'rgba(255,255,255,1)'
-        },
-
-
-
         labels: {
           type: Array,
           notify: true
@@ -60,6 +23,10 @@
           type: Object,
           notify: true
         },
+        options: {
+          type: Object,
+          value: null
+        },
         lastMessage: {
           type: Object,
           notify: true,
@@ -67,15 +34,15 @@
         }
       },
       ready: function() {
-        // configure dataset properties - http://www.chartjs.org/docs/#line-chart-dataset-structure
         this.async(function() {
-          this.dataset.label = this.label;
-          this.dataset.fill = true;
-          this.dataset.backgroundColor = this.backgroundColor;
-          this.dataset.borderWidth = 1;
-          this.dataset.borderColor = this.borderColor;
-          this.dataset.pointBackgroundColor = this.pointBackgroundColor;
-          this.dataset.pointBorderColor = this.pointBorderColor;
+          // set dataset options if available - http://www.chartjs.org/docs/#line-chart-dataset-structure
+          if (this.options !== null) {
+            this._log('Setting dataset options: ', this.options);
+            // copy all properties
+            for (property in this.options) {
+              this.dataset[property] = this.options[property];
+            }
+          }
         });
       },
       /**
@@ -91,8 +58,9 @@
             var index = this._lastIndexOf(label);
             // if label isn't available push new label to x-axis -- don't care of any natural (re-)order
             if (index === -1) {
-              // if value limit is reached, shift labels & dataset to gain new space
-              if (this.labels.length >= this.dataset.maxValues) {
+              // while value limit is reached, shift labels & dataset to gain new space(s);
+              // use 'while' instead of 'if' to reduce a serialized array afterwards
+              while (this.labels.length >= this.dataset.valueLimit) {
                 this.shift('labels');
                 this.shift('dataset.data');
               }
@@ -111,14 +79,15 @@
         }
       },
       interpolate: function() {
-         var path = 'dataset.data';
-         // if value limit is reached, shift dataset to gain new space
-         if (this.dataset.data.length >= this.dataset.maxValues) {
-           this.shift(path);
-         }
-         // interpolate with latest known value
-         this.push(path, this.dataset.data[this.dataset.data.length - 1]);
-       },
+        var path = 'dataset.data';
+        // while value limit is reached, shift dataset to gain new space
+        // use 'while' instead of 'if' to reduce a serialized array afterwards
+        while (this.dataset.data.length >= this.dataset.valueLimit) {
+          this.shift(path);
+        }
+        // interpolate with latest known value
+        this.push(path, this.dataset.data[this.dataset.data.length - 1]);
+      },
       /**
         * return the last index at which the label can be found, or -1 if it isn't present
         */

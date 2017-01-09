@@ -66,7 +66,11 @@
             }
           }
         },
-        maxValues: {
+        valueRange: {
+          type: Number,
+          value: 0
+        },
+        valueLimit: {
           type: Number,
           value: 5
         },
@@ -83,11 +87,22 @@
           // assign an unique id
           items[i].id = this.id + '#' + i;
           // propagate property settings
-          items[i].properties._maxValues = 5;
-          // declare basic dataset
+          items[i].properties._valueLimit = 5;
+          // declare basic dataset with a default config set
           this.datasets[i] = {
+            // see http://www.chartjs.org/docs/#line-chart-dataset-structure
             data: [],
-            maxValues: this.maxValues
+            label: 'undefined',
+            fill: true,
+            backgroundColor: 'rgba(220,220,220,0.2)',
+            borderWidth: 1,
+            borderColor: 'rgba(220,220,220,1)',
+            pointBackgroundColor: 'rgba(220,220,220,1)',
+            pointBorderColor: 'rgba(255,255,255,1)',
+            // broadcast a value range to all sub-elements
+            valueRange: this.valueRange,
+            // broadcast a value limit to all sub-elements
+            valueLimit: this.valueLimit
           };
           // listen to updates from all <line-chart-item> childs
           this.listen(items[i], 'chart-update', '_processUpdates');
@@ -127,7 +142,7 @@
       /**
        * return compound object expected by Chart.js
        *
-       * computed function is called only once because Polymer doesn't register property effects
+       * computed function is called only once because Polymer doesn't reflect array mutations for this function
        * see https://www.polymer-project.org/1.0/docs/devguide/model-data#override-dirty-check
        */
       _computeChart: function(_labels, _datasets) {
