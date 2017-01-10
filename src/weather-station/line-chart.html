@@ -86,8 +86,6 @@
         for (var i = 0; i < items.length; i++) {
           // assign an unique id
           items[i].id = this.id + '#' + i;
-          // propagate property settings
-          items[i].properties._valueLimit = 5;
           // declare basic dataset with a default config set
           this.datasets[i] = {
             // see http://www.chartjs.org/docs/#line-chart-dataset-structure
