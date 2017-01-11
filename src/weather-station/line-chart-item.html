@@ -69,10 +69,6 @@
               index = this.labels.length - 1;
               // force interpolation for sibling elements
               interpolate = true;
-            } else {
-              // update label
-              console.log("hey update label ...." + label);
-              this.set('labels' + index, label);
             }
             // push value at corresponding index
             this._log("Setting dataset.data." + index + ": " + message.value + " at label: " + this.labels[index]);
@@ -93,16 +89,15 @@
         this.push(path, this.dataset.data[this.dataset.data.length - 1]);
       },
       /**
-        * return the first index at which the label is in an equal value range, or -1 if it isn't present
+        * return the first index at which the label is equal, or -1 if it isn't present
         */
       _firstIndexOf: function(label) {
         var index = -1;
-        // search x-axis for the first entry that is in an equal value range
+        // search x-axis for the first entry that is equal
         for (var i = 0; i < this.labels.length; i++) {
           // break if a similar timestamp is found
-          var until = this.labels[i].timestamp + this.dataset.valueRange;
-          if (label.timestamp <= until) {
-            this._log("Matching label ", new Label(label.timestamp), "is before or equal ", new Label(until));
+          if (label.timestamp <= this.labels[i].timestamp) {
+            this._log("Matching label " + label +  " is before or equal " + this.labels[i]);
             index = i;
             break;
           }
@@ -110,15 +105,14 @@
         return index;
       },
       /**
-        * return the last index at which the label is in an equal value range, or -1 if it isn't present
+        * return the last index at which the label is equal, or -1 if it isn't present
         */
       _lastIndexOf: function(label) {
         var index = -1;
-        // search x-axis backward for the first entry that is in an equal value range
+        // search x-axis backward for the first entry that is equal
         for (var i = this.labels.length - 1; i > -1; i--) {
-          var until = this.labels[i].timestamp + this.dataset.valueRange;
-          if (label.timestamp <= until) {
-            this._log("Matching label ", new Label(label.timestamp), "is before or equal ", new Label(until));
+          if (label.timestamp <= this.labels[i].timestamp) {
+            this._log("Matching label " + label +  " is before or equal " + this.labels[i]);
             index = i;
             break;
           }

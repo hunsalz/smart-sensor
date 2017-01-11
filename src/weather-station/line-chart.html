@@ -66,16 +66,12 @@
             }
           }
         },
-        valueRange: {
-          type: Number,
-          value: 0
-        },
         valueLimit: {
           type: Number,
           value: 5
         },
         _lastUpdated: {
-          type: Object,
+          type: String,
           notify: true
         }
       },
@@ -97,9 +93,7 @@
             borderColor: 'rgba(220,220,220,1)',
             pointBackgroundColor: 'rgba(220,220,220,1)',
             pointBorderColor: 'rgba(255,255,255,1)',
-            // broadcast a value range to all sub-elements
-            valueRange: this.valueRange,
-            // broadcast a value limit to all sub-elements
+            // broadcast value limit to all sub-elements
             valueLimit: this.valueLimit
           };
           // listen to updates from all <line-chart-item> childs
@@ -131,8 +125,8 @@
               }
             }
           }
-          // save latest update
-          this._lastUpdated = this.labels[this.labels.length - 1];
+          // save latest datetime update
+          this._lastUpdated = new Date(this.labels[this.labels.length - 1].timestamp * 1000);
           // update chart
           this.$.chart_id.updateChart();
         }

@@ -158,9 +158,7 @@
       <div class="content-area">
         <div class="app-grid">
 
-          <!--
-
-          <widget-layout id="widget_temperature_id" title="Temperature">
+          <widget-layout id="widget_temperature_id" title="Temperature" value-limit="12">
             <span class="widget-label">
               <span class="widget-label-font-small">DHT22</span>
               [[last_DHT22_message.parsedPayload.celsius]]°C
@@ -170,8 +168,18 @@
               [[last_BMP280_message.parsedPayload.celsius]]°C
             </span>
             <line-chart id="temperature" labels="{{labels_01}}" datasets="{{datasets_01}}">
-              <line-chart-item labels="{{labels_01}}" dataset="{{datasets_01.0}}" label="DHT22" last-message="[[_computeTemperatureDHT22(last_DHT22_message)]]"></line-chart-item>
-              <line-chart-item labels="{{labels_01}}" dataset="{{datasets_01.1}}" label="BMP280" last-message="[[_computeTemperatureBMP280(last_BMP280_message)]]"></line-chart-item>
+              <line-chart-item
+                labels="{{labels_01}}"
+                dataset="{{datasets_01.0}}"
+                options='{"label": "DHT22", "borderColor": "rgba(220,220,220,1)", "backgroundColor": "rgba(220,220,220,0.2)"}'
+                last-message="[[_computeTemperatureDHT22(last_DHT22_message)]]">
+              </line-chart-item>
+              <line-chart-item
+                labels="{{labels_01}}"
+                dataset="{{datasets_01.1}}"
+                options='{"label": "BMP280", "borderColor": "rgba(151,187,205,0.2)", "backgroundColor": "rgba(151,187,205,0.2)"}'
+                last-message="[[_computeTemperatureBMP280(last_BMP280_message)]]">
+              </line-chart-item>
             </line-chart>
           </widget-layout>
 
@@ -180,14 +188,11 @@
               [[last_DHT22_message.parsedPayload.humidity]]%
             </span>
             <line-chart id="humidity" labels="{{labels_02}}" datasets="{{datasets_02}}">
-              <line-chart-item labels="{{labels_02}}" dataset="{{datasets_02.0}}" label="Humidity" last-message="[[_computeHumidity(last_DHT22_message)]]"></line-chart-item>
               <line-chart-item
                 labels="{{labels_02}}"
-                dataset="{{datasets_02.1}}"
-                label="Default"
-                border-color="rgba(255,0,0,1)"
-                point-background-color="rgba(255,0,0,1)"
-                last-message='{"value": 25, "timestamp": 1482420761}'>
+                dataset="{{datasets_02.0}}"
+                options='{"label": "Humidity"}'
+                last-message="[[_computeHumidity(last_DHT22_message)]]">
               </line-chart-item>
             </line-chart>
           </widget-layout>
@@ -197,7 +202,12 @@
               [[last_BMP280_message.parsedPayload.pascal]]Pa
             </span>
             <line-chart id="pressure" labels="{{labels_03}}" datasets="{{datasets_03}}">
-              <line-chart-item labels="{{labels_03}}" dataset="{{datasets_03.0}}" label="Pascal" last-message="[[_computePressure(last_BMP280_message)]]"></line-chart-item>
+              <line-chart-item
+                labels="{{labels_03}}"
+                dataset="{{datasets_03.0}}"
+                options='{"label": "Pascal"}'
+                last-message="[[_computePressure(last_BMP280_message)]]">
+              </line-chart-item>
             </line-chart>
           </widget-layout>
 
@@ -206,7 +216,18 @@
               [[last_MQ135_message.parsedPayload.co2]]%
             </span>
             <line-chart id="co2" labels="{{labels_04}}" datasets="{{datasets_04}}">
-              <line-chart-item labels="{{labels_04}}" dataset="{{datasets_04.0}}" label="Percent CO2 in Air" last-message="[[_computeCO2(last_MQ135_message)]]"></line-chart-item>
+              <line-chart-item
+                labels="{{labels_04}}"
+                dataset="{{datasets_04.0}}"
+                options='{"label": "default volume", "borderColor": "rgba(50,200,50,0.1)", "backgroundColor": "rgba(50,200,50,0.1)"}'
+                last-message='{"value": 400, "timestamp": 1482420761}'>
+              </line-chart-item>
+              <line-chart-item
+                labels="{{labels_04}}"
+                dataset="{{datasets_04.1}}"
+                options='{"label": "Parts per million (PPM)"}'
+                last-message="[[_computeCO2(last_MQ135_message)]]">
+              </line-chart-item>
             </line-chart>
           </widget-layout>
 
@@ -224,23 +245,29 @@
               <iron-icon icon="maps:place"></iron-icon>
               <span>48.998648, 8.3919072</span>
             </span>
-            <google-map latitude="[[location.latitude]]" longitude="[[location.longitude]]" api-key="[[google_map_api_key]]" fit-to-markers>
-              <google-map-marker latitude="[[location.latitude]]" longitude="[[location.longitude]]" title="[[app_title]]"></google-map-marker>
+            <google-map
+              latitude="[[location.latitude]]"
+              longitude="[[location.longitude]]"
+              api-key="[[google_map_api_key]]"
+              fit-to-markers>
+              <google-map-marker
+                latitude="[[location.latitude]]"
+                longitude="[[location.longitude]]"
+                title="[[app_title]]">
+              </google-map-marker>
             </google-map>
           </widget-layout>
 
-          -->
-
           <!-- for testing purposes only -->
 
-
+          <!--
 
           <widget-layout id="widget_test1_id" title="Test 1">
             <span class="widget-label">
               <span class="widget-label-font-small">A</span>
               [[last_A_message.parsedPayload.celsius]]°C
             </span>
-            <line-chart id="test1_id" labels="{{labels_test1}}" datasets="{{datasets_test1}}" value-range="300" value-limit="6">
+            <line-chart id="test1_id" labels="{{labels_test1}}" datasets="{{datasets_test1}}" value-limit="12">
               <line-chart-item
                 labels="{{labels_test1}}"
                 dataset="{{datasets_test1.0}}"
@@ -250,21 +277,20 @@
             </line-chart>
           </widget-layout>
 
-          <!--
-
           <widget-layout id="widget_test2_id" title="Test 2">
             <span class="widget-label">
               <span class="widget-label-font-small">B</span>
               [[last_B_message.parsedPayload.celsius]]°C
             </span>
-            <line-chart id="chart_test2_id" labels="{{labels_test2}}" datasets="{{datasets_test2}}">
-              <line-chart-item labels="{{labels_test2}}" dataset="{{datasets_test2.0}}" label="Celsius B" last-message="[[_computeTestB(last_B_message)]]"></line-chart-item>
+            <line-chart id="test2_id" labels="{{labels_test2}}" datasets="{{datasets_test2}}">
+              <line-chart-item
+                labels="{{labels_test2}}"
+                dataset="{{datasets_test2.0}}"
+                options='{"label": "Celsius B"}'
+                last-message="[[_computeTestB(last_B_message)]]">
+              </line-chart-item>
             </line-chart>
           </widget-layout>
-
-          -->
-
-          <!--
 
           <widget-layout id="widget_test3_id" title="Test 3">
             <span class="widget-label">
@@ -275,15 +301,25 @@
               <span class="widget-label-font-small">B</span>
               [[last_B_message.parsedPayload.celsius]]°C
             </span>
-            <line-chart id="test1_id" labels="{{labels_test3}}" datasets="{{datasets_test3}}" value-limit="6">
+            <line-chart id="test3_id" labels="{{labels_test3}}" datasets="{{datasets_test3}}" value-limit="12">
               <line-chart-item
                 labels="{{labels_test3}}"
                 dataset="{{datasets_test3.0}}"
                 options='{"label": "Default", "borderColor": "rgba(255,0,0,0.1)", "backgroundColor": "rgba(255,0,0,0.1)"}'
                 last-message='{"value": 20.5, "timestamp": 1482420761}'>
               </line-chart-item>
-              <line-chart-item labels="{{labels_test3}}" dataset="{{datasets_test3.1}}" options='{"label": "Celsius A", "borderColor": "rgba(220,220,220,1)", "backgroundColor": "rgba(220,220,220,0.2)"}' last-message="[[_computeTestA(last_A_message)]]"></line-chart-item>
-              <line-chart-item labels="{{labels_test3}}" dataset="{{datasets_test3.2}}" options='{"label": "Celsius B", "borderColor": "rgba(151,187,205,0.2)", "backgroundColor": "rgba(151,187,205,0.2)"}' last-message="[[_computeTestB(last_B_message)]]"></line-chart-item>
+              <line-chart-item
+                labels="{{labels_test3}}"
+                dataset="{{datasets_test3.1}}"
+                options='{"label": "Celsius A", "borderColor": "rgba(220,220,220,1)", "backgroundColor": "rgba(220,220,220,0.2)"}'
+                last-message="[[_computeTestA(last_A_message)]]">
+              </line-chart-item>
+              <line-chart-item
+                labels="{{labels_test3}}"
+                dataset="{{datasets_test3.2}}"
+                options='{"label": "Celsius B", "borderColor": "rgba(151,187,205,0.2)", "backgroundColor": "rgba(151,187,205,0.2)"}'
+                last-message="[[_computeTestB(last_B_message)]]">
+              </line-chart-item>
             </line-chart>
           </widget-layout>
 
@@ -454,7 +490,7 @@
       },
       _computeCO2: function(event) {
         if (event) {
-          return {value: event.parsedPayload.co2, timestamp: event.parsedPayload.timestamp};
+          return {value: event.parsedPayload.pmm, timestamp: event.parsedPayload.timestamp};
         }
         return {value: null, timestamp: null};
       },
