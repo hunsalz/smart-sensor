@@ -21,6 +21,8 @@
 
 <link rel="import" href="../../bower_components/neon-animation/neon-animations.html">
 
+<link rel="import" href="../../bower_components/platinum-sw/platinum-sw-elements.html">
+
 <link rel="import" href="../../bower_components/mqtt-elements/mqtt-elements.html">
 
 <link rel="import" href="../../bower_components/google-map/google-map.html">
@@ -154,8 +156,11 @@
           <div spacer main-title>[[app_title]]</div>
         </app-toolbar>
       </app-header>
+
       <!-- content area -->
       <div class="content-area">
+
+        <!-- dashboard -->
         <div class="app-grid">
 
           <widget-layout id="widget_temperature_id" title="Temperature" value-limit="12">
@@ -199,7 +204,7 @@
 
           <widget-layout id="widget_pressure_id" title="Atmospheric pressure">
             <span class="widget-label">
-              [[last_BMP280_message.parsedPayload.pascal]]Pa
+              [[last_BMP280_message.parsedPayload.pascal]] Pa
             </span>
             <line-chart id="pressure" labels="{{labels_03}}" datasets="{{datasets_03}}">
               <line-chart-item
@@ -213,13 +218,13 @@
 
           <widget-layout id="widget_co2_id" title="CO2 in Air">
             <span class="widget-label">
-              [[last_MQ135_message.parsedPayload.co2]]%
+              [[last_MQ135_message.parsedPayload.ppm]] PPM
             </span>
             <line-chart id="co2" labels="{{labels_04}}" datasets="{{datasets_04}}">
               <line-chart-item
                 labels="{{labels_04}}"
                 dataset="{{datasets_04.0}}"
-                options='{"label": "default volume", "borderColor": "rgba(50,200,50,0.1)", "backgroundColor": "rgba(50,200,50,0.1)"}'
+                options='{"label": "Default volume", "borderColor": "rgba(50,200,50,0.1)", "backgroundColor": "rgba(50,200,50,0.1)"}'
                 last-message='{"value": 400, "timestamp": 1482420761}'>
               </line-chart-item>
               <line-chart-item
@@ -234,7 +239,7 @@
           <widget-layout id="widget_altitude_id" title="Altitude">
             <span class="widget-label">
               <iron-icon icon="image:landscape"></iron-icon>
-              [[last_BMP280_message.parsedPayload.altitude]]m
+              [[last_BMP280_message.parsedPayload.altitude]] m
             </span>
             <iron-icon class="widget-iron-icon" icon="image:landscape"></iron-icon>
             <span>[[last_BMP280_message.parsedPayload.altitude]]m</span>
@@ -258,10 +263,9 @@
             </google-map>
           </widget-layout>
 
-          <!-- for testing purposes only -->
+          <!-- widgets for testing purposes only -->
 
           <!--
-
           <widget-layout id="widget_test1_id" title="Test 1">
             <span class="widget-label">
               <span class="widget-label-font-small">A</span>
@@ -322,7 +326,6 @@
               </line-chart-item>
             </line-chart>
           </widget-layout>
-
           -->
 
         </div>
@@ -331,6 +334,7 @@
         <p>&copy; Build with <a href="https://www.polymer-project.org">Polymer</a></p>
       </div>
     </app-header-layout>
+
     <!-- settings dialog -->
     <paper-dialog id="mqtt_dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation" withBackdrop>
       <h2>MQTT settings</h2>
@@ -343,6 +347,7 @@
       <app-localstorage-document key="mqtt_broker_password" data="{{mqtt_broker_password}}"></app-localstorage-document>
       <paper-toggle-button id="toggle_id" checked="[[mqtt_connected]]" on-change="_connectMQTTBroker">[[_isConnected(mqtt_connected)]]</paper-toggle-button>
     </paper-dialog>
+
     <!-- MQTT connection & subscription -->
     <mqtt-connection
       id="mqtt_broker_id"
@@ -388,6 +393,15 @@
         last-message="{{last_B_message}}">
       </mqtt-subscription>
     </mqtt-connection>
+
+    <!-- service worker -->
+    <platinum-sw-register skip-waiting
+                          clients-claim
+                          auto-register
+                          reload-on-install>
+      <platinum-sw-cache default-cache-strategy="fastest"></platinum-sw-cache>
+    </platinum-sw-register>
+
   </template>
   <script>
     Polymer({
@@ -449,9 +463,10 @@
         }
       },
       listeners: {
-        'toggle': '_applyToggleIcon'
+        'toggle': '_applyToggleState'
       },
       attached: function() {
+        // listen to window resizing events
         this._updateGridStyles = this._updateGridStyles || function() {
             this.updateStyles();
           }.bind(this);
@@ -460,6 +475,8 @@
         this.async(function() {
           this._connectMQTTBroker();
         });
+        // apply icon toogle state initially
+        this._applyToggleState();
       },
       detached: function() {
         window.removeEventListener('resize', this._updateGridStyles);
@@ -509,7 +526,7 @@
       _isCollapsed: function(collapsed) {
         return collapsed ? 'icons:expand-more' : 'icons:expand-less';
       },
-      _applyToggleIcon: function(event) {
+      _applyToggleState: function() {
         // compute toggle state of all <widget-layout> elements
         var nodes = this.querySelectorAll('widget-layout');
         var state = 0;

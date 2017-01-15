@@ -15,6 +15,7 @@
     "paper-styles": "PolymerElements/paper-styles#latest",
     "paper-toggle-button": "PolymerElements/paper-toggle-button#latest",
     "neon-animation": "PolymerElements/neon-animation#latest",
+    "platinum-sw": "PolymerElements/platinum-sw#latest",
     "chart-elements": "robdodson/chart-elements#latest",
     "mqtt-elements": "mqttjs/mqtt-elements#latest",
     "google-map": "GoogleWebComponents/google-map#latest"
