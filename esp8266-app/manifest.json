@@ -1,0 +1,7 @@
+{
+  "name": "ESP8266 Weather app",
+  "short_name": "ESP8266 Weather app",
+  "start_url": "/",
+  "display": "browser",
+  "orientation": "portrait"
+}

@@ -1,0 +1,199 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/app-layout/app-grid/app-grid-style.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+
+<link rel="import" href="../../bower_components/iron-icons/hardware-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/image-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../../bower_components/paper-styles/color.html">
+<link rel="import" href="../../bower_components/paper-styles/typography.html">
+
+<link rel="import" href="esp-widget.html">
+<link rel="import" href="temperature-widget.html">
+<link rel="import" href="widget-layout.html">
+
+<dom-module id="esp8266-app">
+  <template strip-whitespace>
+    <style include="app-grid-style">
+      :host {
+        display: block;
+        @apply --paper-font-common-base;
+        --app-grid-columns: 2;
+        --app-grid-item-height: 100%;
+        --app-grid-gutter: 5px;
+      }
+      app-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 30vh;
+        color: white;
+        background-color: var(--paper-blue-500);
+        background-size: cover;
+      }
+      [main-title] {
+        font-size: 1.5em;
+        font-weight: bold;
+      }
+      [condensed-title] {
+        font-size: 1em;
+        font-weight: normal;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      @media screen and (orientation: landscape) {
+        app-toolbar.tall {
+          height: 10vh;
+        }
+      }
+      @media screen and (orientation: portrait) {
+        app-toolbar.tall {
+          height: 30vh;
+        }
+      }
+      @media screen and (min-width: 1200px) {
+        :host {
+          --app-grid-columns: 3;
+        }
+      }
+      @media screen and (max-width: 700px) {
+        :host {
+          --app-grid-columns: 1;
+        }
+      }
+      .content-area {
+        background-color: white;
+      }
+      .widget-label {
+        margin: 0px 2px 0px 2px;
+        padding: 5px 15px 5px 15px;
+        border-radius: 20px;
+        background-color: var(--paper-red-500);
+        color: white;
+        font-size: 1em;
+        font-weight: 500;
+        line-height: 1.5em;
+        white-space: nowrap;
+        @apply --layout-horizontal;
+        @apply --layout-center;
+      }
+      .widget-label-font-small {
+        font-size: 0.5em;
+      }
+    </style>
+    <!-- application -->
+    <app-header-layout fullbleed>
+      <!-- header -->
+      <app-header slot="header" fixed condenses effects="waterfall">
+        <app-toolbar sticky>
+          <div condensed-title>[[app_title]]</div>
+          <paper-icon-button icon="{{_isCollapsed(collapsed)}}" on-tap="_toggleAllWidgets"></paper-icon-button>
+        </app-toolbar>
+        <app-toolbar class="tall">
+          <div spacer main-title>[[app_title]]</div>
+        </app-toolbar>
+      </app-header>
+      <!-- content area -->
+      <div class="content-area">
+
+        <div id="_grid" class="app-grid">
+
+          <widget-layout key="_esp_widget" title="ESP overview">
+            <span class="widget-label" slot="header">
+              <iron-icon icon="icons:assessment"></iron-icon>
+            </span>
+            <esp-widget></esp-widget>
+          </widget-layout>
+
+          <widget-layout key="_temperature_widget" title="Temperature overview">
+            <span class="widget-label" slot="header">
+              <iron-icon icon="icons:assessment"></iron-icon>
+            </span>
+            <temperature-widget></temperature-widget>
+          </widget-layout>
+
+        </div>
+      </div>
+    </app-header-layout>
+
+    <!-- service worker -->
+    <!--platinum-sw-register skip-waiting
+                          clients-claim
+                          auto-register
+                          reload-on-install>
+      <platinum-sw-cache default-cache-strategy="fastest"></platinum-sw-cache>
+    </platinum-sw-register-->
+  </template>
+
+  <script>
+    class Esp8266App extends Polymer.Element {
+
+      static get is() { return 'esp8266-app'; }
+
+      static get properties() {
+        return {
+          app_title: {
+            type: String,
+            value: 'ESP8266',
+          },
+          collapsed: {
+            type: Boolean,
+            value: true,
+            notify: true
+          }
+        };
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+        // listen to toggle events from widgets
+        this.addEventListener('toggle', e => {this._applyIconToggle()});
+        // listen to window resizing events
+        this._updateGridStyles = this._updateGridStyles || function() {
+            this.updateStyles();
+          }.bind(this);
+        window.addEventListener('resize', this._updateGridStyles);
+        // apply icon toogle state initially
+        this._applyIconToggle();
+      }
+      /**
+       * is true if all widgets are collapsed
+       */
+      _isCollapsed(collapsed) {
+        return collapsed ? 'icons:expand-more' : 'icons:expand-less';
+      }
+      /**
+       * applies icon toggle according to all containing widget toggles
+       */
+      _applyIconToggle() {
+        // compute toggle state of all <widget-layout> elements
+        var nodes = this.$._grid.querySelectorAll('widget-layout');
+        var state = 0;
+        for (var i = 0; i < nodes.length; i++) {
+          state += nodes[i].isCollapsed();
+        }
+        // switch toggle according to state result
+        this.collapsed = state === 0 ? false : true;
+      }
+      /*
+       * toggles all widgets synchronous
+       */
+      _toggleAllWidgets() {
+        // toggle all <widget-layout> elements
+        var nodes = this.$._grid.querySelectorAll('widget-layout');
+        this.collapsed = !this.collapsed;
+        for (var i = 0; i < nodes.length; i++) {
+          nodes[i].collapse(this.collapsed);
+        }
+      }
+    }
+    window.customElements.define(Esp8266App.is, Esp8266App);
+  </script>
+</dom-module>

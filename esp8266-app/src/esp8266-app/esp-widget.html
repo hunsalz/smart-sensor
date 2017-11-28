@@ -1,0 +1,107 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<dom-module id="esp-widget">
+  <template strip-whitespace>
+    <style>
+      :host {
+        display: block;
+      }
+      table {
+        width: 100%;
+      }
+      th {
+        text-align: left;
+      }
+      tr:nth-child(odd) td{
+        background-color: var(--paper-grey-100);
+      }
+      tr:nth-child(even) td{
+        background-color: var(--paper-grey-200);
+      }
+    </style>
+    <table>
+      <tr><th>Parameter</th><th>Value</th></tr>
+      <template is="dom-repeat" items="{{details}}">
+        <tr><td>{{item.key}}</td><td>{{item.value}}</td></tr>
+      </template>
+    </table>
+    <div>
+      <paper-button on-tap="_update" raised>Update</paper-button>
+    </div>
+    <iron-ajax
+      id="ajax"
+      auto
+      url="[[url]]"
+      handle-as="json"
+      method="GET"
+      on-response="_handleResponse"
+      last-response="{{response}}"
+      debounce-duration="300"
+      timeout="2000"
+      verbose>
+    </iron-ajax>
+  </template>
+
+  <script>
+    class EspWidget extends Polymer.Element {
+
+      static get is() { return 'esp-widget'; }
+
+      static get properties() {
+        return {
+          url: {
+            type: String
+          },
+          details: {
+            type: Object,
+            notify: true
+          },
+          response: {
+            type: Object,
+            observer: '_handleResponse2'
+          },
+        };
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+        this.url = 'http://esp8266.local/esp';
+        //this.url = window.location.origin + "/esp";
+      }
+
+      /*
+       * map response to representation view
+       */
+      _handleResponse(event) {
+
+        console.log(event);
+
+        if (event) {
+          var response = event.detail.response;
+          // map response object to an array of key value pairs
+          var i = 0;
+          var mapping = [];
+          for (var name in response) {
+            mapping[i] = {key: name, value: response[name]};
+            i++;
+          }
+          this.details = mapping;
+        }
+      }
+
+      _handleResponse2() {
+        console.log(this.response);
+      }
+
+      _update() {
+        this.$.ajax.generateRequest()
+      }
+    }
+    window.customElements.define(EspWidget.is, EspWidget);
+  </script>
+</dom-module>

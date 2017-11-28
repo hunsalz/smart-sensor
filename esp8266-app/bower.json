@@ -1,0 +1,22 @@
+{
+  "name": "esp8266-app",
+  "main": "index.html",
+  "dependencies": {
+    "polymer": "Polymer/polymer#latest",
+    "app-layout": "PolymerElements/app-layout#latest",
+    "app-storage": "PolymerElements/app-storage#latest",
+    "iron-ajax": "PolymerElements/iron-ajax#latest",
+    "iron-collapse": "PolymerElements/iron-collapse#latest",
+    "iron-icon": "PolymerElements/iron-icon#latest",
+    "iron-icons": "PolymerElements/iron-icons#latest",
+    "iron-iconset-svg": "PolymerElements/iron-iconset-svg#latest",
+    "iron-flex-layout": "PolymerElements/iron-flex-layout#latest",
+    "paper-button": "PolymerElements/paper-button#latest",
+    "paper-item": "PolymerElements/paper-item#latest",
+    "web-socket": "hunsalz/web-socket"
+  },
+  "devDependencies": {
+    "web-component-tester": "Polymer/web-component-tester#^6.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#latest"
+  }
+}

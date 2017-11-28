@@ -1,0 +1,71 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="../../bower_components/web-socket/web-socket.html">
+
+<dom-module id="temperature-widget">
+  <template strip-whitespace>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <div>Temperature: [[response.temperature]]</div>
+    <div>Humidity: [[response.humidity]]</div>
+    <!--div>
+      <paper-button on-tap="_update" raised>Update</paper-button>
+    </div-->
+    <!-- url="ws://127.0.0.1:8000" -->
+    <web-socket id="ws"
+      auto
+      url="ws://esp8266.local:80/temperature"
+      state="{{state}}"
+      last-response="{{response}}"
+      verbose>
+    <web-socket>
+  </template>
+
+  <script>
+    class TemperatureWidget extends Polymer.Element {
+
+      static get is() { return 'temperature-widget'; }
+
+      static get properties() {
+        return {
+          url: {
+            type: String
+          },
+          response: {
+            type: Object,
+            observer: '_handleResponse'
+          },
+        };
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+        this._setTemperatureInterval(5000);
+      }
+
+      _setTemperatureInterval(milliseconds) {
+        var _this = this;
+        window.setInterval(function() {
+          _this._update(); // TODO update temperature only
+        }, milliseconds);
+      }
+
+      _update() {
+        console.log("WS request ...");
+        this.$.ws.send({temperature: ""});
+      }
+
+      _handleResponse() {
+        console.log(this.response);
+      }
+    }
+    window.customElements.define(TemperatureWidget.is, TemperatureWidget);
+  </script>
+</dom-module>
