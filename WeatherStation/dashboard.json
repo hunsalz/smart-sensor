@@ -1,0 +1,245 @@
+{
+	"version": 1,
+	"allow_edit": true,
+	"plugins": [],
+	"panes": [
+		{
+			"title": "Humidity",
+			"width": 1,
+			"row": {
+				"1": 1,
+				"3": 1,
+				"4": 7
+			},
+			"col": {
+				"2": 1,
+				"3": 2,
+				"4": 2
+			},
+			"col_width": 1,
+			"widgets": [
+				{
+					"type": "text_widget",
+					"settings": {
+						"size": "regular",
+						"value": "datasources[\"DHT22 MQTT\"][\"msg\"][\"humidity\"]",
+						"sparkline": true,
+						"animate": true,
+						"units": "%"
+					}
+				}
+			]
+		},
+		{
+			"title": "Altitude",
+			"width": 1,
+			"row": {
+				"3": 1,
+				"4": 1
+			},
+			"col": {
+				"3": 1,
+				"4": 4
+			},
+			"col_width": 1,
+			"widgets": [
+				{
+					"type": "text_widget",
+					"settings": {
+						"size": "regular",
+						"value": "datasources[\"BMP280 MQTT\"][\"msg\"][\"altitude\"]",
+						"sparkline": true,
+						"animate": true,
+						"units": "m"
+					}
+				}
+			]
+		},
+		{
+			"title": "Temperature [BMP280 Sensor]",
+			"width": 1,
+			"row": {
+				"3": 1,
+				"4": 1
+			},
+			"col": {
+				"3": 3,
+				"4": 2
+			},
+			"col_width": 1,
+			"widgets": [
+				{
+					"type": "text_widget",
+					"settings": {
+						"size": "regular",
+						"value": "datasources[\"BMP280 MQTT\"][\"msg\"][\"celsius\"]",
+						"sparkline": true,
+						"animate": true,
+						"units": "Celsius"
+					}
+				}
+			]
+		},
+		{
+			"title": "Temperature [DHT22 sensor]",
+			"width": 1,
+			"row": {
+				"1": 1,
+				"3": 7,
+				"4": 1
+			},
+			"col": {
+				"1": 0,
+				"3": 1,
+				"4": 3
+			},
+			"col_width": "1",
+			"widgets": [
+				{
+					"type": "text_widget",
+					"settings": {
+						"title": "",
+						"size": "regular",
+						"value": "datasources[\"DHT22 MQTT\"][\"msg\"][\"celsius\"]",
+						"sparkline": true,
+						"animate": true,
+						"units": "Celsius"
+					}
+				}
+			]
+		},
+		{
+			"title": "CO2 in Air",
+			"width": 1,
+			"row": {
+				"3": 7,
+				"4": 7
+			},
+			"col": {
+				"3": 2,
+				"4": 3
+			},
+			"col_width": 1,
+			"widgets": [
+				{
+					"type": "text_widget",
+					"settings": {
+						"size": "regular",
+						"value": "datasources[\"MQ135 MQTT\"][\"msg\"][\"co2\"]",
+						"sparkline": true,
+						"animate": true,
+						"units": "%"
+					}
+				}
+			]
+		},
+		{
+			"title": "Atmosheric pressure",
+			"width": 1,
+			"row": {
+				"3": 7,
+				"4": 9
+			},
+			"col": {
+				"3": 3,
+				"4": 1
+			},
+			"col_width": 1,
+			"widgets": [
+				{
+					"type": "text_widget",
+					"settings": {
+						"size": "regular",
+						"value": "datasources[\"BMP280 MQTT\"][\"msg\"][\"hPa\"]",
+						"sparkline": true,
+						"animate": true,
+						"units": "Hectopascal (hPa)"
+					}
+				}
+			]
+		},
+		{
+			"title": "Atmospheric pressure",
+			"width": 1,
+			"row": {
+				"3": 13,
+				"4": 1
+			},
+			"col": {
+				"3": 1,
+				"4": 1
+			},
+			"col_width": 1,
+			"widgets": [
+				{
+					"type": "gauge",
+					"settings": {
+						"value": "datasources[\"BMP280 MQTT\"][\"msg\"][\"pascal\"]",
+						"units": "Pa",
+						"min_value": 0,
+						"max_value": "1000000"
+					}
+				}
+			]
+		}
+	],
+	"datasources": [
+		{
+			"name": "DHT22 MQTT",
+			"type": "paho_mqtt",
+			"settings": {
+				"server": "m21.cloudmqtt.com",
+				"port": 33444,
+				"use_ssl": true,
+				"client_id": "freeboard_id_DHT22",
+				"username": "dashboard",
+				"password": "password",
+				"topic": "sensor/DHT22",
+				"json_data": true
+			}
+		},
+		{
+			"name": "MQ135 MQTT",
+			"type": "paho_mqtt",
+			"settings": {
+				"server": "m21.cloudmqtt.com",
+				"port": 33444,
+				"use_ssl": true,
+				"client_id": "freeboard_id_MQ135",
+				"username": "dashboard",
+				"password": "password",
+				"topic": "sensor/MQ135",
+				"json_data": true
+			}
+		},
+		{
+			"name": "BMP280 MQTT",
+			"type": "paho_mqtt",
+			"settings": {
+				"server": "m21.cloudmqtt.com",
+				"port": 33444,
+				"use_ssl": true,
+				"client_id": "freeboard_id_BMP280",
+				"username": "dashboard",
+				"password": "password",
+				"topic": "sensor/BMP280",
+				"json_data": true
+			}
+		},
+		{
+			"name": "Photocell MQTT",
+			"type": "paho_mqtt",
+			"settings": {
+				"server": "m21.cloudmqtt.com",
+				"port": 33444,
+				"use_ssl": true,
+				"client_id": "freeboard_id_Photocell",
+				"username": "dashboard",
+				"password": "password",
+				"topic": "sensor/photocell",
+				"json_data": true
+			}
+		}
+	],
+	"columns": 4
+}
