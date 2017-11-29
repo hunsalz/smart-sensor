@@ -1,4 +1,4 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
 
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
@@ -18,10 +18,11 @@
     <!--div>
       <paper-button on-tap="_update" raised>Update</paper-button>
     </div-->
-    <!-- url="ws://127.0.0.1:8000" -->
+    <!-- ws://127.0.0.1:8000 -->
+    <!-- ws://esp8266.local:80/temperature" -->
     <web-socket id="ws"
       auto
-      url="ws://esp8266.local:80/temperature"
+      url="ws://127.0.0.1:8000"
       state="{{state}}"
       last-response="{{response}}"
       verbose>

@@ -1,4 +1,4 @@
-<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
 
 <link rel="import" href="../../bower_components/app-layout/app-grid/app-grid-style.html">
 <link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
@@ -18,7 +18,7 @@
 <link rel="import" href="temperature-widget.html">
 <link rel="import" href="widget-layout.html">
 
-<dom-module id="esp8266-app">
+<dom-module id="weather-station">
   <template strip-whitespace>
     <style include="app-grid-style">
       :host {
@@ -133,15 +133,15 @@
   </template>
 
   <script>
-    class Esp8266App extends Polymer.Element {
+    class WeatherStation extends Polymer.Element {
 
-      static get is() { return 'esp8266-app'; }
+      static get is() { return 'weather-station'; }
 
       static get properties() {
         return {
           app_title: {
             type: String,
-            value: 'ESP8266',
+            value: 'Weather-Station',
           },
           collapsed: {
             type: Boolean,
@@ -194,6 +194,6 @@
         }
       }
     }
-    window.customElements.define(Esp8266App.is, Esp8266App);
+    window.customElements.define(WeatherStation.is, WeatherStation);
   </script>
 </dom-module>

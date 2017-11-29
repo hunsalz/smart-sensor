@@ -1,2 +1,3 @@
-bower_components/
-WeatherStation/config.h
+weather-station-app/bower_components/
+weather-station-app/build/
+weather-station-app/test/

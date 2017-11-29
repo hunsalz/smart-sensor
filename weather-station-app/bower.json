@@ -1,5 +1,5 @@
 {
-  "name": "esp8266-app",
+  "name": "weather-station",
   "main": "index.html",
   "dependencies": {
     "polymer": "Polymer/polymer#latest",

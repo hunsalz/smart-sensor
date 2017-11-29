@@ -43,22 +43,13 @@ class Esp8266 {
     esp8266util::BMP280Service bmp280Service;
     esp8266util::DHTService dhtService;
     esp8266util::MQ135Service mq135Service;
-
     esp8266util::WebSocketListener wsl;
-    
-    const char* PATH = "/www/config/DHT.json";
-
-		unsigned long previousTime = millis();
-
-    // const definitions
-
-		const static uint16_t UPDATE_INTERVAL = 5000;
 
     // wiFi settings
-    const char* WIFI_SSID_1 = "***";
-    const char* WIFI_PASSWD_1 = "***";
-    const char* WIFI_SSID_2 = "***";
-    const char* WIFI_PASSWD_2 = "***";
+    const char* WIFI_SSID_1 = "Sputnik";
+    const char* WIFI_PASSWD_1 = "!--Sputnik--!";
+    const char* WIFI_SSID_2 = "visitors";
+    const char* WIFI_PASSWD_2 = "kA!3MD.kE-92BVtx";
 
     const char* WIFI_AP_SSID = "MyESP8266";
     const char* WIFI_AP_PASSWD = "password";
