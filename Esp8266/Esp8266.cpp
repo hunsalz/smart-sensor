@@ -88,24 +88,10 @@ void Esp8266::begin() {
     request->send(new AsyncBasicResponse(204));
   });
   SERVER.on("/sensor/last", HTTP_GET, [this](AsyncWebServerRequest * request) {
-    
-    DynamicJsonBuffer jsonBuffer;
-    JsonArray& json = jsonBuffer.createArray();
-    JsonObject& dht22 = json.createNestedObject().createNestedObject(F("dht22"));
-    dht22["temperature"] = dhtService.getTemperature();
-    dht22["humidity"] = dhtService.getHumidity();
-    JsonObject& bmp280 = json.createNestedObject().createNestedObject(F("bmp280"));
-    bmp280["temperature"] = bmp280Service.getTemperature();
-    bmp280["pressure"] = bmp280Service.getPressure();
-    bmp280["altitude"] = bmp280Service.getAltitude();
-    JsonObject& mq135 = json.createNestedObject().createNestedObject(F("mq135"));
-    mq135["ppm"] = mq135Service.getPPM();
-    mq135["CO2"] = mq135Service.getCO2();
-    
-    SERVER.send(request, json);
+    SERVER.send(request, getLastSensorValues());
   });
 
-  // TODO raise condition causes error?
+  // TODO probably a raise condition causes an error?
   SERVER.on("/test", HTTP_GET, [this](AsyncWebServerRequest * request) {
 
     // pinMode(2, OUTPUT);
@@ -118,46 +104,28 @@ void Esp8266::begin() {
     SERVER.send(request, json);
   });
 
-
   SERVER.on("/log", HTTP_GET, [this](AsyncWebServerRequest * request) {
     //request->send(new AsyncBasicResponse(200, "text/plain", esp8266util::LogFile.getLog()));
   });
 
   // add web socket support
   wsl.onConnect([this](AsyncWebSocket *ws, AsyncWebSocketClient *client, AwsEventType type, AwsFrameInfo *info, uint8_t *data, size_t len) {
-
-    //Log.verbose(F("WS connect received" CR));
-
-    // create reply message
-    DynamicJsonBuffer buffer;
-    JsonObject& message = buffer.createObject();
-    message["clientId"] = client->id();
-    message["temperature"] = dhtService.getTemperature();
-    message["humidity"] = dhtService.getHumidity();
-    message["temperature"] = dhtService.getTemperature();
-    message["humidity"] = dhtService.getHumidity();
-      
-    // send reply message
-    uint16_t length = message.measureLength() + 1;
+ 
+    // send reply
+    JsonArray& json = getLastSensorValues();
+    uint16_t length = json.measureLength() + 1;
     char payload[length];
-    message.printTo(payload, length);
+    json.printTo(payload, length);
     client->text(payload);
   });
   wsl.onTextMessage([this](AsyncWebSocket *ws, AsyncWebSocketClient *client, AwsEventType type, AwsFrameInfo *info, uint8_t *data, size_t len) {
 
-    //Log.verbose(F("WS request received" CR));
-
-    // create reply message
-    DynamicJsonBuffer buffer;
-    JsonObject& message = buffer.createObject();
-    message["clientId"] = client->id();
-    message["temperature"] = dhtService.getTemperature();
-    message["humidity"] = dhtService.getHumidity();
-      
-    // send reply message
-    uint16_t length = message.measureLength() + 1;
+    // TODO remove duplicate code with onConnect
+    // send reply
+    JsonArray& json = getLastSensorValues();
+    uint16_t length = json.measureLength() + 1;
     char payload[length];
-    message.printTo(payload, length);
+    json.printTo(payload, length);
     client->text(payload);
   });
   // add web socket
@@ -166,6 +134,17 @@ void Esp8266::begin() {
     wsl.onEvent(ws, client, type, arg, data, len);
   });
   SERVER.getWebServer().addHandler(webSocket);
+
+
+
+
+  mqttService.begin("m21.cloudmqtt.com", 13444);
+  mqttService.getMqttClient().setCredentials(MQTT_USER, MQTT_PASSWD);
+
+  File file = SPIFFS.open("test.log", "w+");
+  FILE_LOG.begin(LOG_LEVEL_VERBOSE, &file, true);
+  FILE_LOG.verbose(F("===========TEST==============" CR));
+
   
   Log.verbose(F("=========================" CR));
   Log.verbose(F("Setup finished. Have fun." CR));
@@ -178,20 +157,41 @@ void Esp8266::run() {
 
     MDNS_SERVICE.getMDNSResponder().update();
 
-    //bmp280Service.update();
-    //dhtService.update();
-    //mq135Service.update();
+    bmp280Service.update();
+    dhtService.update();
+    mq135Service.update();
 
-    // broadcast?
-    //Log.verbose(F("Temperature: 22" CR));
-    //webSocket->textAll("Temperature: 22");
+    Log.verbose(F("DHT 22 - Temperature: %D" CR), dhtService.getTemperature());
+    Log.verbose(F("DHT 22 - Humidity: %D" CR), dhtService.getHumidity());
+    Log.verbose(F("BMP 280 - Temperature: %D" CR), bmp280Service.getTemperature());
+    Log.verbose(F("BMP 280 - Pressure: %D" CR), bmp280Service.getPressure());
+    Log.verbose(F("BMP 280 - Altitude: %D" CR), bmp280Service.getAltitude());
+    Log.verbose(F("MQ 135 - PPM: %D" CR), mq135Service.getPPM());
+    Log.verbose(F("MQ 135 - CO2: %D" CR), mq135Service.getCO2());
 
-    //Log.verbose(F("Temperature: %D" CR), dhtService.getTemperature());
-    //Log.verbose(F("Humidity: %D" CR), dhtService.getHumidity());
+    mqttService.publish("weather-station", getLastSensorValues());
 
     char buffer[200];
     sprintf(buffer, "TIME : %s", NTP_SERVICE.getNTPClient().getTimeDateString().c_str());
     //logService.write(buffer, true);
   }
+}
+
+JsonArray& Esp8266::getLastSensorValues() {
+
+  DynamicJsonBuffer jsonBuffer;
+  JsonArray& json = jsonBuffer.createArray();
+  JsonObject& dht22 = json.createNestedObject().createNestedObject(F("dht22"));
+  dht22["temperature"] = dhtService.getTemperature();
+  dht22["humidity"] = dhtService.getHumidity();
+  JsonObject& bmp280 = json.createNestedObject().createNestedObject(F("bmp280"));
+  bmp280["temperature"] = bmp280Service.getTemperature();
+  bmp280["pressure"] = bmp280Service.getPressure();
+  bmp280["altitude"] = bmp280Service.getAltitude();
+  JsonObject& mq135 = json.createNestedObject().createNestedObject(F("mq135"));
+  mq135["ppm"] = mq135Service.getPPM();
+  mq135["CO2"] = mq135Service.getCO2();
+
+  return json;
 }
 
