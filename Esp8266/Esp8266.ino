@@ -12,7 +12,7 @@ void setup() {
   Serial.setDebugOutput(false);
   while(!Serial && !Serial.available()) {}
 
-  Log.begin(LOG_LEVEL_VERBOSE, &Serial);
+  Log.begin(LOG_LEVEL_VERBOSE, &Serial, true);
 
   Log.setPrefix([](Print* prefix) {
     prefix->print(F("[ESP8266] "));
