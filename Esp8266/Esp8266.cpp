@@ -2,7 +2,7 @@
 
 void Esp8266::begin() {
 
-  Log.verbose(F("Setup ESP8266 ..." CR));
+  LOG.verbose(F("Setup ESP8266 ..."));
   // setup hardware components
   bmp280Service.begin();
   dhtService.begin(2, 22);
@@ -48,9 +48,6 @@ void Esp8266::begin() {
     request->send(new AsyncBasicResponse(204));
   });
 
-
-
-  
   SERVER.on("/fs/details", HTTP_GET, [this](AsyncWebServerRequest * request) {
     SERVER.send(request, FILESYSTEM.getStorageDetails());
   });
@@ -135,20 +132,18 @@ void Esp8266::begin() {
   });
   SERVER.getWebServer().addHandler(webSocket);
 
-
-
-
   mqttService.begin("m21.cloudmqtt.com", 13444);
   mqttService.getMqttClient().setCredentials(MQTT_USER, MQTT_PASSWD);
 
-  File file = SPIFFS.open("test.log", "w+");
-  FILE_LOG.begin(LOG_LEVEL_VERBOSE, &file, true);
-  FILE_LOG.verbose(F("===========TEST==============" CR));
+  // TODO SPIFFS not running request
+  FILESYSTEM.getFileSystem();
 
-  
-  Log.verbose(F("=========================" CR));
-  Log.verbose(F("Setup finished. Have fun." CR));
-  Log.verbose(F("=========================" CR));
+  // define & add Appender
+  _logger.getAppender().push_back(new RollingFileAppender(LOG_FILENAME, 40, 1024, true));
+
+  LOG.verbose(F("========================="));
+  LOG.verbose(F("Setup finished. Have fun."));
+  LOG.verbose(F("========================="));
 }
 
 void Esp8266::run() {
@@ -161,19 +156,19 @@ void Esp8266::run() {
     dhtService.update();
     mq135Service.update();
 
-    Log.verbose(F("DHT 22 - Temperature: %D" CR), dhtService.getTemperature());
-    Log.verbose(F("DHT 22 - Humidity: %D" CR), dhtService.getHumidity());
-    Log.verbose(F("BMP 280 - Temperature: %D" CR), bmp280Service.getTemperature());
-    Log.verbose(F("BMP 280 - Pressure: %D" CR), bmp280Service.getPressure());
-    Log.verbose(F("BMP 280 - Altitude: %D" CR), bmp280Service.getAltitude());
-    Log.verbose(F("MQ 135 - PPM: %D" CR), mq135Service.getPPM());
-    Log.verbose(F("MQ 135 - CO2: %D" CR), mq135Service.getCO2());
+    _logger.verbose(F("DHT 22 - Temperature: %g"), dhtService.getTemperature());
+    _logger.verbose(F("DHT 22 - Humidity: %g"), dhtService.getHumidity());
+    _logger.verbose(F("BMP 280 - Temperature: %g"), bmp280Service.getTemperature());
+    _logger.verbose(F("BMP 280 - Pressure: %g"), bmp280Service.getPressure());
+    _logger.verbose(F("BMP 280 - Altitude: %g"), bmp280Service.getAltitude());
+    _logger.verbose(F("MQ 135 - PPM: %g"), mq135Service.getPPM());
+    _logger.verbose(F("MQ 135 - CO2: %g"), mq135Service.getCO2());
 
     mqttService.publish("weather-station", getLastSensorValues());
 
-    char buffer[200];
-    sprintf(buffer, "TIME : %s", NTP_SERVICE.getNTPClient().getTimeDateString().c_str());
-    //logService.write(buffer, true);
+    // char buffer[200];
+    // sprintf(buffer, "TIME : %s", NTP_SERVICE.getNTPClient().getTimeDateString().c_str());
+    
   }
 }
 
