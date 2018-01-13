@@ -1,6 +1,7 @@
 #include "Esp8266.h"
 
 void Esp8266::begin() {
+  
   LOG.verbose(F("Setup ESP8266 ..."));
   // setup hardware components
   _bmp280Service.begin();
@@ -45,25 +46,24 @@ void Esp8266::begin() {
   // add dynamic http resources
   SERVER.on("/esp", HTTP_GET, [this](AsyncWebServerRequest *request) { SERVER.send(request, SYSTEM.getDetails()); });
   // ESP update options
-  SERVER.on("/esp", HTTP_POST, [this](AsyncWebServerRequest *request) {
-    // TODO
-    // https://github.com/me-no-dev/ESPAsyncWebServer#setting-up-the-server }, [this](AsyncWebServerRequest *request, uint8_t
-    // *data, size_t len, size_t index, size_t total) {
+  // TODO https://github.com/me-no-dev/ESPAsyncWebServer#setting-up-the-server
+  SERVER.on("/esp", HTTP_POST, [this](AsyncWebServerRequest *request) {},
+            [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
 
-    DynamicJsonBuffer buffer;
-    JsonVariant variant = buffer.parse((char *)data);
-    if (variant.is<JsonObject &>() && variant.success()) {
-      JsonObject &json = variant.as<JsonObject &>();
-      if (json["loopInterval"].success()) {
-        SYSTEM.setLoopInterval(json["loopInterval"]);
-      }
-      if (json["deepSleepInterval"].success()) {
-        SYSTEM.setDeepSleepInterval(json["deepSleepInterval"]);
-      }
-    }
-    // TODO corresponding HTTP status codes
-    request->send(new AsyncBasicResponse(204));
-  });
+              DynamicJsonBuffer buffer;
+              JsonVariant variant = buffer.parse((char *)data);
+              if (variant.is<JsonObject &>() && variant.success()) {
+                JsonObject &json = variant.as<JsonObject &>();
+                if (json["loopInterval"].success()) {
+                  SYSTEM.setLoopInterval(json["loopInterval"]);
+                }
+                if (json["deepSleepInterval"].success()) {
+                  SYSTEM.setDeepSleepInterval(json["deepSleepInterval"]);
+                }
+              }
+              // TODO corresponding HTTP status codes
+              request->send(new AsyncBasicResponse(204));
+            });
 
   SERVER.on("/fs/details", HTTP_GET,
             [this](AsyncWebServerRequest *request) { SERVER.send(request, FILESYSTEM.getStorageDetails()); });
@@ -72,24 +72,23 @@ void Esp8266::begin() {
   SERVER.on("/wifi/client", HTTP_GET,
             [this](AsyncWebServerRequest *request) { SERVER.send(request, WIFI_CLIENT.getDetails()); });
 
-  SERVER.on("/wifi/client", HTTP_POST, [this](AsyncWebServerRequest *request) {
-    // TODO
-    // https://github.com/me-no-dev/ESPAsyncWebServer#setting-up-the-server }, [this](AsyncWebServerRequest *request, uint8_t
-    // *data, size_t len, size_t index, size_t total) {
+  // TODO https://github.com/me-no-dev/ESPAsyncWebServer#setting-up-the-server
+  SERVER.on("/wifi/client", HTTP_POST, [this](AsyncWebServerRequest *request) {},
+            [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
 
-    DynamicJsonBuffer buffer;
-    JsonVariant variant = buffer.parse((char *)data);
-    if (variant.is<JsonObject &>() && variant.success()) {
-      JsonObject &json = variant.as<JsonObject &>();
-      if (json["disable"].success()) {
-        // WIFI_CLIENT.getWiFi().enableSTA(false);
-        LOG.verbose("disbale received!");
-        WiFi.mode(WIFI_OFF);
-      }
-    }
-    // TODO corresponding HTTP status codes
-    request->send(new AsyncBasicResponse(204));
-  });
+              DynamicJsonBuffer buffer;
+              JsonVariant variant = buffer.parse((char *)data);
+              if (variant.is<JsonObject &>() && variant.success()) {
+                JsonObject &json = variant.as<JsonObject &>();
+                if (json["disable"].success()) {
+                  // WIFI_CLIENT.getWiFi().enableSTA(false);
+                  LOG.verbose("disbale received!");
+                  WiFi.mode(WIFI_OFF);
+                }
+              }
+              // TODO corresponding HTTP status codes
+              request->send(new AsyncBasicResponse(204));
+            });
 
   SERVER.on("/wifi/station", HTTP_GET,
             [this](AsyncWebServerRequest *request) { SERVER.send(request, WIFI_STATION.getDetails()); });
@@ -98,20 +97,19 @@ void Esp8266::begin() {
   SERVER.on("/sensor/dht", HTTP_GET,
             [this](AsyncWebServerRequest *request) { SERVER.send(request, _dhtService.getConfigAsJson()); });
   // DHT update options
-  SERVER.on("/sensor/dht", HTTP_POST, [this](AsyncWebServerRequest *request) {
-    // TODO
-    // https://github.com/me-no-dev/ESPAsyncWebServer#setting-up-the-server }, [this](AsyncWebServerRequest *request, uint8_t
-    // *data, size_t len, size_t index, size_t total) {
+  // TODO https://github.com/me-no-dev/ESPAsyncWebServer#setting-up-the-server
+  SERVER.on("/sensor/dht", HTTP_POST, [this](AsyncWebServerRequest *request) {},
+            [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
 
-    DynamicJsonBuffer buffer;
-    JsonVariant variant = buffer.parse((char *)data);
-    if (variant.is<JsonObject &>() && variant.success()) {
-      JsonObject &json = variant.as<JsonObject &>();
-      _dhtService.begin(json);
-    }
-    // TODO corresponding HTTP status codes
-    request->send(new AsyncBasicResponse(204));
-  });
+              DynamicJsonBuffer buffer;
+              JsonVariant variant = buffer.parse((char *)data);
+              if (variant.is<JsonObject &>() && variant.success()) {
+                JsonObject &json = variant.as<JsonObject &>();
+                _dhtService.begin(json);
+              }
+              // TODO corresponding HTTP status codes
+              request->send(new AsyncBasicResponse(204));
+            });
   SERVER.on("/sensor/last", HTTP_GET, [this](AsyncWebServerRequest *request) { SERVER.send(request, getLastSensorValues()); });
 
   // TODO probably a raise condition causes an error?
@@ -173,6 +171,7 @@ void Esp8266::begin() {
 }
 
 void Esp8266::run() {
+  
   if (SYSTEM.nextLoopInterval()) {
     MDNS_SERVICE.getMDNSResponder().update();
 
@@ -205,6 +204,7 @@ void Esp8266::run() {
 }
 
 JsonArray &Esp8266::getLastSensorValues() {
+  
   DynamicJsonBuffer jsonBuffer;
   JsonArray &json = jsonBuffer.createArray();
   JsonObject &dht22 = json.createNestedObject().createNestedObject(F("dht22"));
