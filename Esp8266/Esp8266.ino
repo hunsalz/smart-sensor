@@ -1,14 +1,15 @@
 #include "Esp8266.h"
 
-Esp8266* esp8266;
+Esp8266 *esp8266;
 
 void setup() {
-
   Serial.begin(115200);
   Serial.setDebugOutput(false);
-  while (!Serial && !Serial.available()) {}
+  while (!Serial && !Serial.available()) {
+  };
+  Serial.println();
 
-  LOG.verbose(F("\nSerial baud rate is [%d]"), Serial.baudRate());
+  LOG.verbose(F("Serial baud rate is [%d]"), Serial.baudRate());
 
   esp8266 = new Esp8266();
   esp8266->begin();
