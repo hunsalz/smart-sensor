@@ -1,7 +1,7 @@
 #include "Esp8266.h"
 
 void Esp8266::begin() {
-  
+
   LOG.verbose(F("Setup ESP8266 ..."));
   // setup hardware components
   _bmp280Service.begin();
@@ -157,10 +157,12 @@ void Esp8266::begin() {
                             size_t len) { _wsl.onEvent(ws, client, type, arg, data, len); });
   SERVER.getWebServer().addHandler(webSocket);
 
-  SYSTEM.setLoopInterval(2000);
+  SYSTEM.setLoopInterval(10000);
 
   // TODO SPIFFS not running request
   FILESYSTEM.getFileSystem();
+
+  Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
 
   // define & add Appender
   _logger.getAppender().push_back(new RollingFileAppender(LOG_FILENAME, 40, 1024, true));
@@ -171,7 +173,7 @@ void Esp8266::begin() {
 }
 
 void Esp8266::run() {
-  
+
   if (SYSTEM.nextLoopInterval()) {
     MDNS_SERVICE.getMDNSResponder().update();
 
@@ -182,17 +184,23 @@ void Esp8266::run() {
     // LOG.verbose(F("First sync : %s"),
     // NTP_SERVICE.getNTPClient().getTimeDate(NTP_SERVICE.getNTPClient().getFirstSync().c_str());
 
-    // _bmp280Service.update();
-    // _dhtService.update();
-    // _mq135Service.update();
+    _bmp280Service.update();
+    _dhtService.update();
+    _mq135Service.update();
 
-    // _logger.verbose(F("DHT 22 - Temperature: %g"), _dhtService.getTemperature());
-    // _logger.verbose(F("DHT 22 - Humidity: %g"), _dhtService.getHumidity());
-    // _logger.verbose(F("BMP 280 - Temperature: %g"), _bmp280Service.getTemperature());
-    // _logger.verbose(F("BMP 280 - Pressure: %g"), _bmp280Service.getPressure());
-    // _logger.verbose(F("BMP 280 - Altitude: %g"), _bmp280Service.getAltitude());
-    // _logger.verbose(F("MQ 135 - PPM: %g"), _mq135Service.getPPM());
-    // _logger.verbose(F("MQ 135 - CO2: %g"), _mq135Service.getCO2());
+    Firebase.setFloat("temperatue", _bmp280Service.getTemperature());
+    // handle error
+    if (Firebase.failed()) {
+      _logger.error(F("Saving Temperature failed. Error"));
+    }
+
+    _logger.verbose(F("DHT 22 - Temperature: %g"), _dhtService.getTemperature());
+    _logger.verbose(F("DHT 22 - Humidity: %g"), _dhtService.getHumidity());
+    _logger.verbose(F("BMP 280 - Temperature: %g"), _bmp280Service.getTemperature());
+    _logger.verbose(F("BMP 280 - Pressure: %g"), _bmp280Service.getPressure());
+    _logger.verbose(F("BMP 280 - Altitude: %g"), _bmp280Service.getAltitude());
+    _logger.verbose(F("MQ 135 - PPM: %g"), _mq135Service.getPPM());
+    _logger.verbose(F("MQ 135 - CO2: %g"), _mq135Service.getCO2());
 
     // _mqttService.publish("weather-station", getLastSensorValues());
 
@@ -204,7 +212,7 @@ void Esp8266::run() {
 }
 
 JsonArray &Esp8266::getLastSensorValues() {
-  
+
   DynamicJsonBuffer jsonBuffer;
   JsonArray &json = jsonBuffer.createArray();
   JsonObject &dht22 = json.createNestedObject().createNestedObject(F("dht22"));
