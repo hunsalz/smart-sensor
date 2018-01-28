@@ -1,171 +1,82 @@
 #include "Esp8266.h"
 
 void Esp8266::begin() {
-
   LOG.verbose(F("Setup ESP8266 ..."));
   // setup hardware components
-  _bmp280Service.begin();
-  _dhtService.begin(2, 22);
-  _mq135Service.begin(A0);
-  // setup WiFi client
-
-  _stationModeGotIPHandler = WiFi.onStationModeGotIP([this](const WiFiEventStationModeGotIP &event) {
-
-    LOG.verbose(F("Received IP [%s] from WiFi station."), event.ip.toString().c_str());
-
-    // MQTT & NTP
-    NTP_SERVICE.begin("europe.pool.ntp.org", UTC0100, 30);
-
-    _mqttService.begin("m21.cloudmqtt.com", 13444);
-    _mqttService.getMqttClient().setCredentials(MQTT_USER, MQTT_PASSWD);
-  });
-
-  _stationModeDisconnectedHandler = WiFi.onStationModeDisconnected([this](const WiFiEventStationModeDisconnected &event) {
-
-    LOG.verbose(F("WiFi connection [%s] dropped. Reason: %d"), event.ssid.c_str(), event.reason);
-
-    NTP_SERVICE.end();
-    _mqttService.end();
-  });
-
-  WIFI_CLIENT.getWiFiMulti().addAP(WIFI_SSID_1, WIFI_PASSWD_1);
-  WIFI_CLIENT.getWiFiMulti().addAP(WIFI_SSID_2, WIFI_PASSWD_2);
-  WIFI_CLIENT.begin();
+  _bmp280.begin();
+  _dht22.begin(2, 22);
+  _mq135.begin(A0);
+  // setup WIFi station
+  WIFI_STA_CFG.addAP(WIFI_SSID_1, WIFI_PASSWD_1);
+  WIFI_STA_CFG.addAP(WIFI_SSID_2, WIFI_PASSWD_2);
+  WIFI_STA_CFG.begin();
   // setup WiFi access point
-  WIFI_STATION.begin(WIFI_AP_SSID, WIFI_AP_PASSWD);
+  WIFI_AP_CFG.begin(WIFI_AP_SSID, WIFI_AP_PASSWD);
   // setup MDNS
-  MDNS_SERVICE.begin("esp8266");
-  MDNS_SERVICE.getMDNSResponder().addService("http", "tcp", PORT);
-  // MDNS_SERVICE.getMDNSResponder().addService("https", "tcp", 443);
+  MDNS_CFG.begin("esp8266");
+  MDNS.addService("http", "tcp", PORT);
+  // init file system to handle static web resources
+  FILESYSTEM.begin();
   // setup web server
   SERVER.begin(PORT);
   // rewrite root context˘˘
   SERVER.getWebServer().rewrite("/", "/index.build.html");
   // handle static web resources
-  SERVER.getWebServer().serveStatic("/", SPIFFS, "/www/", "max-age:15"); // cache-control 15 seconds
+  SERVER.getWebServer().serveStatic("/", SPIFFS, "/www/",
+                                    "max-age:15");  // cache-control 15 seconds
   // add dynamic http resources
-  SERVER.on("/esp", HTTP_GET, [this](AsyncWebServerRequest *request) { SERVER.send(request, SYSTEM.getDetails()); });
-  // ESP update options
-  // TODO https://github.com/me-no-dev/ESPAsyncWebServer#setting-up-the-server
-  SERVER.on("/esp", HTTP_POST, [this](AsyncWebServerRequest *request) {},
-            [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
-
-              DynamicJsonBuffer buffer;
-              JsonVariant variant = buffer.parse((char *)data);
-              if (variant.is<JsonObject &>() && variant.success()) {
-                JsonObject &json = variant.as<JsonObject &>();
-                if (json["loopInterval"].success()) {
-                  SYSTEM.setLoopInterval(json["loopInterval"]);
-                }
-                if (json["deepSleepInterval"].success()) {
-                  SYSTEM.setDeepSleepInterval(json["deepSleepInterval"]);
-                }
-              }
-              // TODO corresponding HTTP status codes
-              request->send(new AsyncBasicResponse(204));
-            });
-
-  SERVER.on("/fs/details", HTTP_GET,
-            [this](AsyncWebServerRequest *request) { SERVER.send(request, FILESYSTEM.getStorageDetails()); });
-  SERVER.on("/fs/listing", HTTP_GET,
-            [this](AsyncWebServerRequest *request) { SERVER.send(request, FILESYSTEM.getFileListing()); });
-  SERVER.on("/wifi/client", HTTP_GET,
-            [this](AsyncWebServerRequest *request) { SERVER.send(request, WIFI_CLIENT.getDetails()); });
-
-  // TODO https://github.com/me-no-dev/ESPAsyncWebServer#setting-up-the-server
-  SERVER.on("/wifi/client", HTTP_POST, [this](AsyncWebServerRequest *request) {},
-            [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
-
-              DynamicJsonBuffer buffer;
-              JsonVariant variant = buffer.parse((char *)data);
-              if (variant.is<JsonObject &>() && variant.success()) {
-                JsonObject &json = variant.as<JsonObject &>();
-                if (json["disable"].success()) {
-                  // WIFI_CLIENT.getWiFi().enableSTA(false);
-                  LOG.verbose("disbale received!");
-                  WiFi.mode(WIFI_OFF);
-                }
-              }
-              // TODO corresponding HTTP status codes
-              request->send(new AsyncBasicResponse(204));
-            });
-
-  SERVER.on("/wifi/station", HTTP_GET,
-            [this](AsyncWebServerRequest *request) { SERVER.send(request, WIFI_STATION.getDetails()); });
-  SERVER.on("/mdns", HTTP_GET, [this](AsyncWebServerRequest *request) { SERVER.send(request, MDNS_SERVICE.getDetails()); });
-  SERVER.on("/ntp", HTTP_GET, [this](AsyncWebServerRequest *request) { SERVER.send(request, NTP_SERVICE.getDetails()); });
-  SERVER.on("/sensor/dht", HTTP_GET,
-            [this](AsyncWebServerRequest *request) { SERVER.send(request, _dhtService.getConfigAsJson()); });
-  // DHT update options
-  // TODO https://github.com/me-no-dev/ESPAsyncWebServer#setting-up-the-server
-  SERVER.on("/sensor/dht", HTTP_POST, [this](AsyncWebServerRequest *request) {},
-            [this](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total) {
-
-              DynamicJsonBuffer buffer;
-              JsonVariant variant = buffer.parse((char *)data);
-              if (variant.is<JsonObject &>() && variant.success()) {
-                JsonObject &json = variant.as<JsonObject &>();
-                _dhtService.begin(json);
-              }
-              // TODO corresponding HTTP status codes
-              request->send(new AsyncBasicResponse(204));
-            });
-  SERVER.on("/sensor/last", HTTP_GET, [this](AsyncWebServerRequest *request) { SERVER.send(request, getLastSensorValues()); });
-
-  // TODO probably a raise condition causes an error?
-  SERVER.on("/test", HTTP_GET, [this](AsyncWebServerRequest *request) {
-
-    // pinMode(2, OUTPUT);
-    // delay(20);
-    // pinMode(2, INPUT_PULLUP);
-
-    DynamicJsonBuffer jsonBuffer;
-    JsonObject &json = jsonBuffer.createObject();
-
-    SERVER.send(request, json);
+  SERVER.on("/fs", HTTP_GET, [this](AsyncWebServerRequest *request) {
+    SERVER.send(request, FILESYSTEM.getStorageDetails());
   });
-
-  SERVER.on("/log", HTTP_GET, [this](AsyncWebServerRequest *request) {
-    // request->send(new AsyncBasicResponse(200, "text/plain", esp8266util::LogFile.getLog()));
+  SERVER.on("/files", HTTP_GET, [this](AsyncWebServerRequest *request) {
+    SERVER.send(request, FILESYSTEM.getFileListing());
   });
-
-  // add web socket support
-  _wsl.onConnect([this](AsyncWebSocket *ws, AsyncWebSocketClient *client, AwsEventType type, AwsFrameInfo *info, uint8_t *data,
-                        size_t len) {
-
-    // send reply
-    JsonArray &json = getLastSensorValues();
-    uint16_t length = json.measureLength() + 1;
-    char payload[length];
-    json.printTo(payload, length);
-    client->text(payload);
+  SERVER.on("/sta", HTTP_GET, [this](AsyncWebServerRequest *request) {
+    SERVER.send(request, WIFI_STA_CFG.getDetails());
   });
-  _wsl.onTextMessage([this](AsyncWebSocket *ws, AsyncWebSocketClient *client, AwsEventType type, AwsFrameInfo *info,
-                            uint8_t *data, size_t len) {
-
-    // TODO remove duplicate code with onConnect
-    // send reply
-    JsonArray &json = getLastSensorValues();
-    uint16_t length = json.measureLength() + 1;
-    char payload[length];
-    json.printTo(payload, length);
-    client->text(payload);
+  SERVER.on("/ap", HTTP_GET, [this](AsyncWebServerRequest *request) {
+    SERVER.send(request, WIFI_AP_CFG.getDetails());
   });
-  // add web socket
-  AsyncWebSocket *webSocket = new AsyncWebSocket("/temperature");
-  webSocket->onEvent([this](AsyncWebSocket *ws, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data,
-                            size_t len) { _wsl.onEvent(ws, client, type, arg, data, len); });
-  SERVER.getWebServer().addHandler(webSocket);
-
-  SYSTEM.setLoopInterval(10000);
-
-  // TODO SPIFFS not running request
-  FILESYSTEM.getFileSystem();
-
+  SERVER.on("/sensor", HTTP_GET, [this](AsyncWebServerRequest *request) {
+    SERVER.send(request, getLastSensorValues());
+  });
+  SERVER.on("/bmp280", HTTP_GET, [this](AsyncWebServerRequest *request) {
+    SERVER.send(request, _bmp280.getJsonValue());
+  });
+  SERVER.on("/dht22", HTTP_GET, [this](AsyncWebServerRequest *request) {
+    SERVER.send(request, _dht22.getJsonValue());
+  });
+  SERVER.on("/mq135", HTTP_GET, [this](AsyncWebServerRequest *request) {
+    SERVER.send(request, _mq135.getJsonValue());
+  });
+  // setup loop interval
+  SYS_CFG.setLoopInterval(2000);
+  // setup Firebase connection
   Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
+  // setup logger settings
+  //_logger.getAppender().push_back(new RollingFileAppender(LOG_FILENAME, 40,
+  // 1024, true));
+  LOG.addLevelToAll(Appender::VERBOSE);
 
-  // define & add Appender
-  _logger.getAppender().push_back(new RollingFileAppender(LOG_FILENAME, 40, 1024, true));
+  LOG.addFormatterToAll([](Print &output, Appender::Level level, const char *msg, va_list *args) {
+
+    // output log level
+    output.print(Appender::toString(level, true));
+    output.print(Appender::DEFAULT_SEPARATOR);
+    // output uptime of this program in milliseconds
+    output.print(millis());
+    output.print(Appender::DEFAULT_SEPARATOR);
+    // output free heap space
+    output.print(ESP.getFreeHeap());
+    output.print(Appender::DEFAULT_SEPARATOR);
+    // determine buffer length for formatted data
+    size_t length = vsnprintf(NULL, 0, msg, *args) + 1;
+    char buffer[length];
+    // output formatted data
+    vsnprintf(buffer, length, msg, *args);
+    output.print(buffer);
+  });
+
 
   LOG.verbose(F("========================="));
   LOG.verbose(F("Setup finished. Have fun."));
@@ -173,58 +84,52 @@ void Esp8266::begin() {
 }
 
 void Esp8266::run() {
+  if (SYS_CFG.nextLoopInterval()) {
+    MDNS.update();
 
-  if (SYSTEM.nextLoopInterval()) {
-    MDNS_SERVICE.getMDNSResponder().update();
+    // update sensors
+    _bmp280.update();
+    _dht22.update();
+    _mq135.update();
 
-    if (timeStatus() == timeSet) {
-      LOG.verbose(F("TIME : %s"), NTP_SERVICE.getNTPClient().getTimeDate(NTP_SERVICE.getNTPClient().getLastSync()));
-    }
+    Firebase.set("BMP280", JsonVariant(_bmp280.getJsonValue()));
 
-    // LOG.verbose(F("First sync : %s"),
-    // NTP_SERVICE.getNTPClient().getTimeDate(NTP_SERVICE.getNTPClient().getFirstSync().c_str());
+    // Firebase.setFloat("BMP280_Temperature", _bmp280.getTemperature());
+    // Firebase.setFloat("BMP280_Pressure", _bmp280.getPressure());
+    // Firebase.setFloat("BMP280_Altitude", _bmp280.getAltitude());
 
-    _bmp280Service.update();
-    _dhtService.update();
-    _mq135Service.update();
-
-    Firebase.setFloat("temperatue", _bmp280Service.getTemperature());
     // handle error
     if (Firebase.failed()) {
-      _logger.error(F("Saving Temperature failed. Error"));
+      // TODO log error code
+      _logger.error(F("Saving BMP280 temperature failed."));
+    } else {
+      _logger.verbose(F("BMP280 Temperature|%.2f"), _bmp280.getTemperature());
     }
 
-    _logger.verbose(F("DHT 22 - Temperature: %g"), _dhtService.getTemperature());
-    _logger.verbose(F("DHT 22 - Humidity: %g"), _dhtService.getHumidity());
-    _logger.verbose(F("BMP 280 - Temperature: %g"), _bmp280Service.getTemperature());
-    _logger.verbose(F("BMP 280 - Pressure: %g"), _bmp280Service.getPressure());
-    _logger.verbose(F("BMP 280 - Altitude: %g"), _bmp280Service.getAltitude());
-    _logger.verbose(F("MQ 135 - PPM: %g"), _mq135Service.getPPM());
-    _logger.verbose(F("MQ 135 - CO2: %g"), _mq135Service.getCO2());
+    // Firebase.setFloat("DHT22_Temperature", _dht22.getTemperature());
+    // Firebase.setFloat("DHT22_Humidity", _dht22.getHumidity());
+
+    // Firebase.setFloat("MQ135_PPM", _mq135.getPPM());
+    // Firebase.setFloat("MQ135_CO2", _mq135.getCO2());
+
+    LOG.verbose(esp8266util::toString(_bmp280.getJsonValue()));
+    LOG.verbose(esp8266util::toString(_dht22.getJsonValue()));
+    LOG.verbose(esp8266util::toString(_mq135.getJsonValue()));
 
     // _mqttService.publish("weather-station", getLastSensorValues());
 
-    // char buffer[200];
-    // sprintf(buffer, "TIME : %s", NTP_SERVICE.getNTPClient().getTimeDateString().c_str());
-
-    // SYSTEM.deepSleep();
+    // SYS_CFG.deepSleep();
   }
 }
 
 JsonArray &Esp8266::getLastSensorValues() {
-
+  
+  // TODO - FIXME
   DynamicJsonBuffer jsonBuffer;
   JsonArray &json = jsonBuffer.createArray();
-  JsonObject &dht22 = json.createNestedObject().createNestedObject(F("dht22"));
-  dht22["temperature"] = _dhtService.getTemperature();
-  dht22["humidity"] = _dhtService.getHumidity();
-  JsonObject &bmp280 = json.createNestedObject().createNestedObject(F("bmp280"));
-  bmp280["temperature"] = _bmp280Service.getTemperature();
-  bmp280["pressure"] = _bmp280Service.getPressure();
-  bmp280["altitude"] = _bmp280Service.getAltitude();
-  JsonObject &mq135 = json.createNestedObject().createNestedObject(F("mq135"));
-  mq135["ppm"] = _mq135Service.getPPM();
-  mq135["CO2"] = _mq135Service.getCO2();
+  json.add(_bmp280.getJsonValue());
+  json.add(_dht22.getJsonValue());
+  json.add(_mq135.getJsonValue());
 
   return json;
 }
