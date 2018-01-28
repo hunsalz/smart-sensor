@@ -17,24 +17,7 @@ class Esp8266 {
 
  private:
   // WiFi settings
-  const char *WIFI_SSID_1 = "Sputnik";
-  const char *WIFI_PASSWD_1 = "!--Sputnik--!";
-  const char *WIFI_SSID_2 = "visitors";
-  const char *WIFI_PASSWD_2 = "kA!3MD.kE-92BVtx";
 
-  const char *WIFI_AP_SSID = "MyESP8266";
-  const char *WIFI_AP_PASSWD = "password";
-
-  // web server settings
-  const static int PORT = 80;
-
-// Firebase settings
-#define FIREBASE_HOST "esp8266-75597.firebaseio.com"
-#define FIREBASE_AUTH "LR1G6xpQsK51zIOIFF039PC2MDZfaRIWZDA1roRb"
-
-  // MQTT settings
-  const char *MQTT_USER = "esp8266";
-  const char *MQTT_PASSWD = "G}L39C+7p?#Q#E";
 
   // file logger
   const char *LOG_FILENAME = "/www/sensor.log";
