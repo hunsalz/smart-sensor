@@ -17,7 +17,24 @@ class Esp8266 {
 
  private:
   // WiFi settings
+  const char *WIFI_SSID_1 = "xxx";
+  const char *WIFI_PASSWD_1 = "xxx";
+  const char *WIFI_SSID_2 = "xxx";
+  const char *WIFI_PASSWD_2 = "xxx";
 
+  const char *WIFI_AP_SSID = "xxx";
+  const char *WIFI_AP_PASSWD = "xxx";
+
+  // web server settings
+  const static int PORT = 80;
+
+  // MQTT settings
+  const char *MQTT_USER = "xxx";
+  const char *MQTT_PASSWD = "xxx";
+
+  // Firebase settings
+  const char *FIREBASE_HOST = "xxx";
+  const char *FIREBASE_AUTH = "xxx";
 
   // file logger
   const char *LOG_FILENAME = "/www/sensor.log";
@@ -26,8 +43,9 @@ class Esp8266 {
   BMP280Sensor _bmp280;
   DHTSensor _dht22;
   MQ135Sensor _mq135;
-  // MQTTService _mqttService;
-  // WebSocketListener _wsl;
+  MQTTService _mqttService;
+
+  void write(const char *name, JsonObject &json);
 
   JsonArray &getLastSensorValues();
 };
