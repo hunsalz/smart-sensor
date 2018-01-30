@@ -1,3 +1,5 @@
+.gitignore
 weather-station-app/bower_components/
 weather-station-app/build/
 weather-station-app/test/
+bak/
