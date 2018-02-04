@@ -13,7 +13,7 @@
     "iron-flex-layout": "PolymerElements/iron-flex-layout#latest",
     "paper-button": "PolymerElements/paper-button#latest",
     "paper-item": "PolymerElements/paper-item#latest",
-    "web-socket": "hunsalz/web-socket"
+    "firebase-element": "firebase/polymerfire#latest"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^6.0.0",
