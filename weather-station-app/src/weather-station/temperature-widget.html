@@ -3,8 +3,9 @@
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
-
-<link rel="import" href="../../bower_components/web-socket/web-socket.html">
+<link rel="import" href="../../bower_components/firebase-element/firebase-app.html">
+<link rel="import" href="../../bower_components/firebase-element/firebase-auth.html">
+<link rel="import" href="../../bower_components/firebase-element/firebase-query.html">
 
 <dom-module id="temperature-widget">
   <template strip-whitespace>
@@ -13,58 +14,54 @@
         display: block;
       }
     </style>
-    <div>Temperature: [[response.temperature]]</div>
-    <div>Humidity: [[response.humidity]]</div>
-    <!--div>
-      <paper-button on-tap="_update" raised>Update</paper-button>
-    </div-->
-    <!-- ws://127.0.0.1:8000 -->
-    <!-- ws://esp8266.local:80/temperature" -->
-    <web-socket id="ws"
-      auto
-      url="ws://127.0.0.1:8000"
-      state="{{state}}"
-      last-response="{{response}}"
-      verbose>
-    <web-socket>
+    <firebase-app 
+      id="app" 
+      auto-login 
+      name="weather-station" 
+      api-key="AIzaSyD0s4sQ6xVcVOLe8TsRcUUiI9aNvED1zKA"
+      auth-domain="weather-station-8266.firebaseapp.com" 
+      database-url="https://weather-station-8266.firebaseio.com" 
+      messaging-sender-id="192040972544" 
+      storage-bucket="weather-station-8266.appspot.com">
+    </firebase-app>
+
+    <firebase-auth 
+      id="auth" 
+      app-name="weather-station" 
+      status-known="{{status}}" 
+      user="{{user}}" 
+      on-error="_handleError">
+    </firebase-auth>
+
+    <firebase-query 
+      app-name="weather-station" 
+      path="/BMP280" 
+      data="{{bmp280}}">
+    </firebase-query>
+
+    <div>Status: [[status]]</div>
+
+    <template is="dom-repeat" items="[[bmp280]]">
+      <div>[[item.$key]] :: [[item.$val]]</div>
+    </template>
   </template>
 
   <script>
+
     class TemperatureWidget extends Polymer.Element {
 
       static get is() { return 'temperature-widget'; }
 
       static get properties() {
         return {
-          url: {
-            type: String
-          },
-          response: {
-            type: Object,
-            observer: '_handleResponse'
-          },
+          data: {
+            type: Object
+          }
         };
       }
 
-      connectedCallback() {
-        super.connectedCallback();
-        this._setTemperatureInterval(5000);
-      }
-
-      _setTemperatureInterval(milliseconds) {
-        var _this = this;
-        window.setInterval(function() {
-          _this._update(); // TODO update temperature only
-        }, milliseconds);
-      }
-
-      _update() {
-        console.log("WS request ...");
-        this.$.ws.send({temperature: ""});
-      }
-
-      _handleResponse() {
-        console.log(this.response);
+      _handleError(event) {
+        console.log("ERROR");
       }
     }
     window.customElements.define(TemperatureWidget.is, TemperatureWidget);
