@@ -17,6 +17,7 @@ cache:
 install:
   - npm install -g polymer-cli
   - npm install
+  - cd weather-station-app/
   - polymer install
 deploy:
   provider: firebase
