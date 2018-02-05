@@ -22,6 +22,7 @@ script:
   - polymer install
   - cd ..
 deploy:
+  skip_cleanup: true
   provider: firebase
   token:
     secure: "1/jMEfYIhv7ST_QnIEKRWi8BYlNHgWN1ASxF1xWvoQs5DJ7YnxdnBgroEsdG-3oVVD"
