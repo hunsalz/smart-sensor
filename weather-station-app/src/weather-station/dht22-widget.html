@@ -1,0 +1,48 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="../../bower_components/firebase-element/firebase-app.html">
+<link rel="import" href="../../bower_components/firebase-element/firebase-auth.html">
+<link rel="import" href="../../bower_components/firebase-element/firebase-query.html">
+
+<dom-module id="dht22-widget">
+  <template strip-whitespace>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    
+    <firebase-query 
+      app-name="weather-station" 
+      path="/DHT22" 
+      data="{{dht22}}">
+    </firebase-query>
+
+    <div>Status: [[status]]</div>
+
+    <template is="dom-repeat" items="[[dht22]]">
+      <div>[[item.$key]] :: [[item.$val]]</div>
+    </template>
+  </template>
+
+  <script>
+
+    class Dht22Widget extends Polymer.Element {
+
+      static get is() { return 'dht22-widget'; }
+
+      static get properties() {
+        return {
+          data: {
+            type: Object
+          }
+        };
+      }
+    }
+    window.customElements.define(Dht22Widget.is, Dht22Widget);
+  </script>
+</dom-module>

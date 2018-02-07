@@ -14,8 +14,12 @@
 <link rel="import" href="../../bower_components/paper-styles/color.html">
 <link rel="import" href="../../bower_components/paper-styles/typography.html">
 
+<link rel="import" href="../../bower_components/firebase-element/firebase-app.html">
+<link rel="import" href="../../bower_components/firebase-element/firebase-auth.html">
+
 <link rel="import" href="esp-widget.html">
-<link rel="import" href="temperature-widget.html">
+<link rel="import" href="bmp280-widget.html">
+<link rel="import" href="dht22-widget.html">
 <link rel="import" href="widget-layout.html">
 
 <dom-module id="weather-station">
@@ -28,6 +32,7 @@
         --app-grid-item-height: 100%;
         --app-grid-gutter: 5px;
       }
+
       app-header {
         position: fixed;
         top: 0;
@@ -38,39 +43,47 @@
         background-color: var(--paper-blue-500);
         background-size: cover;
       }
+
       [main-title] {
         font-size: 1.5em;
         font-weight: bold;
       }
+
       [condensed-title] {
         font-size: 1em;
         font-weight: normal;
         overflow: hidden;
         text-overflow: ellipsis;
       }
+
       @media screen and (orientation: landscape) {
         app-toolbar.tall {
           height: 10vh;
         }
       }
+
       @media screen and (orientation: portrait) {
         app-toolbar.tall {
           height: 30vh;
         }
       }
+
       @media screen and (min-width: 1200px) {
         :host {
           --app-grid-columns: 3;
         }
       }
+
       @media screen and (max-width: 700px) {
         :host {
           --app-grid-columns: 1;
         }
       }
+
       .content-area {
         background-color: white;
       }
+
       .widget-label {
         margin: 0px 2px 0px 2px;
         padding: 5px 15px 5px 15px;
@@ -84,6 +97,7 @@
         @apply --layout-horizontal;
         @apply --layout-center;
       }
+
       .widget-label-font-small {
         font-size: 0.5em;
       }
@@ -112,16 +126,41 @@
             <esp-widget></esp-widget>
           </widget-layout-->
 
-          <widget-layout key="_temperature_widget" title="Temperature overview">
+          <widget-layout key="_bmp280_widget" title="BMP280 overview">
             <span class="widget-label" slot="header">
               <iron-icon icon="icons:assessment"></iron-icon>
             </span>
-            <temperature-widget></temperature-widget>
+            <bmp280-widget></bmp280-widget>
+          </widget-layout>
+          <widget-layout key="_dht22_widget" title="DHT22 overview">
+            <span class="widget-label" slot="header">
+              <iron-icon icon="icons:assessment"></iron-icon>
+            </span>
+            <dht22-widget></dht22-widget>
           </widget-layout>
 
         </div>
       </div>
     </app-header-layout>
+
+    <firebase-app 
+      id="app" 
+      auto-login 
+      name="weather-station" 
+      api-key="AIzaSyD0s4sQ6xVcVOLe8TsRcUUiI9aNvED1zKA"
+      auth-domain="weather-station-8266.firebaseapp.com" 
+      database-url="https://weather-station-8266.firebaseio.com" 
+      messaging-sender-id="192040972544" 
+      storage-bucket="weather-station-8266.appspot.com">
+    </firebase-app>
+
+    <firebase-auth 
+      id="auth" 
+      app-name="weather-station" 
+      status-known="{{status}}" 
+      user="{{user}}" 
+      on-error="_handleFirebaseAuthError">
+    </firebase-auth>
 
     <!-- service worker -->
     <!--platinum-sw-register skip-waiting
@@ -154,11 +193,11 @@
       connectedCallback() {
         super.connectedCallback();
         // listen to toggle events from widgets
-        this.addEventListener('toggle', e => {this._applyIconToggle()});
+        this.addEventListener('toggle', e => { this._applyIconToggle() });
         // listen to window resizing events
-        this._updateGridStyles = this._updateGridStyles || function() {
-            this.updateStyles();
-          }.bind(this);
+        this._updateGridStyles = this._updateGridStyles || function () {
+          this.updateStyles();
+        }.bind(this);
         window.addEventListener('resize', this._updateGridStyles);
         // apply icon toogle state initially
         this._applyIconToggle();
@@ -192,6 +231,11 @@
         for (var i = 0; i < nodes.length; i++) {
           nodes[i].collapse(this.collapsed);
         }
+      }
+
+      _handleFirebaseAuthError(event) {
+        console.log("ERROR");
+        // TODO
       }
     }
     window.customElements.define(WeatherStation.is, WeatherStation);

@@ -3,43 +3,25 @@
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
 <link rel="import" href="../../bower_components/firebase-element/firebase-app.html">
 <link rel="import" href="../../bower_components/firebase-element/firebase-auth.html">
 <link rel="import" href="../../bower_components/firebase-element/firebase-query.html">
 
-<dom-module id="temperature-widget">
+<dom-module id="bmp280-widget">
   <template strip-whitespace>
     <style>
       :host {
         display: block;
       }
     </style>
-    <firebase-app 
-      id="app" 
-      auto-login 
-      name="weather-station" 
-      api-key="AIzaSyD0s4sQ6xVcVOLe8TsRcUUiI9aNvED1zKA"
-      auth-domain="weather-station-8266.firebaseapp.com" 
-      database-url="https://weather-station-8266.firebaseio.com" 
-      messaging-sender-id="192040972544" 
-      storage-bucket="weather-station-8266.appspot.com">
-    </firebase-app>
-
-    <firebase-auth 
-      id="auth" 
-      app-name="weather-station" 
-      status-known="{{status}}" 
-      user="{{user}}" 
-      on-error="_handleError">
-    </firebase-auth>
-
+    
     <firebase-query 
       app-name="weather-station" 
       path="/BMP280" 
       data="{{bmp280}}">
     </firebase-query>
 
-    <div>BMP280</div>
     <div>Status: [[status]]</div>
 
     <template is="dom-repeat" items="[[bmp280]]">
@@ -49,9 +31,9 @@
 
   <script>
 
-    class TemperatureWidget extends Polymer.Element {
+    class Bmp280Widget extends Polymer.Element {
 
-      static get is() { return 'temperature-widget'; }
+      static get is() { return 'bmp280-widget'; }
 
       static get properties() {
         return {
@@ -60,11 +42,7 @@
           }
         };
       }
-
-      _handleError(event) {
-        console.log("ERROR");
-      }
     }
-    window.customElements.define(TemperatureWidget.is, TemperatureWidget);
+    window.customElements.define(Bmp280Widget.is, Bmp280Widget);
   </script>
 </dom-module>
