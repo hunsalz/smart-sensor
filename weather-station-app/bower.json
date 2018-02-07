@@ -12,6 +12,7 @@
     "iron-iconset-svg": "PolymerElements/iron-iconset-svg#latest",
     "iron-flex-layout": "PolymerElements/iron-flex-layout#latest",
     "paper-button": "PolymerElements/paper-button#latest",
+    "paper-icon-button": "PolymerElements/paper-icon-button#latest",
     "paper-item": "PolymerElements/paper-item#latest",
     "firebase-element": "firebase/polymerfire#latest"
   },
