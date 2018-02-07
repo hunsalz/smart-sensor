@@ -17,14 +17,16 @@
     <firebase-query 
       app-name="weather-station" 
       path="/DHT22" 
-      data="{{dht22}}">
+      data="{{data}}"
+      limit-to-last=1>
     </firebase-query>
 
-    <div>Status: [[status]]</div>
+    <div>Temperature = [[data.0.temperature]]</div>
+    <div>Humidity = [[data.0.humidity]]</div>
 
-    <template is="dom-repeat" items="[[dht22]]">
+    <!--template is="dom-repeat" items="[[data]]">
       <div>[[item.$key]] :: [[item.$val]]</div>
-    </template>
+    </template-->
   </template>
 
   <script>

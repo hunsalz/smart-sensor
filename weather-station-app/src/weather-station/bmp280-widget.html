@@ -17,14 +17,17 @@
     <firebase-query 
       app-name="weather-station" 
       path="/BMP280" 
-      data="{{bmp280}}">
+      data="{{data}}"
+      limit-to-last=1>
     </firebase-query>
 
-    <div>Status: [[status]]</div>
+    <div>Temperature = [[data.0.temperature]]</div>
+    <div>Pressure = [[data.0.pressure]]</div>
+    <div>Altitude = [[data.0.altitude]]</div>
 
-    <template is="dom-repeat" items="[[bmp280]]">
+    <!--template is="dom-repeat" items="[[data]]">
       <div>[[item.$key]] :: [[item.$val]]</div>
-    </template>
+    </template-->
   </template>
 
   <script>
@@ -36,9 +39,14 @@
       static get properties() {
         return {
           data: {
-            type: Object
+            type: Object,
+            observer: "_handle"
           }
         };
+      }
+
+      _handle() {
+        //console.log(this.data);
       }
     }
     window.customElements.define(Bmp280Widget.is, Bmp280Widget);

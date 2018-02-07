@@ -100,21 +100,22 @@
       }
 
       .widget-label-font-small {
-        font-size: 0.5em;
+        font-size: 0.8em;
       }
     </style>
     <!-- application -->
     <app-header-layout fullbleed>
       <!-- header -->
-      <app-header slot="header" fixed condenses effects="waterfall">
+      <app-header slot="header" condenses reveals effects="waterfall">
         <app-toolbar sticky>
-          <div condensed-title>[[app_title]]</div>
+          <div condensed-title></div>
+          <div>Connect: [[status]]</div>
+          <paper-icon-button icon="icons:error"></paper-icon-button>
           <paper-icon-button icon="{{_isCollapsed(collapsed)}}" on-tap="_toggleAllWidgets"></paper-icon-button>
         </app-toolbar>
         <app-toolbar class="tall">
           <div spacer main-title>[[app_title]]</div>
         </app-toolbar>
-        <div>Status: [[status]]</div>
       </app-header>
       <!-- content area -->
       <div class="content-area">
@@ -130,12 +131,14 @@
 
           <widget-layout key="_bmp280_widget" title="BMP280 overview">
             <span class="widget-label" slot="header">
+              <div class="widget-label-font-small"></div>
               <iron-icon icon="icons:assessment"></iron-icon>
             </span>
             <bmp280-widget></bmp280-widget>
           </widget-layout>
           <widget-layout key="_dht22_widget" title="DHT22 overview">
             <span class="widget-label" slot="header">
+              <div class="widget-label-font-small"></div>
               <iron-icon icon="icons:assessment"></iron-icon>
             </span>
             <dht22-widget></dht22-widget>
