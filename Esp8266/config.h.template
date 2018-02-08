@@ -1,0 +1,9 @@
+// WiFi settings
+const char *WIFI_SSID_1 = "YOUR SSID";
+const char *WIFI_PSK_1 = "YOUR PRE SHARED KEY";
+const char *WIFI_SSID_2 = "YOUR SSID";
+const char *WIFI_PSK_2 = "YOUR PRE SHARED KEY";
+
+// Firebase settings
+const char *FIREBASE_HOST = "YOUR PROJECT.firebaseio.com";
+const char *FIREBASE_AUTH = "YOUR AUTH TOKEN";

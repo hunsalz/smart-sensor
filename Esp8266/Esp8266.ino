@@ -2,7 +2,7 @@
 #include <FirebaseArduino.h> // https://github.com/firebase/firebase-arduino
 #include <Log4Esp.h>         // https://github.com/hunsalz/log4Esp
 
-
+#include "config.h"
 
 // web server settings
 const static int PORT = 80;
@@ -46,8 +46,8 @@ void setup() {
   _mq135.begin(A0);
 
   // WiFi setup
-  WIFI_STA_CFG.addAP(WIFI_SSID_1, WIFI_PASSWD_1);
-  WIFI_STA_CFG.addAP(WIFI_SSID_2, WIFI_PASSWD_2);
+  WIFI_STA_CFG.addAP(WIFI_SSID_1, WIFI_PSK_1);
+  WIFI_STA_CFG.addAP(WIFI_SSID_2, WIFI_PSK_2);
   WIFI_STA_CFG.begin();
   
   // MDNS setup
@@ -58,7 +58,7 @@ void setup() {
   Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
 
   // increase loop interval
-  SYS_CFG.setLoopInterval(2000);
+  SYS_CFG.setLoopInterval(20000);
 
   // file system setup
   FILESYSTEM.begin();
@@ -95,6 +95,8 @@ void setup() {
 //     SERVER.send(request, _mq135.getJsonValue());
 //   });
 
+  //write("ESP", SYS_CFG.getDetails());
+
   LOG.verbose(F("========================="));
   LOG.verbose(F("Setup finished. Have fun."));
   LOG.verbose(F("========================="));
@@ -103,7 +105,7 @@ void setup() {
 void write(const char *name, JsonObject &json) {
   
   LOG.verbose(F("%s|%s"), name, esp8266util::toString(json).c_str());
-  Firebase.set(name, json);
+  Firebase.push(name, json);
   if (Firebase.failed()) {
     LOG.error(F("Saving %s values to Firebase failed: Reason: %s"), name, Firebase.error().c_str());
   }
