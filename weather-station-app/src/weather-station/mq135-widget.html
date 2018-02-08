@@ -1,0 +1,53 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="../../bower_components/firebase-element/firebase-query.html">
+
+<dom-module id="mq135-widget">
+  <template strip-whitespace>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    
+    <firebase-query 
+      app-name="weather-station" 
+      path="/MQ135" 
+      data="{{data}}"
+      limit-to-last=1>
+    </firebase-query>
+
+    <div>CO2 = [[data.0.CO2]]</div>
+    <div>PPM = [[data.0.ppm]]</div>
+
+    <!--template is="dom-repeat" items="[[data]]">
+      <div>[[item.$key]] :: [[item.$val]]</div>
+    </template-->
+  </template>
+
+  <script>
+
+    class Mq135Widget extends Polymer.Element {
+
+      static get is() { return 'mq135-widget'; }
+
+      static get properties() {
+        return {
+          data: {
+            type: Object,
+            observer: "_handle"
+          }
+        };
+      }
+
+      _handle() {
+        //console.log(this.data);
+      }
+    }
+    window.customElements.define(Mq135Widget.is, Mq135Widget);
+  </script>
+</dom-module>

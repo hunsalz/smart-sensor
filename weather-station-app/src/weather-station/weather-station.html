@@ -21,6 +21,7 @@
 <link rel="import" href="esp-widget.html">
 <link rel="import" href="bmp280-widget.html">
 <link rel="import" href="dht22-widget.html">
+<link rel="import" href="mq135-widget.html">
 <link rel="import" href="widget-layout.html">
 
 <dom-module id="weather-station">
@@ -142,6 +143,13 @@
               <iron-icon icon="icons:assessment"></iron-icon>
             </span>
             <dht22-widget></dht22-widget>
+          </widget-layout>
+          <widget-layout key="_mq135_widget" title="MQ135 overview">
+            <span class="widget-label" slot="header">
+              <div class="widget-label-font-small"></div>
+              <iron-icon icon="icons:assessment"></iron-icon>
+            </span>
+            <mq135-widget></mq135-widget>
           </widget-layout>
 
         </div>
