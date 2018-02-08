@@ -1,27 +1,36 @@
-# Weather-Station is a Polymer App showing various sensor data
+# Weather-Station
 
 [![Build Status](https://travis-ci.org/hunsalz/weather-station.svg?branch=master)](https://travis-ci.org/hunsalz/weather-station)
 [![License](https://img.shields.io/badge/license-MIT%20License-blue.svg)](http://doge.mit-license.org)
 
+## Demo
 
+[Demo](https://weather-station-8266.firebaseapp.com/)
 
-**Outdated stuff**
+## Open issues
 
-**Key features**
+* extend Travis to build C++ code too
+* automate build process for local builds
+* shrink/rotate data from firebase db with Cloud Functions
+* add charts to widgets
+* style widgets
+* optional: expose ESP data to firebase
+* optional: add location data
+* optional: an ESP8266 solo app without firebase
 
-* Full UI responsiveness
-* Pure client side dashboard
-* Client side caching of previous sensor data
-* Service worker enabled
-* Easy to extend with other sensor data and/or complete new widgets
+## Hardware listing
 
-**Open issues**
+* Amica NodeMCU ESP8266 - *Important note: Not all ESP8266 development boards are compatible with the offered motor shields. Especially the sizing of the LoLin NodeMCU V3 doesn't fit together.*
+* TODO add sensor listing
+* A bunch of wires
 
-* Browser compatibility with Firefox
-* Upgrade sources to Polymer 2.0
-* Secure MQTT credentials; rethink authentication
+## Pictures of hardware assembling
+
+TODO
 
 ## Impressions
+
+TODO replace with new pictures
 
 ### Desktop view
 ![weather-station-desktop view](https://cloud.githubusercontent.com/assets/16960855/20327330/e07c3480-ab8c-11e6-9270-0f31b35fc313.png)
@@ -32,28 +41,6 @@
 ### Mobile landscape view
 ![weather-station-mobile-landscape-view](https://cloud.githubusercontent.com/assets/16960855/20327350/f86fa34c-ab8c-11e6-8bf3-dff82b49c139.png)
 
-##The Weather-Station source code, hardware layout and infrastructure setup
+## Setup Weather-Station
 
-All details about source code, hardware layout and infrastructure setup can be found [here](https://github.com/hunsalz/ESP8266/tree/master/WeatherStation).
-
-## Setup Weather Station
-
-### Prerequisites
-
-Install [bower](https://bower.io/):
-
-    npm install -g bower
-
-Install [polymer-cli](https://github.com/Polymer/polymer-cli):
-
-    npm install -g polymer-cli
-
-### Load dependencies and start the development server
-
-Loading all dependencies:
-
-    bower install
-
-Starting the app at `http://localhost:8080`:
-
-    polymer serve
+TODO describe local build steps
