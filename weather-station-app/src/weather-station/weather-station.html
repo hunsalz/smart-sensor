@@ -130,26 +130,26 @@
             <esp-widget></esp-widget>
           </widget-layout-->
 
-          <widget-layout key="_bmp280_widget" title="BMP280 overview">
+          <widget-layout key="_bmp280_widget" title="Temperature [[temperature]]°, Pressure [[pressure]] Pa, Altitude [[altitude]] m">
             <span class="widget-label" slot="header">
-              <div class="widget-label-font-small"></div>
+              <div class="widget-label-font-small">BMP280</div>
               <iron-icon icon="icons:assessment"></iron-icon>
             </span>
-            <bmp280-widget></bmp280-widget>
+            <bmp280-widget temperature="{{temperature}}" pressure="{{pressure}}" altitude="{{altitude}}"></bmp280-widget>
           </widget-layout>
-          <widget-layout key="_dht22_widget" title="DHT22 overview">
+          <widget-layout key="_dht22_widget" title="Temperature [[temperature]]°, Humidity [[humidity]]%">
             <span class="widget-label" slot="header">
-              <div class="widget-label-font-small"></div>
+              <div class="widget-label-font-small">DHT22</div>
               <iron-icon icon="icons:assessment"></iron-icon>
             </span>
-            <dht22-widget></dht22-widget>
+            <dht22-widget temperature="{{temperature}}" humidity="{{humidity}}"></dht22-widget>
           </widget-layout>
-          <widget-layout key="_mq135_widget" title="MQ135 overview">
+          <widget-layout key="_mq135_widget" title="CO2 [[CO2]], PPM [[ppm]]">
             <span class="widget-label" slot="header">
-              <div class="widget-label-font-small"></div>
+              <div class="widget-label-font-small">MQ135</div>
               <iron-icon icon="icons:assessment"></iron-icon>
             </span>
-            <mq135-widget></mq135-widget>
+            <mq135-widget CO2="{{CO2}}" ppm="{{ppm}}"></mq135-widget>
           </widget-layout>
 
         </div>

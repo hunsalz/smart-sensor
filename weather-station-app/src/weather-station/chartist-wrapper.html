@@ -1,0 +1,101 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="chartist-wrapper">
+  <link rel="import" type="css" href="../../bower_components/chartist/dist/chartist.min.css">
+  <template strip-whitespace>
+    <style>
+      :host {
+        display: block;
+      }
+
+      .ct-series-a .ct-line {
+        stroke: red;
+        stroke-width: 1px;
+      }
+
+      .ct-series-a .ct-point {
+        stroke: red;
+        stroke-width: 5px;
+      }
+    </style>
+
+    <div id="chart" class="ct-chart"></div>
+  </template>
+
+  <script type="text/javascript" src="../../bower_components/chartist/dist/chartist.min.js"></script>
+
+  <script>
+
+    class ChartistWrapper extends Polymer.Element {
+
+      static get is() { return 'chartist-wrapper'; }
+
+      static get properties() {
+        return {
+          type: {
+            type: String,
+            value: 'Line'
+          },
+          data: {
+            type: Object,
+            value: {
+              labels: [],
+              series: [
+                []
+              ]
+            },
+            observer: '__dataChanged'
+          },
+          options: {
+            type: Object,
+            notify: true,
+            observer: '__optionsChanged'
+          },
+          events: {
+            type: Object,
+            notify: true,
+            observer: '__eventsChanged'
+          },
+          responsiveOptions: {
+            type: Array
+          }
+        };
+      }
+
+      __render() {
+
+        console.log('__render() called');
+
+        if (!this.chart) {
+          this.chart = Chartist[this.type](this.$.chart, this.data, this.options, this.responsiveOptions);
+          //this.chart = new Chartist.Line(this.$.chart, this.data, this.options, this.responsiveOptions);
+        } else {
+          this.chart.update(this.data, this.options);
+        }
+
+        if (this.events) {
+          this.__bindEvents();
+        }
+      }
+
+      __dataChanged(newData, oldData) {
+        this.__render();
+      }
+
+      __optionsChanged(newOptions, oldOptions) {
+        this.__render();
+      }
+
+      __eventsChanged(newEvents, oldEvents) {
+        this.__render();
+      }
+
+      __bindEvents() {
+        Object.keys(this.events).forEach(function (eventName) {
+          this.chart.on(eventName, this.events[eventName]);
+        }.bind(this));
+      }
+    }
+    window.customElements.define(ChartistWrapper.is, ChartistWrapper);
+  </script>
+</dom-module>

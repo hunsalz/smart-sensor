@@ -14,7 +14,8 @@
     "paper-button": "PolymerElements/paper-button#latest",
     "paper-icon-button": "PolymerElements/paper-icon-button#latest",
     "paper-item": "PolymerElements/paper-item#latest",
-    "firebase-element": "firebase/polymerfire#latest"
+    "firebase-element": "firebase/polymerfire#latest",
+    "chartist": "^0.11.0"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^6.0.0",

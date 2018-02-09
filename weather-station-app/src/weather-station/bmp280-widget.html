@@ -6,6 +6,8 @@
 
 <link rel="import" href="../../bower_components/firebase-element/firebase-query.html">
 
+<link rel="import" href="chartist-wrapper.html">
+
 <dom-module id="bmp280-widget">
   <template strip-whitespace>
     <style>
@@ -13,21 +15,16 @@
         display: block;
       }
     </style>
-    
-    <firebase-query 
-      app-name="weather-station" 
-      path="/BMP280" 
-      data="{{data}}"
-      limit-to-last=1>
+
+    <firebase-query app-name="weather-station" path="/BMP280" data="{{data}}" on-data-changed="__render" limit-to-last=10>
     </firebase-query>
 
-    <div>Temperature = [[data.0.temperature]]</div>
-    <div>Pressure = [[data.0.pressure]]</div>
-    <div>Altitude = [[data.0.altitude]]</div>
-
-    <!--template is="dom-repeat" items="[[data]]">
-      <div>[[item.$key]] :: [[item.$val]]</div>
-    </template-->
+    <div>Temperature = [[temperature]]</div>
+    <chartist-wrapper id="chart1"></chartist-wrapper>
+    <div>Pressure = [[pressure]]</div>
+    <chartist-wrapper id="chart2"></chartist-wrapper>
+    <div>Altitude = [[altitude]]</div>
+    <chartist-wrapper id="chart3"></chartist-wrapper>
   </template>
 
   <script>
@@ -39,14 +36,58 @@
       static get properties() {
         return {
           data: {
-            type: Object,
-            observer: "_handle"
+            type: Array,
+            notify: true,
+            observer: '__render'
+          },
+          temperature: {
+            type: Number,
+            notify: true
+          },
+          pressure: {
+            type: Number,
+            notify: true
+          },
+          altitude: {
+            type: Number,
+            notify: true
           }
         };
       }
 
-      _handle() {
-        //console.log(this.data);
+      __render() {
+
+        if (this.data) {
+          var temperatures = [];
+          var pressures = [];
+          var altitudes = [];
+          this.data.forEach(e => {
+            temperatures.push(e.temperature);
+            pressures.push(e.pressure);
+            altitudes.push(e.altitude);
+          });
+
+          this.$.chart1.data = {
+            series: [temperatures.reverse()],
+            labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+          };
+
+          this.$.chart2.data = {
+            series: [pressures.reverse()],
+            labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+          };
+
+          this.$.chart3.data = {
+            series: [altitudes.reverse()],
+            labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+          };
+
+          if (this.data.length > 0) {
+            this.temperature = this.data[this.data.length - 1].temperature;
+            this.pressure = this.data[this.data.length - 1].pressure;
+            this.altitude = this.data[this.data.length - 1].altitude;
+          }
+        }
       }
     }
     window.customElements.define(Bmp280Widget.is, Bmp280Widget);

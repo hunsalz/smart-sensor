@@ -6,6 +6,8 @@
 
 <link rel="import" href="../../bower_components/firebase-element/firebase-query.html">
 
+<link rel="import" href="chartist-wrapper.html">
+
 <dom-module id="mq135-widget">
   <template strip-whitespace>
     <style>
@@ -13,20 +15,15 @@
         display: block;
       }
     </style>
-    
-    <firebase-query 
-      app-name="weather-station" 
-      path="/MQ135" 
-      data="{{data}}"
-      limit-to-last=1>
+
+    <firebase-query app-name="weather-station" path="/MQ135" data="{{data}}" on-data-changed="__render" limit-to-last=10>
     </firebase-query>
 
-    <div>CO2 = [[data.0.CO2]]</div>
-    <div>PPM = [[data.0.ppm]]</div>
+    <div>CO2 = [[CO2]]</div>
+    <chartist-wrapper id="chart1"></chartist-wrapper>
+    <div>PPM = [[ppm]]</div>
+    <chartist-wrapper id="chart2"></chartist-wrapper>
 
-    <!--template is="dom-repeat" items="[[data]]">
-      <div>[[item.$key]] :: [[item.$val]]</div>
-    </template-->
   </template>
 
   <script>
@@ -38,14 +35,46 @@
       static get properties() {
         return {
           data: {
-            type: Object,
-            observer: "_handle"
+            type: Array,
+            notify: true,
+            observer: '__render'
+          },
+          CO2: {
+            type: Number,
+            notify: true
+          },
+          ppm: {
+            type: Number,
+            notify: true
           }
         };
       }
 
-      _handle() {
-        //console.log(this.data);
+      __render() {
+
+        if (this.data) {
+          var CO2s = [];
+          var ppms = [];
+          this.data.forEach(e => {
+            CO2s.push(e.CO2);
+            ppms.push(e.ppm);
+          });
+
+          this.$.chart1.data = {
+            series: [CO2s.reverse()],
+            labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+          };
+
+          this.$.chart2.data = {
+            series: [ppms.reverse()],
+            labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+          };
+
+          if (this.data.length > 0) {
+            this.CO2 = this.data[this.data.length - 1].CO2;
+            this.ppm = this.data[this.data.length - 1].ppm;
+          }
+        }
       }
     }
     window.customElements.define(Mq135Widget.is, Mq135Widget);
