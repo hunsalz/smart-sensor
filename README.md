@@ -14,6 +14,7 @@
 * shrink/rotate data from firebase db with Cloud Functions
 * add charts to widgets
 * style widgets
+* add package.json
 * optional: expose ESP data to firebase
 * optional: add location data
 * optional: an ESP8266 solo app without firebase
