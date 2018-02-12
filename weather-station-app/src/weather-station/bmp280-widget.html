@@ -57,31 +57,33 @@
 
       __render() {
 
-        console.log(this.data);
-
         if (this.data) {
           var temperatures = [];
           var pressures = [];
           var altitudes = [];
+          var labels = [];
           this.data.forEach(e => {
             temperatures.push(e.temperature);
             pressures.push(e.pressure);
             altitudes.push(e.altitude);
+            var date = new Date(e.timestamp);
+            labels.push(date.toISOString().substring(11, 19));
           });
+          labels.reverse();
 
           this.$.chart1.data = {
             series: [temperatures.reverse()],
-            labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            labels: labels
           };
 
           this.$.chart2.data = {
             series: [pressures.reverse()],
-            labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            labels: labels
           };
 
           this.$.chart3.data = {
             series: [altitudes.reverse()],
-            labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            labels: labels
           };
 
           if (this.data.length > 0) {
