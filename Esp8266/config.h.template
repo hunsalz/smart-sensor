@@ -9,4 +9,4 @@ const char *FIREBASE_HOST = "YOUR PROJECT.firebaseio.com";
 const char *FIREBASE_AUTH = "YOUR AUTH TOKEN";
 
 // mock sensor data
-const bool IS_MOCK_DATA = true;
+const bool USE_MOCK_DATA = true;

@@ -97,14 +97,8 @@ void setup() {
     SERVER.send(request, _mq135.getJsonValue());
   });
 
-  // write("ESP", SYS_CFG.getDetails());
-
-  JsonObject &json = SYS_CFG.getDetails();
-  json.prettyPrintTo(Serial);
-
-
-
-  Firebase.setString("ESP", esp8266util::toString(json).c_str());
+  // TODO error handling
+  Firebase.setString("esp", esp8266util::toString(json).c_str());
 
   LOG.verbose(F("========================="));
   LOG.verbose(F("Setup finished. Have fun."));
@@ -124,11 +118,11 @@ void loop() {
   if (SYS_CFG.nextLoopInterval()) {
     MDNS.update();
 
-    _bmp280.update(IS_MOCK_DATA);
-    _dht22.update(IS_MOCK_DATA);
-    _mq135.update(IS_MOCK_DATA);
-    write("BMP280", _bmp280.getJsonValue());
-    write("DHT22", _dht22.getJsonValue());
-    write("MQ135", _mq135.getJsonValue());
+    _bmp280.update(USE_MOCK_DATA);
+    _dht22.update(USE_MOCK_DATA);
+    _mq135.update(USE_MOCK_DATA);
+    write("bmp280", _bmp280.getJsonValue());
+    write("dht22", _dht22.getJsonValue());
+    write("mq135", _mq135.getJsonValue());
   }
 }
