@@ -5,6 +5,7 @@
   "hosting": {
     "public": "weather-station-app",
     "ignore": [
+      "ESP8266/",
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
