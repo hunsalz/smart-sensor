@@ -16,7 +16,7 @@
       }
     </style>
 
-    <firebase-query app-name="weather-station" path="/BMP280" data="{{data}}" on-data-changed="__render" limit-to-last=10>
+    <firebase-query app-name="weather-station" path="/bmp280" data="{{data}}" on-data-changed="__render" limit-to-last=10>
     </firebase-query>
 
     <div>Temperature = [[temperature]]</div>
@@ -56,6 +56,8 @@
       }
 
       __render() {
+
+        console.log(this.data);
 
         if (this.data) {
           var temperatures = [];
