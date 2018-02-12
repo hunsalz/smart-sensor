@@ -2,3 +2,5 @@
 Esp8266/config.h
 weather-station-app/bower_components/
 weather-station-app/build/
+**/node_modules
+**/package-lock.json
