@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/hunsalz/weather-station.svg?branch=master)](https://travis-ci.org/hunsalz/weather-station)
 [![License](https://img.shields.io/badge/license-MIT%20License-blue.svg)](http://doge.mit-license.org)
 
-## See [app](https://weather-station-8266.firebaseapp.com/) online.
+## See [Weather-Station](https://weather-station-8266.firebaseapp.com/) online.
 
 ## Open issues
 
