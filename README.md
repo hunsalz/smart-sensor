@@ -9,15 +9,16 @@
 
 ## Open issues
 
+CI/CD
 * extend Travis to build C++ code too
+* extend Travis to deploy all firebase artefacts
 * automate build process for local builds
-* shrink/rotate data from firebase db with Cloud Functions
-* add charts to widgets
+
+App
 * style widgets
 * add package.json
-* optional: expose ESP data to firebase
 * optional: add location data
-* optional: an ESP8266 solo app without firebase
+* optional: add an ESP8266 solo app without firebase functions
 
 ## Hardware listing
 
