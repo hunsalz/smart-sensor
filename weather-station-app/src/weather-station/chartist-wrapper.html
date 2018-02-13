@@ -64,17 +64,10 @@
 
       __render() {
 
-        console.log('__render() called');
-
         if (!this.chart) {
           this.chart = Chartist[this.type](this.$.chart, this.data, this.options, this.responsiveOptions);
-          //this.chart = new Chartist.Line(this.$.chart, this.data, this.options, this.responsiveOptions);
         } else {
           this.chart.update(this.data, this.options);
-        }
-
-        if (this.events) {
-          this.__bindEvents();
         }
       }
 
@@ -83,14 +76,16 @@
       }
 
       __optionsChanged(newOptions, oldOptions) {
-        this.__render();
+        // nothing
       }
 
       __eventsChanged(newEvents, oldEvents) {
-        this.__render();
+        // TODO test function
+        __bindEvents()
       }
 
       __bindEvents() {
+        
         Object.keys(this.events).forEach(function (eventName) {
           this.chart.on(eventName, this.events[eventName]);
         }.bind(this));

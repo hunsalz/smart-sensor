@@ -16,13 +16,13 @@
       }
     </style>
 
-    <firebase-query app-name="weather-station" path="/dht22" data="{{data}}" on-data-changed="__render" limit-to-last=10>
+    <firebase-query app-name="weather-station" path="/dht22" data="{{data}}" on-data-changed="__render" limit-to-last=6>
     </firebase-query>
 
     <div>Temperature = [[temperature]]</div>
     <chartist-wrapper id="chart1"></chartist-wrapper>
     <div>Humidity = [[humidity]]</div>
-    <chartist-wrapper id="chart2"></chartist-wrapper>
+    <chartist-wrapper id="chart2" type="Bar"></chartist-wrapper>
 
   </template>
 
@@ -52,15 +52,14 @@
 
       __render() {
 
-        if (this.data) {
+        if (this.data && this.data.length > 0) {
           var temperatures = [];
           var humidities = [];
           var labels = [];
           this.data.forEach(e => {
             temperatures.push(e.temperature);
             humidities.push(e.humidity);
-            var date = new Date(e.timestamp);
-            labels.push(date.toISOString().substring(11, 19));
+            labels.push(this.__getLabel(e));
           });
           labels.reverse();
 
@@ -79,6 +78,19 @@
             this.humidity = this.data[this.data.length - 1].humidity;
           }
         }
+      }
+      __getLabel(element) {
+
+        var date;
+        // due to race conditions with cloud functions the timestamp isn't always set in time for new entries
+        if ('timestamp' in element) {
+          date = new Date(element.timestamp);
+        } else {
+          date = new Date();
+        }
+
+        // return only time in format 'hh:mm::ss'
+        return date.toTimeString().substring(0, 8);
       }
     }
     window.customElements.define(Dht22Widget.is, Dht22Widget);
