@@ -6,7 +6,7 @@ const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
 
 // max number of sensor values
-const MAX_ENTRIES = 5;
+const MAX_ENTRIES = 250;
 
 // manage new BMP280 entries
 // - add a UNIX timestamp if entry lacks any timestamp value
