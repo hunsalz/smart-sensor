@@ -12,6 +12,7 @@ esp8266util::DHTSensor _dht22;
 esp8266util::MQ135Sensor _mq135;
 
 void setup() {
+  
   // logger setup
   LOG.addLevelToAll(Appender::VERBOSE);
   LOG.addFormatterToAll(
@@ -61,12 +62,12 @@ void setup() {
   // increase loop interval
   SYS_CFG.setLoopInterval(20000);
 
-  // file system setup
+  // file system setup to enable static web server content
   FILESYSTEM.begin();
 
   // web server setup
   SERVER.begin();
-  // rewrite root context˘˘
+  // rewrite root context
   SERVER.getWebServer().rewrite("/", "/index.build.html");
   // handle static web resources
   SERVER.getWebServer().serveStatic("/", SPIFFS, "/www/", "max-age:15");
@@ -84,9 +85,6 @@ void setup() {
   SERVER.on("/ap", HTTP_GET, [](AsyncWebServerRequest *request) {
     SERVER.send(request, WIFI_AP_CFG.getDetails());
   });
-  SERVER.on("/sensor", HTTP_GET, [](AsyncWebServerRequest *request) {
-    //SERVER.send(request, getLastSensorValues());
-  });
   SERVER.on("/bmp280", HTTP_GET, [](AsyncWebServerRequest *request) {
     SERVER.send(request, _bmp280.getJsonValue());
   });
@@ -97,6 +95,7 @@ void setup() {
     SERVER.send(request, _mq135.getJsonValue());
   });
 
+  // save current ESP settings to Firebase
   set("esp", SYS_CFG.getDetails());
 
   LOG.verbose(F("========================="));
@@ -123,12 +122,14 @@ void push(const char *name, JsonObject &json) {
 }
 
 void loop() {
+  
   if (SYS_CFG.nextLoopInterval()) {
     MDNS.update();
 
     _bmp280.update(USE_MOCK_DATA);
     _dht22.update(USE_MOCK_DATA);
     _mq135.update(USE_MOCK_DATA);
+    // push sensor values to Firebase
     push("bmp280", _bmp280.getJsonValue());
     push("dht22", _dht22.getJsonValue());
     push("mq135", _mq135.getJsonValue());
