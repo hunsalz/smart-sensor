@@ -1,10 +1,13 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 
-<link rel="import" href="../../bower_components/app-layout/app-grid/app-grid-style.html">
+<link rel="import" href="../../bower_components/app-layout/app-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+
+<!-- <link rel="import" href="../../bower_components/app-layout/app-grid/app-grid-style.html">
 <link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
 <link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
-<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html"> -->
 
 <link rel="import" href="../../bower_components/iron-icons/hardware-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/image-icons.html">
@@ -43,7 +46,7 @@
         height: 30vh;
         color: white;
         background-color: var(--paper-blue-500);
-        background-size: cover;
+        z-index: 1;
       }
 
       [main-title] {
@@ -83,6 +86,7 @@
       }
 
       .content-area {
+        padding-top: 30vh;
         background-color: white;
       }
 
@@ -115,14 +119,12 @@
     <!-- application -->
     <app-header-layout fullbleed>
       <!-- header -->
-      <app-header slot="header" condenses reveals effects="waterfall">
-        <app-toolbar sticky>
-          <div condensed-title></div>
-          <div>Connect: [[status]]</div>
-          <paper-icon-button icon="icons:error"></paper-icon-button>
+      <app-header condenses fixed effects="resize-title">
+        <app-toolbar>
+          <div spacer condensed-title>[[app_title]]</div>
           <paper-icon-button icon="{{_isCollapsed(collapsed)}}" on-tap="_toggleAllWidgets"></paper-icon-button>
         </app-toolbar>
-        <app-toolbar class="tall">
+        <app-toolbar>
           <div spacer main-title>[[app_title]]</div>
         </app-toolbar>
       </app-header>
@@ -156,8 +158,9 @@
               <iron-icon icon="icons:assessment"></iron-icon>
             </span>
             <esp-widget></esp-widget>
-          </widget-layout </div>
+          </widget-layout>
         </div>
+      </div>
     </app-header-layout>
 
     <!-- service worker -->
