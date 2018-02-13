@@ -98,6 +98,7 @@ void setup() {
   });
 
   // TODO error handling
+  JsonObject &json = SYS_CFG.getDetails();
   Firebase.setString("esp", esp8266util::toString(json).c_str());
 
   LOG.verbose(F("========================="));
@@ -122,7 +123,7 @@ void loop() {
     _dht22.update(USE_MOCK_DATA);
     _mq135.update(USE_MOCK_DATA);
     write("bmp280", _bmp280.getJsonValue());
-    write("dht22", _dht22.getJsonValue());
-    write("mq135", _mq135.getJsonValue());
+    //write("dht22", _dht22.getJsonValue());
+    //write("mq135", _mq135.getJsonValue());
   }
 }
