@@ -97,21 +97,28 @@ void setup() {
     SERVER.send(request, _mq135.getJsonValue());
   });
 
-  // TODO error handling
-  JsonObject &json = SYS_CFG.getDetails();
-  Firebase.setString("esp", esp8266util::toString(json).c_str());
+  set("esp", SYS_CFG.getDetails());
 
   LOG.verbose(F("========================="));
   LOG.verbose(F("Setup finished. Have fun."));
   LOG.verbose(F("========================="));
 }
 
-void write(const char *name, JsonObject &json) {
-  LOG.verbose(F("%s|%s"), name, esp8266util::toString(json).c_str());
-  // json["millis"] = millis();
+void set(const char *name, JsonObject &json) {
+  
+  LOG.verbose(F("Set value|%s|%s"), name, esp8266util::toString(json).c_str());
+  Firebase.setString(name, esp8266util::toString(json).c_str());
+  if (Firebase.failed()) {
+    LOG.error(F("Saving %s value to Firebase failed: Reason: %s"), name, Firebase.error().c_str());
+  }
+}
+
+void push(const char *name, JsonObject &json) {
+  
+  LOG.verbose(F("Push value|%s|%s"), name, esp8266util::toString(json).c_str());
   Firebase.push(name, json);
   if (Firebase.failed()) {
-    LOG.error(F("Saving %s values to Firebase failed: Reason: %s"), name, Firebase.error().c_str());
+    LOG.error(F("Saving %s value to Firebase failed: Reason: %s"), name, Firebase.error().c_str());
   }
 }
 
@@ -122,8 +129,8 @@ void loop() {
     _bmp280.update(USE_MOCK_DATA);
     _dht22.update(USE_MOCK_DATA);
     _mq135.update(USE_MOCK_DATA);
-    write("bmp280", _bmp280.getJsonValue());
-    //write("dht22", _dht22.getJsonValue());
-    //write("mq135", _mq135.getJsonValue());
+    push("bmp280", _bmp280.getJsonValue());
+    push("dht22", _dht22.getJsonValue());
+    push("mq135", _mq135.getJsonValue());
   }
 }
