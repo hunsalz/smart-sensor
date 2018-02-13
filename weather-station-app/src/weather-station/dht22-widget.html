@@ -20,7 +20,7 @@
     </firebase-query>
 
     <div>Temperature = [[temperature]]</div>
-    <chartist-wrapper id="chart1"></chartist-wrapper>
+    <chartist-wrapper id="chart1" options="[[options]]"></chartist-wrapper>
     <div>Humidity = [[humidity]]</div>
     <chartist-wrapper id="chart2" type="Bar"></chartist-wrapper>
 
@@ -46,6 +46,12 @@
           humidity: {
             type: Number,
             notify: true
+          },
+          options: {
+            type: Object,
+            value: {
+              showArea: true
+            }
           }
         };
       }
