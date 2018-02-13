@@ -16,7 +16,7 @@
       }
     </style>
 
-    <firebase-query app-name="weather-station" path="/mq135" data="{{data}}" limit-to-last=6>
+    <firebase-query app-name="weather-station" path="/mq135" data="{{data}}" on-data-changed="__render" limit-to-last=6>
     </firebase-query>
 
     <div>CO2 = [[co2]]</div>

@@ -104,6 +104,14 @@
         font-size: 0.8em;
       }
     </style>
+
+    <firebase-app id="app" auto-login name="weather-station" api-key="AIzaSyD0s4sQ6xVcVOLe8TsRcUUiI9aNvED1zKA" auth-domain="weather-station-8266.firebaseapp.com"
+      database-url="https://weather-station-8266.firebaseio.com" messaging-sender-id="192040972544" storage-bucket="weather-station-8266.appspot.com">
+    </firebase-app>
+
+    <firebase-auth id="auth" app-name="weather-station" status-known="{{status}}" user="{{user}}" on-error="_handleFirebaseAuthError">
+    </firebase-auth>
+
     <!-- application -->
     <app-header-layout fullbleed>
       <!-- header -->
@@ -151,13 +159,6 @@
           </widget-layout </div>
         </div>
     </app-header-layout>
-
-    <firebase-app id="app" auto-login name="weather-station" api-key="AIzaSyD0s4sQ6xVcVOLe8TsRcUUiI9aNvED1zKA" auth-domain="weather-station-8266.firebaseapp.com"
-      database-url="https://weather-station-8266.firebaseio.com" messaging-sender-id="192040972544" storage-bucket="weather-station-8266.appspot.com">
-    </firebase-app>
-
-    <firebase-auth id="auth" app-name="weather-station" status-known="{{status}}" user="{{user}}" on-error="_handleFirebaseAuthError">
-    </firebase-auth>
 
     <!-- service worker -->
     <!--platinum-sw-register skip-waiting

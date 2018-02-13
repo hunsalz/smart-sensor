@@ -30,7 +30,7 @@
       }
     </style>
 
-    <firebase-query app-name="weather-station" path="/esp" data="{{data}}" on-data-changed="__render">
+    <firebase-query app-name="weather-station" path="/esp" data="{{data}}" on-data-changed="__render" log>
     </firebase-query>
 
     <table>
@@ -72,6 +72,11 @@
           url: {
             type: String
           },
+          data: {
+            type: Object,
+            notify: true,
+            observer: '__render'
+          },
           details: {
             type: Object,
             notify: true
@@ -79,11 +84,11 @@
         };
       }
 
-      connectedCallback() {
-        super.connectedCallback();
-        this.url = 'http://esp8266.local/esp';
-        //this.url = window.location.origin + "/esp";
-      }
+      // connectedCallback() {
+      //   super.connectedCallback();
+      //   this.url = 'http://esp8266.local/esp';
+      //   //this.url = window.location.origin + "/esp";
+      // }
 
       __render() {
 
@@ -94,26 +99,26 @@
         }
       }
 
-      __handleResponse(event) {
+      // __handleResponse(event) {
 
-        console.log(event);
+      //   console.log(event);
 
-        if (event) {
-          var response = event.detail.response;
-          // map response object to an array of key value pairs
-          var i = 0;
-          var mapping = [];
-          for (var name in response) {
-            mapping[i] = { key: name, value: response[name] };
-            i++;
-          }
-          this.details = mapping;
-        }
-      }
+      //   if (event) {
+      //     var response = event.detail.response;
+      //     // map response object to an array of key value pairs
+      //     var i = 0;
+      //     var mapping = [];
+      //     for (var name in response) {
+      //       mapping[i] = { key: name, value: response[name] };
+      //       i++;
+      //     }
+      //     this.details = mapping;
+      //   }
+      // }
 
-      __update() {
-        this.$.ajax.generateRequest()
-      }
+      // __update() {
+      //   this.$.ajax.generateRequest()
+      // }
     }
     window.customElements.define(EspWidget.is, EspWidget);
   </script>
