@@ -14,6 +14,11 @@
       :host {
         display: block;
       }
+
+      #chart3 {
+        --chartist-wrapper-stroke-color: var(--paper-blue-800);
+        --chartist-wrapper-fill: var(--paper-blue-800);;
+      }
     </style>
 
     <firebase-query app-name="weather-station" path="/bmp280" data="{{data}}" on-data-changed="__render" limit-to-last=6>

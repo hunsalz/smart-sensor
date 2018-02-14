@@ -10,13 +10,21 @@
       }
 
       .ct-series-a .ct-line {
-        stroke: red;
+        stroke: var(--chartist-wrapper-stroke-color, red);
         stroke-width: 1px;
       }
 
+      .ct-series-a .ct-bar {
+        stroke: var(--chartist-wrapper-stroke-color, red);
+      }
+
       .ct-series-a .ct-point {
-        stroke: red;
+        stroke: var(--chartist-wrapper-stroke-color, red);
         stroke-width: 5px;
+      }
+
+      .ct-series-a .ct-area {
+        fill: var(--chartist-wrapper-fill, red);
       }
     </style>
 
@@ -81,7 +89,7 @@
       }
 
       __eventsChanged(newEvents, oldEvents) {
-        // TODO test function
+        // TODO - test function
         __bindEvents()
       }
 
