@@ -8,7 +8,7 @@
 
 <link rel="import" href="../../bower_components/firebase-element/firebase-query.html">
 
-<dom-module id="esp-widget">
+<dom-module id="hardware-widget">
   <template strip-whitespace>
     <style>
       :host {
@@ -32,7 +32,7 @@
       }
     </style>
 
-    <firebase-query app-name="weather-station" path="/esp" data="{{data}}" on-data-changed="__render" log>
+    <firebase-query app-name="weather-station" path="/esp" data="{{data}}" on-data-changed="__render">
     </firebase-query>
 
     <table>
@@ -40,17 +40,15 @@
         <th>Parameter</th>
         <th>Value</th>
       </tr>
-      <template is="dom-repeat" items="{{details}}">
+      <template is="dom-repeat" items="{{data}}">
         <tr>
-          <td>{{item.key}}</td>
-          <td>{{item.value}}</td>
+          <td>{{item.$key}}</td>
+          <td>{{item.$val}}</td>
         </tr>
       </template>
     </table>
-    <!-- <div>
-      <paper-button on-tap="__update" raised>Update</paper-button>
-    </div>
-    <iron-ajax
+
+    <!-- <iron-ajax
       id="ajax"
       auto
       url="[[url]]"
@@ -65,9 +63,9 @@
   </template>
 
   <script>
-    class EspWidget extends Polymer.Element {
+    class HardwareWidget extends Polymer.Element {
 
-      static get is() { return 'esp-widget'; }
+      static get is() { return 'hardware-widget'; }
 
       static get properties() {
         return {
@@ -78,10 +76,6 @@
             type: Object,
             notify: true,
             observer: '__render'
-          },
-          details: {
-            type: Object,
-            notify: true
           }
         };
       }
@@ -94,10 +88,8 @@
 
       __render() {
 
-        console.log(this.data);
-
         if (this.data) {
-
+          // nothing to do
         }
       }
 
@@ -122,6 +114,6 @@
       //   this.$.ajax.generateRequest()
       // }
     }
-    window.customElements.define(EspWidget.is, EspWidget);
+    window.customElements.define(HardwareWidget.is, HardwareWidget);
   </script>
 </dom-module>
