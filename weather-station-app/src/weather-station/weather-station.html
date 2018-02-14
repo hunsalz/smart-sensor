@@ -137,7 +137,7 @@
       <!-- content area -->
       <div class="content-area">
         <div id="_grid" class="app-grid">
-          <widget-layout>
+          <widget-layout key="__bmp280">
             <div slot="title">
               <div>Temperature [[temperature1]]°</div>
               <div>Pressure [[pressure]] Pa</div>
@@ -150,7 +150,7 @@
             </div>
             <bmp280-widget temperature="{{temperature1}}" pressure="{{pressure}}" altitude="{{altitude}}"></bmp280-widget>
           </widget-layout>
-          <widget-layout>
+          <widget-layout key="__dht22">
             <div slot="title">
               <div>Temperature [[temperature2]]°</div>
               <div>Humidity [[humidity]]%</div>
@@ -162,7 +162,7 @@
             </div>
             <dht22-widget temperature="{{temperature2}}" humidity="{{humidity}}"></dht22-widget>
           </widget-layout>
-          <widget-layout>
+          <widget-layout key="__mq135">
             <div slot="title">
               <div>CO2 [[ppm]] parts per million (ppm)</div>
             </div>
@@ -173,7 +173,7 @@
             </div>
             <mq135-widget co2="{{co2}}" ppm="{{ppm}}"></mq135-widget>
           </widget-layout>
-          <widget-layout>
+          <widget-layout key="__hardware">
             <div slot="title">
               <div>Hardware overview</div>
             </div>
