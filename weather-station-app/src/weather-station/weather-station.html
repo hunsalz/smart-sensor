@@ -207,17 +207,19 @@
         };
       }
 
-      connectedCallback() {
-        super.connectedCallback();
-        // listen to toggle events from widgets
-        this.addEventListener('toggle', e => { this.__applyIconToggle() });
-        // listen to window resizing events
-        this.__updateGridStyles = this.__updateGridStyles || function () {
-          this.updateStyles();
-        }.bind(this);
-        window.addEventListener('resize', this.__updateGridStyles);
-        // apply icon toogle state initially
-        this.__applyIconToggle();
+      constructor() {
+        super();
+        Polymer.RenderStatus.afterNextRender(this, function () {
+          // listen to toggle events from widgets
+          this.addEventListener('iron-resize', e => { this.__applyIconToggle() });
+          // listen to window resizing events
+          this.__updateGridStyles = this.__updateGridStyles || function () {
+            this.updateStyles();
+          }.bind(this);
+          window.addEventListener('resize', this.__updateGridStyles);
+          // apply icon toogle state initially
+          this.__applyIconToggle();
+        });
       }
 
       /**

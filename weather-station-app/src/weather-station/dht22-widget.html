@@ -69,9 +69,11 @@
         };
       }
 
-      ready() {
-        super.ready();
-        this.addEventListener('iron-resize', () => { this.__render() });
+      constructor() {
+        super();
+        Polymer.RenderStatus.afterNextRender(this, function() {
+          this.addEventListener('iron-resize', () => { this.__render() });
+        });
       }
 
       __render() {
