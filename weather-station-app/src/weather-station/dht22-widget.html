@@ -15,6 +15,15 @@
         display: block;
       }
 
+      .subtitle {
+        text-align: center;
+        color: var(--paper-blue-grey-700);
+        font-size: 0.8em;
+        @apply --layout-flex;
+        width: 100%;
+      }
+
+
       #chart2 {
         --chartist-wrapper-stroke-color: var(--paper-blue-800);
         --chartist-wrapper-fill: var(--paper-blue-800);;
@@ -24,11 +33,10 @@
     <firebase-query app-name="weather-station" path="/dht22" data="{{data}}" on-data-changed="__render" limit-to-last=6>
     </firebase-query>
 
-    <div>Temperature = [[temperature]]</div>
+    <div class="subtitle">Last temperature measured is [[temperature]]°</div>
     <chartist-wrapper id="chart1" options="[[options]]"></chartist-wrapper>
-    <div>Humidity = [[humidity]]</div>
+    <div class="subtitle">Last humidity measured is [[humidity]] %</div>
     <chartist-wrapper id="chart2" type="Bar"></chartist-wrapper>
-
   </template>
 
   <script>

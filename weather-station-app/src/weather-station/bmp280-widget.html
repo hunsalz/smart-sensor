@@ -14,6 +14,14 @@
       :host {
         display: block;
       }
+      
+      .subtitle {
+        text-align: center;
+        color: var(--paper-blue-grey-700);
+        font-size: 0.8em;
+        @apply --layout-flex;
+        width: 100%;
+      }
 
       #chart3 {
         --chartist-wrapper-stroke-color: var(--paper-blue-800);
@@ -24,11 +32,11 @@
     <firebase-query app-name="weather-station" path="/bmp280" data="{{data}}" on-data-changed="__render" limit-to-last=6>
     </firebase-query>
 
-    <div>Temperature = [[temperature]]</div>
+    <div class="subtitle">Last temperature measured is [[temperature]]°</div>
     <chartist-wrapper id="chart1" options="[[options]]"></chartist-wrapper>
-    <div>Pressure = [[pressure]]</div>
+    <div class="subtitle">Last pressure measured is [[pressure]] Pascal (Pa)</div>
     <chartist-wrapper id="chart2" type="Bar"></chartist-wrapper>
-    <div>Altitude = [[altitude]]</div>
+    <div class="subtitle">Last altitude measured is [[altitude]] m</div>
     <chartist-wrapper id="chart3" options="[[options]]"></chartist-wrapper>
   </template>
 

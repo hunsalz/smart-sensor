@@ -14,14 +14,21 @@
       :host {
         display: block;
       }
+
+      .subtitle {
+        text-align: center;
+        color: var(--paper-blue-grey-700);
+        font-size: 0.8em;
+        @apply --layout-flex;
+        width: 100%;
+      }
     </style>
 
     <firebase-query app-name="weather-station" path="/mq135" data="{{data}}" on-data-changed="__render" limit-to-last=6>
     </firebase-query>
 
-    <div>PPM = [[ppm]]</div>
+    <div class="subtitle">Last CO2 value measured is [[ppm]] parts per million (10<sup>-6</sup>)</div>
     <chartist-wrapper id="chart" type="Bar"></chartist-wrapper>
-
   </template>
 
   <script>
