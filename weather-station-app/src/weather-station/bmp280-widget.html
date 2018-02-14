@@ -1,8 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 
-<link rel="import" href="../../bower_components/paper-item/paper-item.html">
-<link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
 
 <link rel="import" href="../../bower_components/firebase-element/firebase-query.html">
 
@@ -14,7 +12,7 @@
       :host {
         display: block;
       }
-      
+
       .subtitle {
         text-align: center;
         color: var(--paper-blue-grey-700);
@@ -25,24 +23,34 @@
 
       #chart3 {
         --chartist-wrapper-stroke-color: var(--paper-blue-800);
-        --chartist-wrapper-fill: var(--paper-blue-800);;
+        --chartist-wrapper-fill: var(--paper-blue-800);
+        ;
       }
     </style>
 
     <firebase-query app-name="weather-station" path="/bmp280" data="{{data}}" on-data-changed="__render" limit-to-last=6>
     </firebase-query>
 
-    <div class="subtitle">Last temperature measured at <b>[[lastdate]]</b> is <b>[[temperature]]°</b></div>
+    <div class="subtitle">Last temperature measured at
+      <b>[[lastdate]]</b> is
+      <b>[[temperature]]°</b>
+    </div>
     <chartist-wrapper id="chart1" options="[[options]]"></chartist-wrapper>
-    <div class="subtitle">Last pressure measured at <b>[[lastdate]]</b> is <b>[[pressure]] Pascal (Pa)</b></div>
+    <div class="subtitle">Last pressure measured at
+      <b>[[lastdate]]</b> is
+      <b>[[pressure]] Pascal (Pa)</b>
+    </div>
     <chartist-wrapper id="chart2" type="Bar"></chartist-wrapper>
-    <div class="subtitle">Last altitude measured at <b>[[lastdate]]</b> is <b>[[altitude]] m</b></div>
+    <div class="subtitle">Last altitude measured at
+      <b>[[lastdate]]</b> is
+      <b>[[altitude]] m</b>
+    </div>
     <chartist-wrapper id="chart3" options="[[options]]"></chartist-wrapper>
   </template>
 
   <script>
 
-    class Bmp280Widget extends Polymer.Element {
+    class Bmp280Widget extends Polymer.mixinBehaviors([Polymer.IronResizableBehavior], Polymer.Element) {
 
       static get is() { return 'bmp280-widget'; }
 
@@ -75,6 +83,11 @@
             }
           }
         };
+      }
+
+      ready() {
+        super.ready();
+        this.addEventListener('iron-resize', () => { this.__render() });
       }
 
       __render() {

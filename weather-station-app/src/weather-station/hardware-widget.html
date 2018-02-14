@@ -1,10 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 
-<!-- <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html"> -->
-
-<link rel="import" href="../../bower_components/paper-item/paper-item.html">
-<link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
 
 <link rel="import" href="../../bower_components/firebase-element/firebase-query.html">
 
@@ -18,6 +14,10 @@
 
       table {
         width: 100%;
+      }
+
+      td {
+        padding: 0.5em;
       }
 
       th {
@@ -48,72 +48,21 @@
         </tr>
       </template>
     </table>
-
-    <!-- <iron-ajax
-      id="ajax"
-      auto
-      url="[[url]]"
-      handle-as="json"
-      method="GET"
-      on-response="__handleResponse"
-      last-response="{{response}}"
-      debounce-duration="300"
-      timeout="2000"
-      verbose>
-    </iron-ajax> -->
   </template>
 
   <script>
-    class HardwareWidget extends Polymer.Element {
+    class HardwareWidget extends Polymer.mixinBehaviors([Polymer.IronResizableBehavior], Polymer.Element) {
 
       static get is() { return 'hardware-widget'; }
 
       static get properties() {
         return {
-          url: {
-            type: String
-          },
           data: {
             type: Object,
-            notify: true,
-            observer: '__render'
+            notify: true
           }
         };
       }
-
-      // connectedCallback() {
-      //   super.connectedCallback();
-      //   this.url = 'http://esp8266.local/esp';
-      //   //this.url = window.location.origin + "/esp";
-      // }
-
-      __render() {
-
-        if (this.data) {
-          // nothing to do
-        }
-      }
-
-      // __handleResponse(event) {
-
-      //   console.log(event);
-
-      //   if (event) {
-      //     var response = event.detail.response;
-      //     // map response object to an array of key value pairs
-      //     var i = 0;
-      //     var mapping = [];
-      //     for (var name in response) {
-      //       mapping[i] = { key: name, value: response[name] };
-      //       i++;
-      //     }
-      //     this.details = mapping;
-      //   }
-      // }
-
-      // __update() {
-      //   this.$.ajax.generateRequest()
-      // }
     }
     window.customElements.define(HardwareWidget.is, HardwareWidget);
   </script>

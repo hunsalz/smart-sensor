@@ -13,6 +13,7 @@
       :host {
         display: inline-block;
       }
+
       .widget-header {
         background-color: white;
         border: 1px solid var(--paper-grey-100);
@@ -24,11 +25,13 @@
         cursor: pointer;
         width: 100%;
       }
+
       .header {
         padding: 10px;
         @apply --layout-horizontal;
         @apply --layout-center;
       }
+
       iron-collapse {
         padding: 10px;
         border: 1px solid var(--paper-grey-100);
@@ -38,12 +41,13 @@
         @apply --shadow-elevation-2dp;
         height: 100%;
       }
+
       .spacer {
         @apply --layout-flex;
         width: 100%;
       }
     </style>
-    <div class="widget-header" on-tap="toggle">   
+    <div class="widget-header" on-tap="toggle">
       <div class="header">
         <slot name="title"></slot>
         <span>[[title]]</span>
@@ -75,24 +79,27 @@
           }
         };
       }
+
       /**
-       * is true if widget is collapsed
+       * true if widget is collapsed
        */
       isCollapsed() {
         return !this.$.collapse_id.opened;
       }
+
       /**
-       * collapse widget more or less
+       * collapses widget more or less 
        */
       collapse(collapse) {
         this.$.collapse_id.opened = !collapse;
       }
+
       /**
-       * toggle between expand widget more or less
+       * toggle between collapsed or expanded widget
        */
       toggle() {
         this.$.collapse_id.toggle();
-        this.dispatchEvent(new CustomEvent('toggle', {detail: {collapsed: this.isCollapsed()}, bubbles: true, composed: true}));
+        this.$.collapse_id.notifyResize();
       }
     }
     window.customElements.define(WidgetLayout.is, WidgetLayout);

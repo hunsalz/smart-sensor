@@ -1,8 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
 
-<link rel="import" href="../../bower_components/paper-item/paper-item.html">
-<link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
 
 <link rel="import" href="../../bower_components/firebase-element/firebase-query.html">
 
@@ -33,7 +31,7 @@
 
   <script>
 
-    class Mq135Widget extends Polymer.Element {
+    class Mq135Widget extends Polymer.mixinBehaviors([Polymer.IronResizableBehavior], Polymer.Element) {
 
       static get is() { return 'mq135-widget'; }
 
@@ -58,6 +56,11 @@
             }
           }
         };
+      }
+
+      ready() {
+        super.ready();
+        this.addEventListener('iron-resize', () => { this.__render() });
       }
 
       __render() {
