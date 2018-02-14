@@ -32,11 +32,11 @@
     <firebase-query app-name="weather-station" path="/bmp280" data="{{data}}" on-data-changed="__render" limit-to-last=6>
     </firebase-query>
 
-    <div class="subtitle">Last temperature measured is [[temperature]]°</div>
+    <div class="subtitle">Last temperature measured at <b>[[lastdate]]</b> is <b>[[temperature]]°</b></div>
     <chartist-wrapper id="chart1" options="[[options]]"></chartist-wrapper>
-    <div class="subtitle">Last pressure measured is [[pressure]] Pascal (Pa)</div>
+    <div class="subtitle">Last pressure measured at <b>[[lastdate]]</b> is <b>[[pressure]] Pascal (Pa)</b></div>
     <chartist-wrapper id="chart2" type="Bar"></chartist-wrapper>
-    <div class="subtitle">Last altitude measured is [[altitude]] m</div>
+    <div class="subtitle">Last altitude measured at <b>[[lastdate]]</b> is <b>[[altitude]] m</b></div>
     <chartist-wrapper id="chart3" options="[[options]]"></chartist-wrapper>
   </template>
 
@@ -65,6 +65,9 @@
             type: Number,
             notify: true
           },
+          lastdate: {
+            type: Object
+          },
           options: {
             type: Object,
             value: {
@@ -85,7 +88,7 @@
             temperatures.push(e.temperature);
             pressures.push(e.pressure);
             altitudes.push(e.altitude);
-            labels.push(this.__getLabel(e));
+            labels.push(this.__getLabelFromElement(e));
           });
           labels.reverse();
 
@@ -108,11 +111,17 @@
             this.temperature = this.data[this.data.length - 1].temperature;
             this.pressure = this.data[this.data.length - 1].pressure;
             this.altitude = this.data[this.data.length - 1].altitude;
+            this.lastdate = this.__getDateFromElement(this.data[this.data.length - 1]).toDateString();
           }
         }
       }
 
-      __getLabel(element) {
+      __getLabelFromElement(element) {
+        // return just time in format 'hh:mm::ss'
+        return this.__getDateFromElement(element).toTimeString().substring(0, 8);
+      }
+
+      __getDateFromElement(element) {
 
         var date;
         // due to race conditions with cloud functions the timestamp isn't always set in time for new entries
@@ -122,8 +131,7 @@
           date = new Date();
         }
 
-        // return only time in format 'hh:mm::ss'
-        return date.toTimeString().substring(0, 8);
+        return date;
       }
     }
     window.customElements.define(Bmp280Widget.is, Bmp280Widget);

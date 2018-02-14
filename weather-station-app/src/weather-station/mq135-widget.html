@@ -27,7 +27,7 @@
     <firebase-query app-name="weather-station" path="/mq135" data="{{data}}" on-data-changed="__render" limit-to-last=6>
     </firebase-query>
 
-    <div class="subtitle">Last CO2 value measured is [[ppm]] parts per million (10<sup>-6</sup>)</div>
+    <div class="subtitle">Last CO2 value measured at <b>[[lastdate]]</b> is <b>[[ppm]] parts per million (10<sup>-6</sup>)</b></div>
     <chartist-wrapper id="chart" type="Bar"></chartist-wrapper>
   </template>
 
@@ -48,6 +48,9 @@
             type: Number,
             notify: true
           },
+          lastdate: {
+            type: Object
+          },
           options: {
             type: Object,
             value: {
@@ -64,7 +67,7 @@
           var labels = [];
           this.data.forEach(e => {
             ppms.push(e.ppm);
-            labels.push(this.__getLabel(e));
+            labels.push(this.__getLabelFromElement(e));
           });
           labels.reverse();
 
@@ -75,10 +78,17 @@
 
           if (this.data.length > 0) {
             this.ppm = this.data[this.data.length - 1].ppm;
+            this.lastdate = this.__getDateFromElement(this.data[this.data.length - 1]).toDateString();
           }
         }
       }
-      __getLabel(element) {
+
+      __getLabelFromElement(element) {
+        // return just time in format 'hh:mm::ss'
+        return this.__getDateFromElement(element).toTimeString().substring(0, 8);
+      }
+
+      __getDateFromElement(element) {
 
         var date;
         // due to race conditions with cloud functions the timestamp isn't always set in time for new entries
@@ -88,8 +98,7 @@
           date = new Date();
         }
 
-        // return only time in format 'hh:mm::ss'
-        return date.toTimeString().substring(0, 8);
+        return date;
       }
     }
     window.customElements.define(Mq135Widget.is, Mq135Widget);
