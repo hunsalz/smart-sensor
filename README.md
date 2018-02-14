@@ -3,20 +3,7 @@
 [![Build Status](https://travis-ci.org/hunsalz/weather-station.svg?branch=master)](https://travis-ci.org/hunsalz/weather-station)
 [![License](https://img.shields.io/badge/license-MIT%20License-blue.svg)](http://doge.mit-license.org)
 
-## See [Weather-Station](https://weather-station-8266.firebaseapp.com/) online.
-
-## Open issues
-
-CI/CD
-* extend Travis to build C++ code too
-* extend Travis to deploy all firebase artefacts
-* automate build process for local builds
-
-App
-* style widgets
-* add package.json
-* optional: add location data
-* optional: add an ESP8266 solo app without firebase functions
+## [Weather-Station](https://weather-station-8266.firebaseapp.com/) online.
 
 ## Hardware listing
 
