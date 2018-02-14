@@ -54,7 +54,6 @@ exports.mq135 = functions.database.ref('/mq135/{message}').onCreate(event => {
     const message = event.data.val();
     if (!message.timestamp) {
         event.data.adminRef.update({
-            co2: message.co2,
             ppm: message.ppm,
             timestamp: Date.now()
         });

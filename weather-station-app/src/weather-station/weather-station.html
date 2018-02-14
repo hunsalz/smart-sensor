@@ -111,7 +111,7 @@
       database-url="https://weather-station-8266.firebaseio.com" messaging-sender-id="192040972544" storage-bucket="weather-station-8266.appspot.com">
     </firebase-app>
 
-    <firebase-auth id="auth" app-name="weather-station" status-known="{{status}}" user="{{user}}" on-error="_handleFirebaseAuthError">
+    <firebase-auth id="auth" app-name="weather-station" on-error="_handleFirebaseAuthError">
     </firebase-auth>
 
     <!-- service worker -->
@@ -171,7 +171,7 @@
               <div class="spacer"></div>
               <iron-icon icon="icons:assessment"></iron-icon>
             </div>
-            <mq135-widget co2="{{co2}}" ppm="{{ppm}}"></mq135-widget>
+            <mq135-widget ppm="{{ppm}}"></mq135-widget>
           </widget-layout>
           <widget-layout key="__hardware">
             <div slot="title">

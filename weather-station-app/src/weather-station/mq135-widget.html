@@ -19,10 +19,8 @@
     <firebase-query app-name="weather-station" path="/mq135" data="{{data}}" on-data-changed="__render" limit-to-last=6>
     </firebase-query>
 
-    <div>CO2 = [[co2]]</div>
-    <chartist-wrapper id="chart1" options="[[options]]"></chartist-wrapper>
     <div>PPM = [[ppm]]</div>
-    <chartist-wrapper id="chart2" type="Bar"></chartist-wrapper>
+    <chartist-wrapper id="chart" type="Bar"></chartist-wrapper>
 
   </template>
 
@@ -38,10 +36,6 @@
             type: Array,
             notify: true,
             observer: '__render'
-          },
-          co2: {
-            type: Number,
-            notify: true
           },
           ppm: {
             type: Number,
@@ -59,28 +53,20 @@
       __render() {
 
         if (this.data && this.data.length > 0) {
-          var co2s = [];
           var ppms = [];
           var labels = [];
           this.data.forEach(e => {
-            co2s.push(e.co2);
             ppms.push(e.ppm);
             labels.push(this.__getLabel(e));
           });
           labels.reverse();
 
-          this.$.chart1.data = {
-            series: [co2s.reverse()],
-            labels: labels
-          };
-
-          this.$.chart2.data = {
+          this.$.chart.data = {
             series: [ppms.reverse()],
             labels: labels
           };
 
           if (this.data.length > 0) {
-            this.co2 = this.data[this.data.length - 1].co2;
             this.ppm = this.data[this.data.length - 1].ppm;
           }
         }
