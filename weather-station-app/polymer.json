@@ -10,7 +10,7 @@
     "bower_components/webcomponentsjs/webcomponents-lite.js"
   ],
   "lint": {
-    "rules": ["polymer-2-hybrid"]
+    "rules": ["polymer-2"]
   },
   "builds": [
     { "preset": "es5-bundled" },
