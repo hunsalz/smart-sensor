@@ -3,12 +3,6 @@
 <link rel="import" href="../../bower_components/app-layout/app-layout.html">
 <link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 
-<!-- <link rel="import" href="../../bower_components/app-layout/app-grid/app-grid-style.html">
-<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
-<link rel="import" href="../../bower_components/app-layout/app-header-layout/app-header-layout.html">
-<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
-<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html"> -->
-
 <link rel="import" href="../../bower_components/iron-icons/hardware-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/image-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
@@ -100,14 +94,18 @@
         font-weight: 500;
         line-height: 1.5em;
         white-space: nowrap;
+        font-size: 0.8em;
         @apply --layout-horizontal;
         @apply --layout-center;
       }
 
-      .widget-label-font-small {
-        font-size: 0.8em;
+      .spacer {
+        @apply --layout-flex;
+        width: 1vw;
       }
     </style>
+
+    <!-- services -->
 
     <firebase-app id="app" auto-login name="weather-station" api-key="AIzaSyD0s4sQ6xVcVOLe8TsRcUUiI9aNvED1zKA" auth-domain="weather-station-8266.firebaseapp.com"
       database-url="https://weather-station-8266.firebaseio.com" messaging-sender-id="192040972544" storage-bucket="weather-station-8266.appspot.com">
@@ -116,13 +114,21 @@
     <firebase-auth id="auth" app-name="weather-station" status-known="{{status}}" user="{{user}}" on-error="_handleFirebaseAuthError">
     </firebase-auth>
 
-    <!-- application -->
+    <!-- service worker -->
+    <!--platinum-sw-register skip-waiting
+                          clients-claim
+                          auto-register
+                          reload-on-install>
+      <platinum-sw-cache default-cache-strategy="fastest"></platinum-sw-cache>
+    </platinum-sw-register-->
+
+    <!-- UI -->
     <app-header-layout fullbleed>
       <!-- header -->
       <app-header condenses fixed effects="resize-title">
         <app-toolbar>
           <div spacer condensed-title>[[app_title]]</div>
-          <paper-icon-button icon="{{_isCollapsed(collapsed)}}" on-tap="_toggleAllWidgets"></paper-icon-button>
+          <paper-icon-button icon="{{__isCollapsed(collapsed)}}" on-tap="__toggleAllWidgets"></paper-icon-button>
         </app-toolbar>
         <app-toolbar>
           <div spacer main-title>[[app_title]]</div>
@@ -131,45 +137,56 @@
       <!-- content area -->
       <div class="content-area">
         <div id="_grid" class="app-grid">
-          <widget-layout key="_bmp280_widget" title="Temperature [[temperature1]]°, Pressure [[pressure]] Pa, Altitude [[altitude]] m">
-            <span class="widget-label" slot="header">
-              <div class="widget-label-font-small">BMP280</div>
+          <widget-layout>
+            <div slot="title">
+              <div>Temperature [[temperature1]]°</div>
+              <div>Pressure [[pressure]] Pa</div>
+              <div>Altitude [[altitude]] m</div>
+            </div>
+            <div class="widget-label" slot="label">
+              <div>BMP280</div>
+              <div class="spacer"></div>
               <iron-icon icon="icons:assessment"></iron-icon>
-            </span>
+            </div>
             <bmp280-widget temperature="{{temperature1}}" pressure="{{pressure}}" altitude="{{altitude}}"></bmp280-widget>
           </widget-layout>
-          <widget-layout key="_dht22_widget" title="Temperature [[temperature2]]°, Humidity [[humidity]]%">
-            <span class="widget-label" slot="header">
-              <div class="widget-label-font-small">DHT22</div>
+          <widget-layout>
+            <div slot="title">
+              <div>Temperature [[temperature2]]°</div>
+              <div>Humidity [[humidity]]%</div>
+            </div>
+            <div class="widget-label" slot="label">
+              <div>DHT22</div>
+              <div class="spacer"></div>
               <iron-icon icon="icons:assessment"></iron-icon>
-            </span>
+            </div>
             <dht22-widget temperature="{{temperature2}}" humidity="{{humidity}}"></dht22-widget>
           </widget-layout>
-          <widget-layout key="_mq135_widget" title="CO2 [[co2]], PPM [[ppm]]">
-            <span class="widget-label" slot="header">
-              <div class="widget-label-font-small">MQ135</div>
+          <widget-layout>
+            <div slot="title">
+              <div>CO2 [[ppm]] parts per million (ppm)</div>
+            </div>
+            <div class="widget-label" slot="label">
+              <div>MQ135</div>
+              <div class="spacer"></div>
               <iron-icon icon="icons:assessment"></iron-icon>
-            </span>
+            </div>
             <mq135-widget co2="{{co2}}" ppm="{{ppm}}"></mq135-widget>
           </widget-layout>
-          <widget-layout key="_esp_widget" title="ESP overview">
-            <span class="widget-label" slot="header">
-              <div class="widget-label-font-small"></div>
+          <widget-layout>
+            <div slot="title">
+              <div>Hardware overview</div>
+            </div>
+            <div class="widget-label" slot="label">
+              <div>ESP8266</div>
+              <div class="spacer"></div>
               <iron-icon icon="icons:assessment"></iron-icon>
-            </span>
+            </div>
             <esp-widget></esp-widget>
           </widget-layout>
         </div>
       </div>
     </app-header-layout>
-
-    <!-- service worker -->
-    <!--platinum-sw-register skip-waiting
-                          clients-claim
-                          auto-register
-                          reload-on-install>
-      <platinum-sw-cache default-cache-strategy="fastest"></platinum-sw-cache>
-    </platinum-sw-register-->
   </template>
 
   <script>
@@ -194,25 +211,27 @@
       connectedCallback() {
         super.connectedCallback();
         // listen to toggle events from widgets
-        this.addEventListener('toggle', e => { this._applyIconToggle() });
+        this.addEventListener('toggle', e => { this.__applyIconToggle() });
         // listen to window resizing events
-        this._updateGridStyles = this._updateGridStyles || function () {
+        this.__updateGridStyles = this.__updateGridStyles || function () {
           this.updateStyles();
         }.bind(this);
-        window.addEventListener('resize', this._updateGridStyles);
+        window.addEventListener('resize', this.__updateGridStyles);
         // apply icon toogle state initially
-        this._applyIconToggle();
+        this.__applyIconToggle();
       }
+
       /**
-       * is true if all widgets are collapsed
+       * true if all widgets are collapsed
        */
-      _isCollapsed(collapsed) {
+      __isCollapsed(collapsed) {
         return collapsed ? 'icons:expand-more' : 'icons:expand-less';
       }
+
       /**
-       * applies icon toggle according to all containing widget toggles
+       * apply icon toggle according to all containing widgets
        */
-      _applyIconToggle() {
+      __applyIconToggle() {
         // compute toggle state of all <widget-layout> elements
         var nodes = this.$._grid.querySelectorAll('widget-layout');
         var state = 0;
@@ -222,10 +241,11 @@
         // switch toggle according to state result
         this.collapsed = state === 0 ? false : true;
       }
+
       /*
-       * toggles all widgets synchronous
+       * toggle all widgets synchronous
        */
-      _toggleAllWidgets() {
+      __toggleAllWidgets() {
         // toggle all <widget-layout> elements
         var nodes = this.$._grid.querySelectorAll('widget-layout');
         this.collapsed = !this.collapsed;
@@ -234,9 +254,8 @@
         }
       }
 
-      _handleFirebaseAuthError(event) {
-        console.log("ERROR");
-        // TODO
+      __handleFirebaseAuthError(event) {
+        console.warn("Firebase auth error: " + event);
       }
     }
     window.customElements.define(WeatherStation.is, WeatherStation);
