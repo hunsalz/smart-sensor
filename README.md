@@ -5,6 +5,8 @@
 
 ## [Weather-Station](https://weather-station-8266.firebaseapp.com/) online.
 
+Weather-Station is a [Polymer 2.0](https://www.polymer-project.org/2.0/) app hosted on [Firebase](https://firebase.google.com). All sensor values are collected by an ESP8266 development board. The ESP8266 pushes all collected sensor values into [Firebase Realtime Database](https://firebase.google.com/docs/database/). Values are pre-processed by [Cloud Functions for Firebase](https://firebase.google.com/docs/functions/) to extend sensor values by timestamp and to limit the amount of historical values. Any new values are displayed instantly. The App itself is easily extandable by new widgets.
+
 ## Hardware listing
 
 * Amica NodeMCU ESP8266 - *Important note: Not all ESP8266 development boards are compatible with the offered motor shields. Especially the sizing of the LoLin NodeMCU V3 doesn't fit together.*
@@ -17,7 +19,7 @@ TODO
 
 ## Impressions
 
-TODO replace with new pictures
+TODO replace with new images
 
 ### Desktop view
 ![weather-station-desktop view](https://cloud.githubusercontent.com/assets/16960855/20327330/e07c3480-ab8c-11e6-9270-0f31b35fc313.png)
