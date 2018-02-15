@@ -1,6 +1,7 @@
 {
-  "name": "weather-station",
-  "short_name": "weather-station",
+  "name": "Weather-Station for various sensor values",
+  "short_name": "Weather-Station",
   "start_url": "/",
-  "display": "standalone"
+  "display": "fullscreen",
+  "orientation": "landscape"
 }
