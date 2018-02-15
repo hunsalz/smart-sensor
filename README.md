@@ -5,7 +5,7 @@
 
 ## [Weather-Station](https://weather-station-8266.firebaseapp.com/) online.
 
-Weather-Station is a [Polymer 2.0](https://www.polymer-project.org/2.0/) app hosted on [Firebase](https://firebase.google.com). All sensor values are collected by an ESP8266 development board. The ESP8266 pushes all collected sensor values into [Firebase Realtime Database](https://firebase.google.com/docs/database/). Values are pre-processed by [Cloud Functions for Firebase](https://firebase.google.com/docs/functions/) to extend sensor values by timestamp and to limit the amount of historical values. Any new values are displayed instantly. The App itself is easily extandable by new widgets.
+Weather-Station is a [Polymer 2.0](https://www.polymer-project.org/2.0/) app hosted on [Firebase](https://firebase.google.com). All sensor values are collected by an ESP8266 development board. The ESP8266 pushes all collected sensor values into a [Firebase Realtime Database](https://firebase.google.com/docs/database/). Values are pre-processed by [Cloud Functions for Firebase](https://firebase.google.com/docs/functions/) to extend sensor values by timestamp and to limit the amount of historical values. Any new values are displayed instantly. The App itself is easily extandable by new widgets.
 
 ## Hardware listing
 
