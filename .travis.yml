@@ -11,10 +11,11 @@ cache:
     - node_modules
 install:
   - npm install -g polymer-cli
+  - npm install -g firebase-tools
   - npm install
 script:
   - cd weather-station-app/
-  - polymer install
+  - polymer install -v
   - cd ..
 deploy:
   skip_cleanup: true
