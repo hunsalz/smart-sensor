@@ -82,9 +82,6 @@ void setup() {
   SERVER.on("/sta", HTTP_GET, [](AsyncWebServerRequest *request) {
     SERVER.send(request, WIFI_STA_CFG.getDetails());
   });
-  SERVER.on("/ap", HTTP_GET, [](AsyncWebServerRequest *request) {
-    SERVER.send(request, WIFI_AP_CFG.getDetails());
-  });
   SERVER.on("/bmp280", HTTP_GET, [](AsyncWebServerRequest *request) {
     SERVER.send(request, _bmp280.getJsonValue());
   });
