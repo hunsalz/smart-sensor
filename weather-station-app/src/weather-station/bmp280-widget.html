@@ -79,7 +79,13 @@
           options: {
             type: Object,
             value: {
-              showArea: true
+              showArea: true,
+              axisY: {
+                labelInterpolationFnc: function (value) {
+                  var factor = Math.pow(10, 2);
+                  return Math.round(value * factor) / factor;
+                }
+              }
             }
           }
         };
@@ -87,7 +93,7 @@
 
       constructor() {
         super();
-        Polymer.RenderStatus.afterNextRender(this, function() {
+        Polymer.RenderStatus.afterNextRender(this, function () {
           this.addEventListener('iron-resize', () => { this.__render() });
         });
       }

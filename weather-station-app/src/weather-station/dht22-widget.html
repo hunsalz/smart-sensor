@@ -23,16 +23,23 @@
 
       #chart2 {
         --chartist-wrapper-stroke-color: var(--paper-blue-800);
-        --chartist-wrapper-fill: var(--paper-blue-800);;
+        --chartist-wrapper-fill: var(--paper-blue-800);
+        ;
       }
     </style>
 
     <firebase-query app-name="weather-station" path="/dht22" data="{{data}}" on-data-changed="__render" limit-to-last=6>
     </firebase-query>
 
-    <div class="subtitle">Last temperature measured at <b>[[lastdate]]</b> is <b>[[temperature]]°</b></div>
+    <div class="subtitle">Last temperature measured at
+      <b>[[lastdate]]</b> is
+      <b>[[temperature]]°</b>
+    </div>
     <chartist-wrapper id="chart1" options="[[options]]"></chartist-wrapper>
-    <div class="subtitle">Last humidity measured at <b>[[lastdate]]</b> is <b>[[humidity]] %</b></div>
+    <div class="subtitle">Last humidity measured at
+      <b>[[lastdate]]</b> is
+      <b>[[humidity]] %</b>
+    </div>
     <chartist-wrapper id="chart2" type="Bar"></chartist-wrapper>
   </template>
 
@@ -63,7 +70,13 @@
           options: {
             type: Object,
             value: {
-              showArea: true
+              showArea: true,
+              axisY: {
+                labelInterpolationFnc: function (value) {
+                  var factor = Math.pow(10, 2);
+                  return Math.round(value * factor) / factor;
+                }
+              }
             }
           }
         };
@@ -71,7 +84,7 @@
 
       constructor() {
         super();
-        Polymer.RenderStatus.afterNextRender(this, function() {
+        Polymer.RenderStatus.afterNextRender(this, function () {
           this.addEventListener('iron-resize', () => { this.__render() });
         });
       }

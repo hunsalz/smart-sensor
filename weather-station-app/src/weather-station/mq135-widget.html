@@ -25,7 +25,11 @@
     <firebase-query app-name="weather-station" path="/mq135" data="{{data}}" on-data-changed="__render" limit-to-last=6>
     </firebase-query>
 
-    <div class="subtitle">Last CO2 value measured at <b>[[lastdate]]</b> is <b>[[ppm]] parts per million (10<sup>-6</sup>)</b></div>
+    <div class="subtitle">Last CO2 value measured at
+      <b>[[lastdate]]</b> is
+      <b>[[ppm]] parts per million (10
+        <sup>-6</sup>)</b>
+    </div>
     <chartist-wrapper id="chart" type="Bar"></chartist-wrapper>
   </template>
 
@@ -52,7 +56,13 @@
           options: {
             type: Object,
             value: {
-              showArea: true
+              showArea: true,
+              axisY: {
+                labelInterpolationFnc: function (value) {
+                  var factor = Math.pow(10, 2);
+                  return Math.round(value * factor) / factor;
+                }
+              }
             }
           }
         };
@@ -60,7 +70,7 @@
 
       constructor() {
         super();
-        Polymer.RenderStatus.afterNextRender(this, function() {
+        Polymer.RenderStatus.afterNextRender(this, function () {
           this.addEventListener('iron-resize', () => { this.__render() });
         });
       }
