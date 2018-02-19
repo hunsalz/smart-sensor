@@ -12,7 +12,6 @@ esp8266util::DHTSensor _dht22;
 esp8266util::MQ135Sensor _mq135;
 
 void setup() {
-  
   // logger setup
   LOG.addLevelToAll(Appender::VERBOSE);
   LOG.addFormatterToAll(
@@ -82,6 +81,9 @@ void setup() {
   SERVER.on("/sta", HTTP_GET, [](AsyncWebServerRequest *request) {
     SERVER.send(request, WIFI_STA_CFG.getDetails());
   });
+  SERVER.on("/esp", HTTP_GET, [](AsyncWebServerRequest *request) {
+    SERVER.send(request, SYS_CFG.getDetails());
+  });
   SERVER.on("/bmp280", HTTP_GET, [](AsyncWebServerRequest *request) {
     SERVER.send(request, _bmp280.getJsonValue());
   });
@@ -101,7 +103,6 @@ void setup() {
 }
 
 void set(const char *name, JsonObject &json) {
-  
   LOG.verbose(F("Set value|%s|%s"), name, esp8266util::toString(json).c_str());
   Firebase.setString(name, esp8266util::toString(json).c_str());
   if (Firebase.failed()) {
@@ -110,7 +111,6 @@ void set(const char *name, JsonObject &json) {
 }
 
 void push(const char *name, JsonObject &json) {
-  
   LOG.verbose(F("Push value|%s|%s"), name, esp8266util::toString(json).c_str());
   Firebase.push(name, json);
   if (Firebase.failed()) {
@@ -119,7 +119,6 @@ void push(const char *name, JsonObject &json) {
 }
 
 void loop() {
-  
   if (SYS_CFG.nextLoopInterval()) {
     MDNS.update();
 
