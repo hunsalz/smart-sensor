@@ -21,7 +21,7 @@
 <link rel="import" href="mq135-widget.html">
 <link rel="import" href="hardware-widget.html">
 
-<dom-module id="weather-station">
+<dom-module id="smart-sensor-app">
   <template strip-whitespace>
     <style include="app-grid-style">
       :host {
@@ -106,20 +106,17 @@
 
     <!-- services -->
 
-    <firebase-app id="app" auto-login name="weather-station" api-key="AIzaSyD0s4sQ6xVcVOLe8TsRcUUiI9aNvED1zKA" auth-domain="weather-station-8266.firebaseapp.com"
-      database-url="https://weather-station-8266.firebaseio.com" messaging-sender-id="192040972544" storage-bucket="weather-station-8266.appspot.com">
+    <firebase-app id="app" 
+      auto-login name="smart-sensor-app" 
+      api-key="AIzaSyD6XnyQv2n5B5SPc4Ir2pl_Z2GiDlFwGB8" 
+      auth-domain="smart-sensor-8266.firebaseapp.com"
+      database-url="https://smart-sensor-8266.firebaseio.com" 
+      messaging-sender-id="555603887556" 
+      storage-bucket="smart-sensor-8266.appspot.com">
     </firebase-app>
 
-    <firebase-auth id="auth" app-name="weather-station" on-error="_handleFirebaseAuthError">
+    <firebase-auth id="auth" app-name="smart-sensor-app" on-error="_handleFirebaseAuthError">
     </firebase-auth>
-
-    <!-- service worker -->
-    <!--platinum-sw-register skip-waiting
-                          clients-claim
-                          auto-register
-                          reload-on-install>
-      <platinum-sw-cache default-cache-strategy="fastest"></platinum-sw-cache>
-    </platinum-sw-register-->
 
     <!-- UI -->
     <app-header-layout fullbleed>
@@ -189,15 +186,15 @@
   </template>
 
   <script>
-    class WeatherStation extends Polymer.Element {
+    class SmartSensorApp extends Polymer.Element {
 
-      static get is() { return 'weather-station'; }
+      static get is() { return 'smart-sensor-app'; }
 
       static get properties() {
         return {
           app_title: {
             type: String,
-            value: 'Weather-Station',
+            value: 'Smart-Sensor',
           },
           collapsed: {
             type: Boolean,
@@ -259,6 +256,6 @@
         console.warn("Firebase auth error: " + event);
       }
     }
-    window.customElements.define(WeatherStation.is, WeatherStation);
+    window.customElements.define(SmartSensorApp.is, SmartSensorApp);
   </script>
 </dom-module>

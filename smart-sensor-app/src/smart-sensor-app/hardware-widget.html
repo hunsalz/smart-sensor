@@ -33,7 +33,11 @@
       }
     </style>
 
-    <firebase-query app-name="weather-station" path="/esp" data="{{data}}" on-data-changed="__render">
+    <firebase-query 
+      app-name="smart-sensor-app" 
+      path="/esp" 
+      data="{{data}}" 
+      on-data-changed="__render">
     </firebase-query>
 
     <table>

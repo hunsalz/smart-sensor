@@ -1,6 +1,6 @@
 {
   "entrypoint": "index.html",
-  "shell": "src/weather-station/weather-station.html",
+  "shell": "src/smart-sensor-app/smart-sensor-app.html",
   "sources": [
     "src/**/*",
     "bower.json"

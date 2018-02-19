@@ -28,7 +28,11 @@
       }
     </style>
 
-    <firebase-query app-name="weather-station" path="/dht22" data="{{data}}" on-data-changed="__render" limit-to-last=6>
+    <firebase-query 
+      app-name="smart-sensor-app" 
+      path="/dht22" data="{{data}}" 
+      on-data-changed="__render" 
+      limit-to-last=6>
     </firebase-query>
 
     <div class="subtitle">Last temperature measured at

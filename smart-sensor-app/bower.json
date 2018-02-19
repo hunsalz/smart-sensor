@@ -1,5 +1,5 @@
 {
-  "name": "weather-station",
+  "name": "smart-sensor-app",
   "main": "index.html",
   "dependencies": {
     "polymer": "Polymer/polymer#latest",
