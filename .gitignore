@@ -1,6 +1,6 @@
 .gitignore
 Esp8266/config.h
-weather-station-app/bower_components/
-weather-station-app/build/
+**/bower_components/
+**/build/
 **/node_modules
 **/package-lock.json
