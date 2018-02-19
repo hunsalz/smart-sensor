@@ -8,5 +8,8 @@ const char *WIFI_PSK_2 = "YOUR PRE SHARED KEY";
 const char *FIREBASE_HOST = "YOUR PROJECT.firebaseio.com";
 const char *FIREBASE_AUTH = "YOUR AUTH TOKEN";
 
+// loop interval in ms
+const uint16_t LOOP_INTERVAL = 20 * 1000;
+
 // mock sensor data
 const bool USE_MOCK_DATA = true;

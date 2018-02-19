@@ -59,7 +59,7 @@ void setup() {
   Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
 
   // increase loop interval
-  SYS_CFG.setLoopInterval(20000);
+  SYS_CFG.setLoopInterval(LOOP_INTERVAL);
 
   // file system setup to enable static web server content
   FILESYSTEM.begin();
@@ -95,7 +95,7 @@ void setup() {
   });
 
   // save current ESP settings to Firebase
-  set("esp", SYS_CFG.getDetails());
+  //set("esp", SYS_CFG.getDetails());
 
   LOG.verbose(F("========================="));
   LOG.verbose(F("Setup finished. Have fun."));
