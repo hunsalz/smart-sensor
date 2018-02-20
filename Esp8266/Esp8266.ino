@@ -95,7 +95,7 @@ void setup() {
   });
 
   // save current ESP settings to Firebase
-  //set("esp", SYS_CFG.getDetails());
+  set("esp", SYS_CFG.getDetails());
 
   LOG.verbose(F("========================="));
   LOG.verbose(F("Setup finished. Have fun."));
@@ -103,14 +103,17 @@ void setup() {
 }
 
 void set(const char *name, JsonObject &json) {
-  LOG.verbose(F("Set value|%s|%s"), name, esp8266util::toString(json).c_str());
-  Firebase.setString(name, esp8266util::toString(json).c_str());
+  
+  String str = esp8266util::toString(json);
+  LOG.verbose(F("Set value|%s|%s"), name, str.c_str());
+  Firebase.setString(name, str.c_str());
   if (Firebase.failed()) {
     LOG.error(F("Saving %s value to Firebase failed: Reason: %s"), name, Firebase.error().c_str());
   }
 }
 
 void push(const char *name, JsonObject &json) {
+  
   LOG.verbose(F("Push value|%s|%s"), name, esp8266util::toString(json).c_str());
   Firebase.push(name, json);
   if (Firebase.failed()) {
