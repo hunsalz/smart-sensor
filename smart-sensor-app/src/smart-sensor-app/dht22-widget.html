@@ -30,7 +30,8 @@
 
     <firebase-query 
       app-name="smart-sensor-app" 
-      path="/dht22" data="{{data}}" 
+      path="/dht22" 
+      data="{{data}}" 
       on-data-changed="__render" 
       limit-to-last=6>
     </firebase-query>
