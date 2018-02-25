@@ -21,7 +21,7 @@ TODO
 
 TODO 
 
-## Setup Weather-Station
+## Setup Smart-Sensor-App
 
 1. Install Polymer dependencies
 ```
