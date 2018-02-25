@@ -36,8 +36,8 @@
     <firebase-query 
       app-name="smart-sensor-app" 
       path="/esp" 
-      data="{{data}}" 
-      on-data-changed="__render">
+      data="{{data}}"
+      log>
     </firebase-query>
 
     <table>
@@ -63,9 +63,14 @@
         return {
           data: {
             type: Object,
-            notify: true
+            notify: true,
+            observer: "handle"
           }
         };
+      }
+
+      handle(event) {
+        console.log(event);
       }
     }
     window.customElements.define(HardwareWidget.is, HardwareWidget);
