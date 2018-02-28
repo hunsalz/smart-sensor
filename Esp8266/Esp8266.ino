@@ -85,13 +85,13 @@ void setup() {
     SERVER.send(request, esp8266utils::TEXT_JSON, SYS_CFG.getDetails());
   });
   SERVER.on("/bmp280", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::TEXT_JSON, _bmp280.getJsonValue());
+    SERVER.send(request, esp8266utils::TEXT_JSON, _bmp280.getValuesAsJson());
   });
   SERVER.on("/dht22", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::TEXT_JSON, _dht22.getJsonValue());
+    SERVER.send(request, esp8266utils::TEXT_JSON, _dht22.getValuesAsJson());
   });
   SERVER.on("/mq135", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::TEXT_JSON, _mq135.getJsonValue());
+    SERVER.send(request, esp8266utils::TEXT_JSON, _mq135.getValuesAsJson());
   });
 
   // save current ESP settings to Firebase
@@ -132,8 +132,8 @@ void loop() {
     _dht22.update(USE_MOCK_DATA);
     _mq135.update(USE_MOCK_DATA);
     // push sensor values to Firebase
-    push("bmp280", _bmp280.getJsonValue());
-    push("dht22", _dht22.getJsonValue());
-    push("mq135", _mq135.getJsonValue());
+    push("bmp280", _bmp280.getValuesAsJson());
+    push("dht22", _dht22.getValuesAsJson());
+    push("mq135", _mq135.getValuesAsJson());
   }
 }
