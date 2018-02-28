@@ -73,25 +73,25 @@ void setup() {
   // cache-control 15 seconds
   // add dynamic http resources
   SERVER.on("/fs", HTTP_GET, [](AsyncWebServerRequest *request) {
-    SERVER.send(request, FILESYSTEM.getStorageDetails());
+    SERVER.send(request, "text/json", FILESYSTEM.getStorageDetails());
   });
   SERVER.on("/files", HTTP_GET, [](AsyncWebServerRequest *request) {
-    SERVER.send(request, FILESYSTEM.getFileListing());
+    SERVER.send(request, "text/json", FILESYSTEM.getFileListing());
   });
   SERVER.on("/sta", HTTP_GET, [](AsyncWebServerRequest *request) {
-    SERVER.send(request, WIFI_STA_CFG.getDetails());
+    SERVER.send(request, "text/json", WIFI_STA_CFG.getDetails());
   });
   SERVER.on("/esp", HTTP_GET, [](AsyncWebServerRequest *request) {
-    SERVER.send(request, SYS_CFG.getDetails());
+    SERVER.send(request, "text/json", SYS_CFG.getDetails());
   });
   SERVER.on("/bmp280", HTTP_GET, [](AsyncWebServerRequest *request) {
-    SERVER.send(request, _bmp280.getJsonValue());
+    SERVER.send(request, "text/json", _bmp280.getJsonValue());
   });
   SERVER.on("/dht22", HTTP_GET, [](AsyncWebServerRequest *request) {
-    SERVER.send(request, _dht22.getJsonValue());
+    SERVER.send(request, "text/json", _dht22.getJsonValue());
   });
   SERVER.on("/mq135", HTTP_GET, [](AsyncWebServerRequest *request) {
-    SERVER.send(request, _mq135.getJsonValue());
+    SERVER.send(request, "text/json", _mq135.getJsonValue());
   });
 
   // save current ESP settings to Firebase
@@ -102,20 +102,23 @@ void setup() {
   LOG.verbose(F("========================="));
 }
 
-void set(const char *name, JsonObject &json) {
+void set(const char *name, const char *json) {
   
-  String str = esp8266util::toString(json);
-  LOG.verbose(F("Set value|%s|%s"), name, str.c_str());
-  Firebase.setString(name, str.c_str());
+  LOG.verbose(F("Set value|%s|%s"), name, json);
+  DynamicJsonBuffer jsonBuffer;
+  JsonObject& variant = jsonBuffer.parseObject(json);
+  Firebase.set(name, variant);
   if (Firebase.failed()) {
     LOG.error(F("Saving %s value to Firebase failed: Reason: %s"), name, Firebase.error().c_str());
   }
 }
 
-void push(const char *name, JsonObject &json) {
+void push(const char *name, const char *json) {
   
-  LOG.verbose(F("Push value|%s|%s"), name, esp8266util::toString(json).c_str());
-  Firebase.push(name, json);
+  LOG.verbose(F("Push value|%s|%s"), name, json);
+  DynamicJsonBuffer jsonBuffer;
+  JsonObject& variant = jsonBuffer.parseObject(json);
+  Firebase.push(name, variant);
   if (Firebase.failed()) {
     LOG.error(F("Saving %s value to Firebase failed: Reason: %s"), name, Firebase.error().c_str());
   }
