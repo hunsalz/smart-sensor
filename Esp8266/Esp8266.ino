@@ -7,9 +7,9 @@
 // web server settings
 const static int PORT = 80;
 
-esp8266util::BMP280Sensor _bmp280;
-esp8266util::DHTSensor _dht22;
-esp8266util::MQ135Sensor _mq135;
+esp8266utils::BMP280Sensor _bmp280;
+esp8266utils::DHTSensor _dht22;
+esp8266utils::MQ135Sensor _mq135;
 
 void setup() {
   // logger setup
@@ -72,26 +72,26 @@ void setup() {
   SERVER.getWebServer().serveStatic("/", SPIFFS, "/www/", "max-age:15");
   // cache-control 15 seconds
   // add dynamic http resources
-  SERVER.on("/fs", HTTP_GET, [](AsyncWebServerRequest *request) {
-    SERVER.send(request, "text/json", FILESYSTEM.getStorageDetails());
+  SERVER.on("/fs", HTTP_GET, [](AsyncWebServerRequest* request) {
+    SERVER.send(request, esp8266utils::TEXT_JSON, FILESYSTEM.getStorageDetails());
   });
-  SERVER.on("/files", HTTP_GET, [](AsyncWebServerRequest *request) {
-    SERVER.send(request, "text/json", FILESYSTEM.getFileListing());
+  SERVER.on("/files", HTTP_GET, [](AsyncWebServerRequest* request) {
+    SERVER.send(request, esp8266utils::TEXT_JSON, FILESYSTEM.getFileListing());
   });
-  SERVER.on("/sta", HTTP_GET, [](AsyncWebServerRequest *request) {
-    SERVER.send(request, "text/json", WIFI_STA_CFG.getDetails());
+  SERVER.on("/sta", HTTP_GET, [](AsyncWebServerRequest* request) {
+    SERVER.send(request, esp8266utils::TEXT_JSON, WIFI_STA_CFG.getDetails());
   });
-  SERVER.on("/esp", HTTP_GET, [](AsyncWebServerRequest *request) {
-    SERVER.send(request, "text/json", SYS_CFG.getDetails());
+  SERVER.on("/esp", HTTP_GET, [](AsyncWebServerRequest* request) {
+    SERVER.send(request, esp8266utils::TEXT_JSON, SYS_CFG.getDetails());
   });
-  SERVER.on("/bmp280", HTTP_GET, [](AsyncWebServerRequest *request) {
-    SERVER.send(request, "text/json", _bmp280.getJsonValue());
+  SERVER.on("/bmp280", HTTP_GET, [](AsyncWebServerRequest* request) {
+    SERVER.send(request, esp8266utils::TEXT_JSON, _bmp280.getJsonValue());
   });
-  SERVER.on("/dht22", HTTP_GET, [](AsyncWebServerRequest *request) {
-    SERVER.send(request, "text/json", _dht22.getJsonValue());
+  SERVER.on("/dht22", HTTP_GET, [](AsyncWebServerRequest* request) {
+    SERVER.send(request, esp8266utils::TEXT_JSON, _dht22.getJsonValue());
   });
-  SERVER.on("/mq135", HTTP_GET, [](AsyncWebServerRequest *request) {
-    SERVER.send(request, "text/json", _mq135.getJsonValue());
+  SERVER.on("/mq135", HTTP_GET, [](AsyncWebServerRequest* request) {
+    SERVER.send(request, esp8266utils::TEXT_JSON, _mq135.getJsonValue());
   });
 
   // save current ESP settings to Firebase
