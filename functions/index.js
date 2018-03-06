@@ -79,3 +79,24 @@ function truncate(parentRef) {
         return null;
     });
 }
+
+// DialogFlow
+
+exports.temperature = functions.https.onRequest((req, res) => {
+
+    return admin.database().ref('/bmp280')
+        .limitToLast(1)
+        .once('value')
+        .then(snapshot => {
+            snapshot.forEach((child) => {
+                let value = child.val();
+                return response(res, value.temperature + '°', 200);
+            });
+        });
+});
+
+function response(res, value, code) {
+    return Promise.resolve(res.status(code)
+        .type('application/json')
+        .send(JSON.stringify({ "speech": value, "displayText": value })));
+}
