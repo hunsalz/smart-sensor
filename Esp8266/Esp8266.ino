@@ -51,15 +51,17 @@ void setup() {
   WIFI_STA_CFG.addAP(WIFI_SSID_2, WIFI_PSK_2);
   WIFI_STA_CFG.begin();
 
-  // MDNS setup
-  MDNS_CFG.begin("esp8266");
-  MDNS.addService("http", "tcp", PORT);
-
   // Firebase setup
   Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
 
   // increase loop interval
   SYS_CFG.setLoopInterval(LOOP_INTERVAL);
+
+  #ifdef ENABLE_WEBSERVER
+
+  // MDNS setup
+  MDNS_CFG.begin("esp8266");
+  MDNS.addService("http", "tcp", PORT);
 
   // file system setup to enable static web server content
   FILESYSTEM.begin();
@@ -73,26 +75,28 @@ void setup() {
   // cache-control 15 seconds
   // add dynamic http resources
   SERVER.on("/fs", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::TEXT_JSON, FILESYSTEM.getStorageDetails());
+    SERVER.send(request, esp8266utils::APP_JSON, FILESYSTEM.getStorageDetails());
   });
   SERVER.on("/files", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::TEXT_JSON, FILESYSTEM.getFileListing());
+    SERVER.send(request, esp8266utils::APP_JSON, FILESYSTEM.getFileListing());
   });
   SERVER.on("/sta", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::TEXT_JSON, WIFI_STA_CFG.getDetails());
+    SERVER.send(request, esp8266utils::APP_JSON, WIFI_STA_CFG.getDetails());
   });
   SERVER.on("/esp", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::TEXT_JSON, SYS_CFG.getDetails());
+    SERVER.send(request, esp8266utils::APP_JSON, SYS_CFG.getDetails());
   });
   SERVER.on("/bmp280", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::TEXT_JSON, _bmp280.getValuesAsJson());
+    SERVER.send(request, esp8266utils::APP_JSON, _bmp280.getValuesAsJson());
   });
   SERVER.on("/dht22", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::TEXT_JSON, _dht22.getValuesAsJson());
+    SERVER.send(request, esp8266utils::APP_JSON, _dht22.getValuesAsJson());
   });
   SERVER.on("/mq135", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::TEXT_JSON, _mq135.getValuesAsJson());
+    SERVER.send(request, esp8266utils::APP_JSON, _mq135.getValuesAsJson());
   });
+
+  #endif // NO_WEBSERVER
 
   // save current ESP settings to Firebase
   set("esp", SYS_CFG.getDetails());
@@ -102,38 +106,45 @@ void setup() {
   LOG.verbose(F("========================="));
 }
 
-void set(const char *name, const char *json) {
+void set(const char *name, String json) {
   
-  LOG.verbose(F("Set value|%s|%s"), name, json);
-  DynamicJsonBuffer jsonBuffer;
-  JsonObject& variant = jsonBuffer.parseObject(json);
-  Firebase.set(name, variant);
+  LOG.verbose(F("Set value|%s|%s"), name, json.c_str());
+  Firebase.setRawJson(name, json);
   if (Firebase.failed()) {
     LOG.error(F("Saving %s value to Firebase failed: Reason: %s"), name, Firebase.error().c_str());
   }
 }
 
-void push(const char *name, const char *json) {
+void push(const char *name, String json) {
   
-  LOG.verbose(F("Push value|%s|%s"), name, json);
-  DynamicJsonBuffer jsonBuffer;
-  JsonObject& variant = jsonBuffer.parseObject(json);
-  Firebase.push(name, variant);
+  //Serial.printf("Push value|%s|%s|%d\n", name, json.c_str(), ESP.getFreeHeap());
+  LOG.verbose(F("Push value|%s|%s"), name, json.c_str());
+  Firebase.pushRawJson(name, json);
   if (Firebase.failed()) {
+    //Serial.printf("Saving %s value to Firebase failed: Reason: %s\n", name, Firebase.error().c_str());
     LOG.error(F("Saving %s value to Firebase failed: Reason: %s"), name, Firebase.error().c_str());
   }
 }
 
 void loop() {
+  
+  ESP.wdtDisable();
   if (SYS_CFG.nextLoopInterval()) {
+       
+    #ifdef ENABLE_WEBSERVER
     MDNS.update();
+    #endif // NO_WEBSERVER
 
     _bmp280.update(USE_MOCK_DATA);
     _dht22.update(USE_MOCK_DATA);
     _mq135.update(USE_MOCK_DATA);
-    // push sensor values to Firebase
+
+    // // push sensor values to Firebase
     push("bmp280", _bmp280.getValuesAsJson());
     push("dht22", _dht22.getValuesAsJson());
     push("mq135", _mq135.getValuesAsJson());
   }
+  ESP.wdtEnable(30000);
+  // reserve time for core processes
+  delay(500);
 }
