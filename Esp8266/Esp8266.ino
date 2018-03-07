@@ -117,13 +117,11 @@ void set(const char *name, String json) {
 
 void push(const char *name, String json) {
   
-  //Serial.printf("Push value|%s|%s|%d\n", name, json.c_str(), ESP.getFreeHeap());
   LOG.verbose(F("Push value|%s|%s"), name, json.c_str());
-  Firebase.pushRawJson(name, json);
-  if (Firebase.failed()) {
-    //Serial.printf("Saving %s value to Firebase failed: Reason: %s\n", name, Firebase.error().c_str());
-    LOG.error(F("Saving %s value to Firebase failed: Reason: %s"), name, Firebase.error().c_str());
-  }
+  // Firebase.pushRawJson(name, json);
+  // if (Firebase.failed()) {
+  //   LOG.error(F("Saving %s value to Firebase failed: Reason: %s"), name, Firebase.error().c_str());
+  // }
 }
 
 void loop() {
