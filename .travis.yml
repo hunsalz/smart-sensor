@@ -30,7 +30,7 @@ script:
   - cd functions/
   - npm install
   - cd ..
-  - source $TRAVIS_BUILD_DIR/travis/build.sh;
+  - source $TRAVIS_BUILD_DIR/travis/build.sh
 deploy:
   skip_cleanup: true
   provider: firebase
