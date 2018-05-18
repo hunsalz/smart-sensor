@@ -9,7 +9,7 @@ Smart-Sensor-App is a [Polymer 2.0](https://www.polymer-project.org/2.0/) app ho
 
 ## Hardware listing
 
-* Amica NodeMCU ESP8266 - *Important note: Not all ESP8266 development boards are compatible with the offered motor shields. Especially the sizing of the LoLin NodeMCU V3 doesn't fit together.*
+* (NodeMCU) ESP8266
 * TODO add sensor listing
 * A bunch of wires
 
@@ -27,7 +27,7 @@ TODO
 ```
 npm install -g polymer-cli
 cd smart-sensor-app/
-Polymer install
+polymer install
 cd ..
 ```
 
@@ -67,6 +67,6 @@ firebase setup:web
 firebase deploy
 ```
 
-5. Upload ESP8266 sketch
+5. Upload sketch to ESP8266
 
 Rename `config.h.template` to `config.h` and insert `FIREBASE_AUTH` = Firebase database secret. (not API-key)
