@@ -2,12 +2,12 @@
   "name": "sensor-data-functions",
   "description": "Sensor data functions",
   "dependencies": {
-    "firebase-admin": "^4.1.1",
-    "firebase-functions": "^0.8.1"
+    "firebase-admin": "^5.12.1",
+    "firebase-functions": "^1.1.0"
   },
   "devDependencies": {
-    "eslint": "^4.13.1",
-    "eslint-plugin-promise": "^3.6.0"
+    "eslint": "^4.19.1",
+    "eslint-plugin-promise": "^3.8.0"
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint .",
