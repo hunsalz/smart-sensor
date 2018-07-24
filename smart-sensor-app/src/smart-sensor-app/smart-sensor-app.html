@@ -17,6 +17,7 @@
 
 <link rel="import" href="widget-layout.html">
 <link rel="import" href="bmp280-widget.html">
+<link rel="import" href="dht11-widget.html">
 <link rel="import" href="dht22-widget.html">
 <link rel="import" href="mq135-widget.html">
 <link rel="import" href="hardware-widget.html">
@@ -146,17 +147,29 @@
             </div>
             <bmp280-widget temperature="{{temperature1}}" pressure="{{pressure}}" altitude="{{altitude}}"></bmp280-widget>
           </widget-layout>
-          <widget-layout key="__dht22">
+          <widget-layout key="__dht11">
             <div slot="title">
               <div>Temperature [[temperature2]]°</div>
-              <div>Humidity [[humidity]]%</div>
+              <div>Humidity [[humidity1]]%</div>
+            </div>
+            <div class="widget-label" slot="label">
+              <div>DHT11</div>
+              <div class="spacer"></div>
+              <iron-icon icon="icons:assessment"></iron-icon>
+            </div>
+            <dht11-widget temperature="{{temperature2}}" humidity="{{humidity1}}"></dht11-widget>
+          </widget-layout>
+          <widget-layout key="__dht22">
+            <div slot="title">
+              <div>Temperature [[temperature3]]°</div>
+              <div>Humidity [[humidity2]]%</div>
             </div>
             <div class="widget-label" slot="label">
               <div>DHT22</div>
               <div class="spacer"></div>
               <iron-icon icon="icons:assessment"></iron-icon>
             </div>
-            <dht22-widget temperature="{{temperature2}}" humidity="{{humidity}}"></dht22-widget>
+            <dht22-widget temperature="{{temperature3}}" humidity="{{humidity2}}"></dht22-widget>
           </widget-layout>
           <widget-layout key="__mq135">
             <div slot="title">
