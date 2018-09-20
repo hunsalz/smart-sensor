@@ -1,5 +1,4 @@
 #include <Esp8266Utils.h>     // https://github.com/hunsalz/esp8266utils
-#include <FirebaseArduino.h>  // https://github.com/firebase/firebase-arduino
 #include <Log4Esp.h>          // https://github.com/hunsalz/log4Esp
 
 #include "config.h"
@@ -7,9 +6,7 @@
 // web server settings
 const static int PORT = 80;
 
-esp8266utils::BMP280Sensor _bmp280;
-esp8266utils::DHTSensor _dht22;
-esp8266utils::MQ135Sensor _mq135;
+esp8266utils::BMP085Sensor _bmp085;
 
 void setup() {
   // logger setup
@@ -42,17 +39,16 @@ void setup() {
   LOG.verbose(F("Serial baud rate is [%d]"), Serial.baudRate());
 
   // sensor setup
-  _bmp280.begin();
-  _dht22.begin(2, 22);
-  _mq135.begin(A0);
+  if (_bmp085.begin()) {
+    LOG.verbose(F("BMP085 is ready."));
+  } else {
+    LOG.error(F("Setup BMP085 failed!"));
+  }
 
   // WiFi setup
   WIFI_STA_CFG.addAP(WIFI_SSID_1, WIFI_PSK_1);
   WIFI_STA_CFG.addAP(WIFI_SSID_2, WIFI_PSK_2);
   WIFI_STA_CFG.begin();
-
-  // Firebase setup
-  Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
 
   // increase loop interval
   SYS_CFG.setLoopInterval(LOOP_INTERVAL);
@@ -86,42 +82,15 @@ void setup() {
   SERVER.on("/esp", HTTP_GET, [](AsyncWebServerRequest* request) {
     SERVER.send(request, esp8266utils::APP_JSON, SYS_CFG.getDetails());
   });
-  SERVER.on("/bmp280", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::APP_JSON, _bmp280.getValuesAsJson());
-  });
-  SERVER.on("/dht22", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::APP_JSON, _dht22.getValuesAsJson());
-  });
-  SERVER.on("/mq135", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::APP_JSON, _mq135.getValuesAsJson());
+  SERVER.on("/bmp085", HTTP_GET, [](AsyncWebServerRequest* request) {
+    SERVER.send(request, esp8266utils::APP_JSON, _bmp085.getValuesAsJson());
   });
 
   #endif // NO_WEBSERVER
 
-  // save current ESP settings to Firebase
-  set("esp", SYS_CFG.getDetails());
-
   LOG.verbose(F("========================="));
   LOG.verbose(F("Setup finished. Have fun."));
   LOG.verbose(F("========================="));
-}
-
-void set(const char *name, String json) {
-  
-  LOG.verbose(F("Set value|%s|%s"), name, json.c_str());
-  Firebase.setRawJson(name, json);
-  if (Firebase.failed()) {
-    LOG.error(F("Saving %s value to Firebase failed: Reason: %s"), name, Firebase.error().c_str());
-  }
-}
-
-void push(const char *name, String json) {
-  
-  LOG.verbose(F("Push value|%s|%s"), name, json.c_str());
-  // Firebase.pushRawJson(name, json);
-  // if (Firebase.failed()) {
-  //   LOG.error(F("Saving %s value to Firebase failed: Reason: %s"), name, Firebase.error().c_str());
-  // }
 }
 
 void loop() {
@@ -133,16 +102,12 @@ void loop() {
     MDNS.update();
     #endif // NO_WEBSERVER
 
-    _bmp280.update(USE_MOCK_DATA);
-    _dht22.update(USE_MOCK_DATA);
-    _mq135.update(USE_MOCK_DATA);
-
-    // // push sensor values to Firebase
-    push("bmp280", _bmp280.getValuesAsJson());
-    push("dht22", _dht22.getValuesAsJson());
-    push("mq135", _mq135.getValuesAsJson());
+    _bmp085.update(USE_MOCK_DATA);
+    LOG.verbose(F("Set value|%s|%s"), "BMP085", _bmp085.getValuesAsJson().c_str());
   }
   ESP.wdtEnable(30000);
+
+  //ESP.deepSleep(30e6);
   // reserve time for core processes
   delay(500);
 }

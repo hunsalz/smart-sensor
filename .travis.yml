@@ -3,7 +3,7 @@ dist: trusty
 os: linux
 env:
   global:
-    - ARDUINO_VERSION=1.8.5
+    - ARDUINO_VERSION=1.8.7
 node_js:
   - "node"
   - "stable"
@@ -24,7 +24,7 @@ install:
   - arduino --board esp8266:esp8266:generic --save-prefs
   - arduino --pref "compiler.warning_level=all" --save-prefs
 script:
-  - cd smart-sensor-app/
+  - cd Firebase/smart-sensor-app/
   - polymer install -v
   - cd ..
   - cd functions/

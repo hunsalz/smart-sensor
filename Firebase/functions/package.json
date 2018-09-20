@@ -2,7 +2,7 @@
   "name": "sensor-data-functions",
   "description": "Sensor data functions",
   "dependencies": {
-    "firebase-admin": "^5.12.1",
+    "firebase-admin": "^5.13.1",
     "firebase-functions": "^1.1.0"
   },
   "devDependencies": {

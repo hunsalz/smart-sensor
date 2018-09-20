@@ -8,6 +8,24 @@ admin.initializeApp(functions.config().firebase);
 // max number of sensor values
 const MAX_ENTRIES = 250;
 
+// manage new BME280 entries
+// - add a UNIX timestamp if entry lacks any timestamp value
+// - truncate history if exceeds max. entries
+exports.bme280 = functions.database.ref('/bme280/{message}')
+    .onCreate((snapshot, context) => {
+        // add a UNIX timestamp if message lacks any timestamp value
+        const message = snapshot.val();
+        if (!message.timestamp) {
+            snapshot.ref.update({
+                altitude: message.altitude,
+                pressure: message.pressure,
+                temperature: message.temperature,
+                timestamp: Date.now()
+            });
+        }
+    return truncate(snapshot.ref.parent);
+});
+
 // manage new BMP280 entries
 // - add a UNIX timestamp if entry lacks any timestamp value
 // - truncate history if exceeds max. entries
@@ -92,4 +110,26 @@ function truncate(parentRef) {
         }
         return null;
     });
+}
+
+exports.temperature = functions.https.onRequest((req, res) => {
+
+    console.log(req);
+
+    return admin.database().ref('/bmp280')
+        .limitToLast(1)
+        .once('value')
+        .then(snapshot => {
+            snapshot.forEach((child) => {
+                let value = child.val();
+                return response(res, value.temperature, 200);
+            });
+        });
+});
+
+function response(res, value, code) {
+    
+    return Promise.resolve(res.status(code)
+        .type('application/json')
+        .send(JSON.stringify({ "fulfillmentText": "Derzeit haben wir " + value + "°"})));
 }
