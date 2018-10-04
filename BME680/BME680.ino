@@ -39,7 +39,7 @@ void setup() {
   LOG.verbose(F("Serial baud rate is [%d]"), Serial.baudRate());
 
   // sensor setup
-  if (_bme680.begin()) {
+  if (_bme680.begin(0x77)) {
     LOG.verbose(F("BME680 is ready."));
   } else {
     LOG.error(F("Setup BME680 failed!"));
