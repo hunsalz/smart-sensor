@@ -1,0 +1,17 @@
+// WiFi settings
+const char *WIFI_SSID_1 = "";
+const char *WIFI_PSK_1 = "";
+const char *WIFI_SSID_2 = "";
+const char *WIFI_PSK_2 = "";
+
+// Parse settings
+const char *APPLICATION_ID = "";
+const char *CLIENT_KEY = "";
+
+// loop interval in ms
+const uint16_t LOOP_INTERVAL = 5 * 1000;
+
+// mock sensor data
+const bool USE_MOCK_DATA = false;
+
+define ENABLE_WEBSERVER
