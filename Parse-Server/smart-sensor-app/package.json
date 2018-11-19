@@ -1,0 +1,25 @@
+{
+  "name": "smart-sensor-app",
+  "description": "Smart Sensor App",
+  "dependencies": {
+    "@polymer/app-layout": "3.0.1",
+    "@polymer/app-storage": "3.0.2",
+    "@polymer/iron-ajax": "3.0.1",
+    "@polymer/iron-collapse": "3.0.1",
+    "@polymer/iron-icon": "3.0.1",
+    "@polymer/iron-icons": "3.0.1",
+    "@polymer/iron-iconset-svg": "3.0.1",
+    "@polymer/iron-flex-layout": "3.0.1",
+    "@polymer/paper-icon-button": "3.0.1",
+    "@polymer/polymer": "3.1.0",
+    "parse": "2.1.0",
+    "chart.js": "2.7.3"
+  },
+  "devDependencies": {
+    "@webcomponents/webcomponentsjs": "2.1.3",
+    "wct-browser-legacy": "1.0.2"
+  },
+  "engines": {
+    "node": ">=10.0"
+  }
+}

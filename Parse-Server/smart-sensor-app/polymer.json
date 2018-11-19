@@ -1,0 +1,42 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/smart-sensor-app/smart-sensor-app.js",
+  "sources": [
+    "fonts/**/*",
+    "images/**/*",
+    "src/**.js",
+    "manifest/**",
+    "package.json"
+  ],
+  "extraDependencies": [
+    "manifest.json",
+    "node_modules/@webcomponents/webcomponentsjs/bundles/**"
+  ],
+  "builds": [
+    {
+      "name": "production",
+      "preset": "es6-bundled",
+      "js": {
+        "compile": "es2015",
+        "minify": true,
+        "transformModulesToAmd": true
+      },
+      "css": {
+        "minify": true
+      },
+      "html": {
+        "minify": true
+      },
+      "bundle": true,
+      "addServiceWorker": true,
+      "addPushManifest": false
+    }
+  ],
+  "moduleResolution": "node",
+  "npm": true,
+  "lint": {
+    "rules": [
+      "polymer-3"
+    ]
+  }
+}

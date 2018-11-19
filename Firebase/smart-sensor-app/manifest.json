@@ -1,7 +1,0 @@
-{
-  "name": "Smart-Sensor-App for various sensor values",
-  "short_name": "Smart-Sensor-App",
-  "start_url": "/",
-  "display": "fullscreen",
-  "orientation": "landscape"
-}

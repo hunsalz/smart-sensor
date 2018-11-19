@@ -1,6 +1,7 @@
 .gitignore
 **/config.h
-**/bower_components/
+**/back4app/
 **/build/
 **/node_modules
+**/www/
 **/package-lock.json
