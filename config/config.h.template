@@ -13,3 +13,5 @@ const uint16_t LOOP_INTERVAL = 20 * 1000;
 
 // mock sensor data
 const bool USE_MOCK_DATA = true;
+
+#define ENABLE_WEBSERVER
