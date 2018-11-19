@@ -107,7 +107,7 @@ class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
             label: 'Temperature',
             borderColor: '#e57373',
             borderWidth: 1,
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            backgroundColor: 'rgba(229, 115, 115, 0.2)',
             data: []
           }]
         }
@@ -120,9 +120,9 @@ class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
           labels: [],
           datasets: [{
             label: 'Pressure',
-            borderColor: '#e57373',
+            borderColor: '#7986cb',
             borderWidth: 1,
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            backgroundColor: 'rgba(121, 134, 203, 0.2)',
             data: []
           }]
         }
@@ -135,9 +135,9 @@ class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
           labels: [],
           datasets: [{
             label: 'Altitude',
-            borderColor: '#e57373',
+            borderColor: '#ffb74d',
             borderWidth: 1,
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            backgroundColor: 'rgba(255, 183, 77, 0.2)',
             data: []
           }]
         }
@@ -145,6 +145,8 @@ class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
       // handle resize event
       this.addEventListener('iron-resize', () => {
         this.temperatures.resize();
+        this.pressures.resize();
+        this.altitudes.resize();
       });
     });
   }
@@ -187,7 +189,7 @@ class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
         this.lastAltitude = results[0].get('altitude');
       }
     }, (error) => {
-      console.error("Query BM280 entries failed.", error);
+      console.error("Query BMP280 entries failed.", error);
     });
 
     // subscribe to get updates
@@ -207,7 +209,7 @@ class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
       __this.pressures.data.labels.pop();
       __this.pressures.data.datasets[0].data.unshift(bmp280.get('pressure'));
       __this.pressures.data.datasets[0].data.pop();
-      // update pressure chart
+      // update altitude chart
       __this.altitudes.data.labels.unshift(label);
       __this.altitudes.data.labels.pop();
       __this.altitudes.data.datasets[0].data.unshift(bmp280.get('pressure'));
