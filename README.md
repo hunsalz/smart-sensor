@@ -3,9 +3,9 @@
 [![Build Status](https://travis-ci.org/hunsalz/smart-sensor.svg?branch=master)](https://travis-ci.org/hunsalz/smart-sensor)
 [![License](https://img.shields.io/badge/license-MIT%20License-blue.svg)](http://doge.mit-license.org)
 
-## Watch [Smart-Sensor-App ↗](https://smart-sensor-8266.firebaseapp.com/) live.
+## Watch [Smart-Sensor-App ↗](https://smart-sensor.back4app.io/) live.
 
-Smart-Sensor-App is a [Polymer 2.0](https://www.polymer-project.org/2.0/) app hosted on [Firebase](https://firebase.google.com). All sensor values are collected by an ESP8266 development board. The ESP8266 pushes all collected sensor values into a [Firebase Realtime Database](https://firebase.google.com/docs/database/). Values are pre-processed by [Cloud Functions for Firebase](https://firebase.google.com/docs/functions/) to extend sensor values by timestamp and to limit the amount of historical values. Any new values are displayed instantly. The App itself is easily extandable by new widgets.
+Smart-Sensor-App is a Progressive Web App build with [Polymer 3.0](https://polymer-library.polymer-project.org/3.0/docs/devguide/feature-overview). As backend service [Parse](https://parseplatform.org/) is used. Application shows sensor values collected by an ESP8266 development board. Values are post-processed by [Cloud Code](https://docs.parseplatform.org/cloudcode/guide/) to limit the amount of historical values. New values are shown instantly. The App itself is easily extandable by new widgets.
 
 ## Hardware listing
 
@@ -27,46 +27,20 @@ TODO
 ```
 npm install -g polymer-cli
 cd smart-sensor-app/
-polymer install
-cd ..
 ```
 
-2. Install Firebase Cloud Functions
-```
-npm install -g firebase-tools
-cd functions/
-npm install
-cd ..
-```
+2. TODO
 
-3. Create Firebase project
+3. Create Parse project
 
-```
-firebase init
-```
-
-Result should look like:
-```
-firebase setup:web
-
-> firebase.initializeApp({
->  "apiKey": "AIzaSyD6XnyQv2n5B5SPc4Ir2pl_Z2GiDlFwGB8",
->  "databaseURL": "https://smart-sensor-8266.firebaseio.com",
->  "storageBucket": "smart-sensor-8266.appspot.com",
->  "authDomain": "smart-sensor-8266.firebaseapp.com",
->  "messagingSenderId": "555603887556",
->  "projectId": "smart-sensor-8266"
-> });
-```
+TODO
 
 *Note:* Change entries in `./smart-sensor-app/src/smart-sensor-app/smart-sensor-app.html` accordingly!
 
-4. Deploy project to Firebase 
+4. Deploy project
 
-```
-firebase deploy
-```
+TODO
 
 5. Upload sketch to ESP8266
 
-Rename `config.h.template` to `config.h` and insert `FIREBASE_AUTH` = Firebase database secret. (not API-key)
+Rename `config.h.template` to `config.h` and insert `APPLICATION_ID` and `CLIENT_KEY` accordingly.
