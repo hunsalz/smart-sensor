@@ -13,6 +13,8 @@ esp8266utils::BME280Sensor _bme280;
 //esp8266utils::DHTSensor _dht22;
 //esp8266utils::MQ135Sensor _mq135;
 
+ParseClient parse = ParseClient();
+
 void setup() {
 
   // logger setup
@@ -60,8 +62,7 @@ void setup() {
   WIFI_STA_CFG.begin();
 
   // Parse setup
-  ParseClient pc = ParseClient();
-  pc.begin(APPLICATION_ID, CLIENT_KEY);
+  parse.begin(APPLICATION_ID, CLIENT_KEY);
 
   // increase loop interval
   SYS_CFG.setLoopInterval(LOOP_INTERVAL);

@@ -14,7 +14,7 @@
   ],
   "builds": [
     {
-      "name": "production",
+      "name": "public",
       "preset": "es6-bundled",
       "js": {
         "compile": "es2015",
