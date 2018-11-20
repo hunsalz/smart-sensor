@@ -5,7 +5,11 @@
 
 ## Watch [Smart-Sensor-App ↗](https://smart-sensor.back4app.io/) live.
 
-Smart-Sensor-App is a Progressive Web App build with [Polymer 3.0](https://polymer-library.polymer-project.org/3.0/docs/devguide/feature-overview). As backend service [Parse](https://parseplatform.org/) is used. Application shows sensor values collected by an ESP8266 development board. Values are post-processed by [Cloud Code](https://docs.parseplatform.org/cloudcode/guide/) to limit the amount of historical values. New values are shown instantly. The App itself is easily extandable by new widgets.
+Smart-Sensor consists of various sensor input sources and a central Progressive Web App. Sensor values are collected via separate ESP8266 units. Smart-Sensor-App is build with [Polymer 3.0](https://polymer-library.polymer-project.org/3.0/docs/devguide/feature-overview). The App is easily extandable by new widgets and shows new sensor values instantly. As backend service [Parse](https://parseplatform.org/) is used.
+
+## Features
+
+* TODO
 
 ## Hardware listing
 
