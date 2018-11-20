@@ -26,6 +26,7 @@ install:
 script:
   - cd Parse-Server/smart-sensor-app/
   - polymer install -v
+  - polymer build -v
   - cd ..
   - source $TRAVIS_BUILD_DIR/travis/build.sh
 after_success:
