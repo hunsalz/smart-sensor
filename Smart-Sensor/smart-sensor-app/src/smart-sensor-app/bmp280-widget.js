@@ -92,7 +92,7 @@ class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
   constructor() {
     super();
    
-    this.__queryBMP280Entries();
+    this._boundListener = this.__queryBMP280Entries.bind(this);
 
     afterNextRender(this, function () {
       // global chart properties
@@ -151,82 +151,96 @@ class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
     });
   }
 
-  async __queryBMP280Entries(limit = 5) {
+  connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener('parse-authenticated', this._boundListener);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener('parse-authenticated', this._boundListener);
+  }
+
+  async __queryBMP280Entries() {
     
-    // query BMP280 entries
-    const BMP280 = Parse.Object.extend('BMP280');
-    const query = new Parse.Query(BMP280);
-    query.descending("createdAt");
-    query.limit(limit);
-
-    // initially query all entries to draw chart once
-    query.find().then((results) => {
-      if (results.length > 0) {
-        // add each entry
-        results.forEach(e => {
-          let label = __this.__getShortTime(e.get('createdAt'));
-          // update temperature chart
-          this.temperatures.data.labels.push(label);
-          this.temperatures.data.datasets[0].data.push(e.get('temperature'));
-          // update pressure chart
-          this.pressures.data.labels.push(label);
-          this.pressures.data.datasets[0].data.push(e.get('pressure'));
-          // update altitude chart
-          this.altitudes.data.labels.push(label);
-          this.altitudes.data.datasets[0].data.push(e.get('altitude'));
-        });
+    // verify that Parse is initialized
+    if (this.app) {
+      
+      // try to query BMP280 entries
+      const BMP280 = Parse.Object.extend('BMP280');
+      const query = new Parse.Query(BMP280);
+      query.descending("createdAt");
+      query.limit(5);
+  
+      // initially query all entries to draw chart once
+      query.find().then((results) => {
+        if (results.length > 0) {
+          // add each entry
+          results.forEach(e => {
+            let label = self.__getShortTime(e.get('createdAt'));
+            // update temperature chart
+            this.temperatures.data.labels.push(label);
+            this.temperatures.data.datasets[0].data.push(e.get('temperature'));
+            // update pressure chart
+            this.pressures.data.labels.push(label);
+            this.pressures.data.datasets[0].data.push(e.get('pressure'));
+            // update altitude chart
+            this.altitudes.data.labels.push(label);
+            this.altitudes.data.datasets[0].data.push(e.get('altitude'));
+          });
+          // update charts
+          this.temperatures.update();
+          this.pressures.update();
+          this.altitudes.update();
+          // update last update date
+          this.lastUpdate = self.__getShortDate(results[0].get('createdAt'));
+          // update last temperature value
+          this.lastTemperature = results[0].get('temperature');
+          // update last pressure value
+          this.lastPressure = results[0].get('pressure');
+          // update last altitude value
+          this.lastAltitude = results[0].get('altitude');
+        }
+      }, (error) => {
+        console.error("Query BMP280 entries failed.", error);
+      });
+  
+      // subscribe to get updates
+      var subscription = query.subscribe();
+      // handle incoming event
+      var self = this;
+      subscription.on('create', function(bmp280) {
+        // add new entry and drop the oldest one
+        let label = self.__getShortTime(bmp280.get('createdAt'));
+        // update temperature chart
+        self.temperatures.data.labels.unshift(label);
+        self.temperatures.data.labels.pop();
+        self.temperatures.data.datasets[0].data.unshift(bmp280.get('temperature'));
+        self.temperatures.data.datasets[0].data.pop();
+        // update pressure chart
+        self.pressures.data.labels.unshift(label);
+        self.pressures.data.labels.pop();
+        self.pressures.data.datasets[0].data.unshift(bmp280.get('pressure'));
+        self.pressures.data.datasets[0].data.pop();
+        // update altitude chart
+        self.altitudes.data.labels.unshift(label);
+        self.altitudes.data.labels.pop();
+        self.altitudes.data.datasets[0].data.unshift(bmp280.get('pressure'));
+        self.altitudes.data.datasets[0].data.pop();
         // update charts
-        this.temperatures.update();
-        this.pressures.update();
-        this.altitudes.update();
+        self.temperatures.update();
+        self.pressures.update();
+        self.altitudes.update();
         // update last update date
-        this.lastUpdate = __this.__getShortDate(results[0].get('createdAt'));
+        self.lastUpdate = self.__getShortDate(bmp280.get('createdAt'));
         // update last temperature value
-        this.lastTemperature = results[0].get('temperature');
+        self.lastTemperature = bmp280.get('temperature');
         // update last pressure value
-        this.lastPressure = results[0].get('pressure');
+        self.lastPressure = bmp280.get('pressure');
         // update last altitude value
-        this.lastAltitude = results[0].get('altitude');
-      }
-    }, (error) => {
-      console.error("Query BMP280 entries failed.", error);
-    });
-
-    // subscribe to get updates
-    var subscription = query.subscribe();
-    // handle incoming event
-    var __this = this;
-    subscription.on('create', function(bmp280) {
-      // add new entry and drop the oldest one
-      let label = __this.__getShortTime(bmp280.get('createdAt'));
-      // update temperature chart
-      __this.temperatures.data.labels.unshift(label);
-      __this.temperatures.data.labels.pop();
-      __this.temperatures.data.datasets[0].data.unshift(bmp280.get('temperature'));
-      __this.temperatures.data.datasets[0].data.pop();
-      // update pressure chart
-      __this.pressures.data.labels.unshift(label);
-      __this.pressures.data.labels.pop();
-      __this.pressures.data.datasets[0].data.unshift(bmp280.get('pressure'));
-      __this.pressures.data.datasets[0].data.pop();
-      // update altitude chart
-      __this.altitudes.data.labels.unshift(label);
-      __this.altitudes.data.labels.pop();
-      __this.altitudes.data.datasets[0].data.unshift(bmp280.get('pressure'));
-      __this.altitudes.data.datasets[0].data.pop();
-      // update charts
-      __this.temperatures.update();
-      __this.pressures.update();
-      __this.altitudes.update();
-      // update last update date
-      __this.lastUpdate = __this.__getShortDate(bmp280.get('createdAt'));
-      // update last temperature value
-      __this.lastTemperature = bmp280.get('temperature');
-      // update last pressure value
-      __this.lastPressure = bmp280.get('pressure');
-      // update last altitude value
-       __this.lastAltitude = bmp280.get('altitude');
-    });
+         self.lastAltitude = bmp280.get('altitude');
+      });
+    }
   }
 
   __getShortDate(date) {

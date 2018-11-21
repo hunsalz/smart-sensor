@@ -14,8 +14,8 @@ import '@polymer/iron-icons/iron-icons.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-styles/paper-styles.js';
 
-import 'parse/dist/parse.min.js';
-
+import './parse-app.js';
+import './parse-auth.js';
 import './bmp280-widget.js';
 import './bme280-widget.js';
 import './hardware-widget.js';
@@ -93,7 +93,16 @@ class SmartSensorApp extends GestureEventListeners(PolymerElement) {
       
       <!-- service components -->
 
+      <parse-app
+        app="{{app}}"
+        application-id="1IFq8uk57NzXVMvzb1EYtytchOCj4OEUMyCawK1a" 
+        java-script-key="jtl8Wgy2RajOIMqxlQjuAjJFqfZoMLLlL5yLWooY"
+        server-url="https://smart-sensor.back4app.io"
+        live-query-server-url="wss://smart-sensor.back4app.io"
+        verbose>
+      </parse-app>
 
+      <parse-auth app="{{app}}" user="app" password="123456789" status="{{status}}"></parse-auth>
 
       <!-- UI components -->
       <app-header-layout fullbleed>
@@ -123,7 +132,7 @@ class SmartSensorApp extends GestureEventListeners(PolymerElement) {
                 <div>BMP280</div>
                 <iron-icon icon="icons:assessment"></iron-icon>
               </div>
-              <bmp280-widget last-temperature="{{__bmp280_temperature}}" last-pressure="{{__bmp280_pressure}}" last-altitude="{{__bmp280_altitude}}"></bmp280-widget>
+              <bmp280-widget app="{{app}}" last-temperature="{{__bmp280_temperature}}" last-pressure="{{__bmp280_pressure}}" last-altitude="{{__bmp280_altitude}}"></bmp280-widget>
             </widget-layout>
 
             <widget-layout key="__bme280">
@@ -137,7 +146,7 @@ class SmartSensorApp extends GestureEventListeners(PolymerElement) {
                 <div>BME280</div>
                 <iron-icon icon="icons:assessment"></iron-icon>
               </div>
-              <bme280-widget last-temperature="{{__bme280_temperature}}" last-humidity="{{__bme280_humidity}}" last-pressure="{{__bme280_pressure}}" last-altitude="{{__bme280_altitude}}"></bme280-widget>
+              <bme280-widget app="{{app}}" last-temperature="{{__bme280_temperature}}" last-humidity="{{__bme280_humidity}}" last-pressure="{{__bme280_pressure}}" last-altitude="{{__bme280_altitude}}"></bme280-widget>
             </widget-layout>
 
             <widget-layout key="__hardware">
@@ -175,16 +184,6 @@ class SmartSensorApp extends GestureEventListeners(PolymerElement) {
     
     // set passive gestures globally for all elements using Polymer gestures
     setPassiveTouchGestures(true);
-
-    Parse.initialize("1IFq8uk57NzXVMvzb1EYtytchOCj4OEUMyCawK1a", "jtl8Wgy2RajOIMqxlQjuAjJFqfZoMLLlL5yLWooY");
-    Parse.serverURL = "https://smart-sensor.back4app.io";
-    Parse.liveQueryServerURL = 'wss://smart-sensor.back4app.io';
-
-    Parse.User.logIn("app", "123456789").then(function(user) {
-      console.info("Login successful.");
-    }, function(error) {
-      console.error("Login failed.", error);
-    });
 
     // add tasks after next render ...
     afterNextRender(this, function () {
@@ -231,10 +230,6 @@ class SmartSensorApp extends GestureEventListeners(PolymerElement) {
     for (var i = 0; i < nodes.length; i++) {
       nodes[i].collapse(this.collapsed);
     }
-  }
-
-  __handleFirebaseAuthError(event) {
-    console.warn("Firebase auth error: " + event);
   }
 }
 

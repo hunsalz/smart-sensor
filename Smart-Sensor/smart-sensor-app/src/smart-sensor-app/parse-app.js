@@ -1,5 +1,7 @@
 import {PolymerElement, html} from '@polymer/polymer/polymer-element.js';
 
+import 'parse/dist/parse.min.js';
+
 class ParseApp extends PolymerElement {
   static get template() {
     return html`
@@ -13,21 +15,40 @@ class ParseApp extends PolymerElement {
 
   static get properties() {
     return {
-      title: {
+      applicationId: {
         type: String
       },
-      key: {
+      javaScriptKey: {
         type: String
       },
-      verbose: {
-        type: Boolean,
-        value: false
+      serverUrl: {
+        type: String
+      },
+      liveQueryServerUrl: {
+        type: String
+      },
+      app: {
+        type: Object,
+        notify: true,
+        computed: '__computeApp(applicationId, javaScriptKey, serverUrl, liveQueryServerUrl)'
       }
     };
   }
 
-  isCollapsed() {
-    return !this.$.collapse_id.opened;
+  __computeApp(applicationId, javaScriptKey, serverUrl, liveQueryServerUrl) {
+
+    if (applicationId && javaScriptKey && serverUrl) {
+      Parse.initialize(applicationId, javaScriptKey);
+      Parse.serverURL = serverUrl;
+      Parse.liveQueryServerURL = liveQueryServerUrl;
+      console.log("Parse initialized.", Parse);
+      this.dispatchEvent(new CustomEvent('parse-initialized', { bubbles: true, composed: true }));
+    } else {
+      console.error("Initializing Parse failed! Check your attributes: applicationId, javaScriptKey, serverUrl are mandatory.");
+      return null;
+    }
+
+    return Parse;
   }
 }
 
