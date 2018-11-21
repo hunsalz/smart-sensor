@@ -9,42 +9,61 @@ Smart-Sensor consists of various sensor input sources and a central Progressive 
 
 ## Features
 
-* TODO
+* Fulfils [Progressive Web Application characteristics](https://en.wikipedia.org/wiki/Progressive_web_applications#Characteristics)
+* No cloud vendor lock-in with [Parse](https://parseplatform.org/)
+* Possible to use in a local setup without cloud provider
+* Low-price hardware
 
 ## Hardware listing
 
 * (NodeMCU) ESP8266
-* TODO add sensor listing
+* Examples for [Bosch environmental sensors](https://www.bosch-sensortec.com/bst/products/environmental/integrated_environmental_unit/overview_integratedenvironmentalunit)
 * A bunch of wires
 
-## Pictures of hardware assembling
+## Impressions of hardware assembling
 
 TODO
-
-## Impressions
-
-TODO 
 
 ## Setup Smart-Sensor-App
 
 1. Install Polymer dependencies
+
 ```
 npm install -g polymer-cli
-cd smart-sensor-app/
 ```
 
-2. TODO
+2. Build PWA
 
-3. Create Parse project
+```
+cd Smart-Sensor/smart-sensor-app/
+polymer install
+```
+
+3. Build PWA
+
+```
+cd Smart-Sensor/smart-sensor-app/
+polymer install
+```
+
+4. Run PWA locally
+
+```
+polymer serve
+```
+
+Go to http://127.0.0.1:8081/components/smart-sensor-app/
+
+x. Create Parse project
 
 TODO
 
 *Note:* Change entries in `./smart-sensor-app/src/smart-sensor-app/smart-sensor-app.html` accordingly!
 
-4. Deploy project
+x. Deploy project
 
 TODO
 
-5. Upload sketch to ESP8266
+x. Upload sketch to ESP8266
 
 Rename `config.h.template` to `config.h` and insert `APPLICATION_ID` and `CLIENT_KEY` accordingly.
