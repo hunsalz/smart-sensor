@@ -1,7 +1,7 @@
-import {PolymerElement, html} from '@polymer/polymer/polymer-element.js';
-import {mixinBehaviors} from '@polymer/polymer/lib/legacy/class.js';
-import {IronResizableBehavior} from '@polymer/iron-resizable-behavior/iron-resizable-behavior.js';
-import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
+import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
+import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class.js';
+import { IronResizableBehavior } from '@polymer/iron-resizable-behavior/iron-resizable-behavior.js';
+import { afterNextRender } from '@polymer/polymer/lib/utils/render-status.js';
 
 import '@polymer/paper-styles/paper-styles.js';
 
@@ -194,16 +194,16 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
   }
 
   async __queryBME280Entries() {
-  
+
     // verify that Parse is initialized
     if (this.app) {
-      
+
       // try to query BME280 entries
       const BME280 = this.app.Object.extend('BME280');
       const query = new this.app.Query(BME280);
       query.descending("createdAt");
       query.limit(5);
-  
+
       // initially query all entries to draw chart once
       query.find().then((results) => {
         if (results.length > 0) {
@@ -242,12 +242,12 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
       }, (error) => {
         console.error("Query BME280 entries failed.", error);
       });
-  
+
       // subscribe to get updates
       var subscription = query.subscribe();
       // handle incoming event
       var self = this;
-      subscription.on('create', function(bme280) {
+      subscription.on('create', function (bme280) {
         // add new entry and drop the oldest one
         let label = self.__getShortTime(bme280.get('createdAt'));
         // update temperature chart
@@ -284,7 +284,7 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
         // update last pressure value
         self.lastPressure = bme280.get('pressure');
         // update last altitude value
-         self.lastAltitude = bme280.get('altitude');
+        self.lastAltitude = bme280.get('altitude');
       });
     }
   }

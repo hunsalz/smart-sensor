@@ -1,4 +1,4 @@
-import {PolymerElement, html} from '@polymer/polymer/polymer-element.js';
+import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 
 import 'parse/dist/parse.min.js';
 
@@ -7,7 +7,7 @@ class ParseApp extends PolymerElement {
     return html`
       <style>
         :host {
-          display: inline-block;
+          display: none;
         }
       </style>
     `;
@@ -41,10 +41,10 @@ class ParseApp extends PolymerElement {
       Parse.initialize(applicationId, javaScriptKey);
       Parse.serverURL = serverUrl;
       Parse.liveQueryServerURL = liveQueryServerUrl;
-      console.log("Parse initialized.", Parse);
+      console.info("Parse initialized.", Parse);
       this.dispatchEvent(new CustomEvent('parse-initialized', { bubbles: true, composed: true }));
     } else {
-      console.error("Initializing Parse failed! Check your attributes: applicationId, javaScriptKey, serverUrl are mandatory.");
+      console.error("Initializing Parse failed! Check your attributes: 'applicationId', 'javaScriptKey', 'serverUrl' are mandatory.");
       return null;
     }
 

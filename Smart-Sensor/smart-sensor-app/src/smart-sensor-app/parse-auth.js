@@ -1,4 +1,4 @@
-import {PolymerElement, html} from '@polymer/polymer/polymer-element.js';
+import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 
 import 'parse/dist/parse.min.js';
 
@@ -7,7 +7,7 @@ class ParseAuth extends PolymerElement {
     return html`
       <style>
         :host {
-          display: inline-block;
+          display: none;
         }
       </style>
     `;
@@ -44,12 +44,12 @@ class ParseAuth extends PolymerElement {
   __auth(app) {
 
     var self = this;
-    app.User.logIn(this.user, this.password).then(function(user) {
+    app.User.logIn(this.user, this.password).then(function (user) {
       self._setStatus(true);
       // notify about successful authentication
       self.dispatchEvent(new CustomEvent('parse-authenticated', { bubbles: true, composed: true }));
       console.info("Login successful.", user);
-    }, function(error) {
+    }, function (error) {
       self._setStatus(false);
       console.error("Login failed.", error);
     });

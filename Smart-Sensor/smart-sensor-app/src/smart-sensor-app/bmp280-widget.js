@@ -1,7 +1,7 @@
-import {PolymerElement, html} from '@polymer/polymer/polymer-element.js';
-import {mixinBehaviors} from '@polymer/polymer/lib/legacy/class.js';
-import {IronResizableBehavior} from '@polymer/iron-resizable-behavior/iron-resizable-behavior.js';
-import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
+import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
+import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class.js';
+import { IronResizableBehavior } from '@polymer/iron-resizable-behavior/iron-resizable-behavior.js';
+import { afterNextRender } from '@polymer/polymer/lib/utils/render-status.js';
 
 import '@polymer/paper-styles/paper-styles.js';
 
@@ -91,7 +91,7 @@ class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
 
   constructor() {
     super();
-   
+
     this._boundListener = this.__queryBMP280Entries.bind(this);
 
     afterNextRender(this, function () {
@@ -162,16 +162,16 @@ class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
   }
 
   async __queryBMP280Entries() {
-    
+
     // verify that Parse is initialized
     if (this.app) {
-      
+
       // try to query BMP280 entries
       const BMP280 = Parse.Object.extend('BMP280');
       const query = new Parse.Query(BMP280);
       query.descending("createdAt");
       query.limit(5);
-  
+
       // initially query all entries to draw chart once
       query.find().then((results) => {
         if (results.length > 0) {
@@ -204,12 +204,12 @@ class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
       }, (error) => {
         console.error("Query BMP280 entries failed.", error);
       });
-  
+
       // subscribe to get updates
       var subscription = query.subscribe();
       // handle incoming event
       var self = this;
-      subscription.on('create', function(bmp280) {
+      subscription.on('create', function (bmp280) {
         // add new entry and drop the oldest one
         let label = self.__getShortTime(bmp280.get('createdAt'));
         // update temperature chart
@@ -238,7 +238,7 @@ class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
         // update last pressure value
         self.lastPressure = bmp280.get('pressure');
         // update last altitude value
-         self.lastAltitude = bmp280.get('altitude');
+        self.lastAltitude = bmp280.get('altitude');
       });
     }
   }

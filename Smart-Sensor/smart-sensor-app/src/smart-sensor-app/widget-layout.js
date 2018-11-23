@@ -1,5 +1,5 @@
-import {PolymerElement, html} from '@polymer/polymer/polymer-element.js';
-import {GestureEventListeners} from '@polymer/polymer/lib/mixins/gesture-event-listeners.js';
+import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
+import { GestureEventListeners } from '@polymer/polymer/lib/mixins/gesture-event-listeners.js';
 
 import '@polymer/app-storage/app-localstorage/app-localstorage-document.js';
 

@@ -1,12 +1,12 @@
-import {PolymerElement, html} from '@polymer/polymer/polymer-element.js';
-import {GestureEventListeners} from '@polymer/polymer/lib/mixins/gesture-event-listeners.js';
-import {afterNextRender} from '@polymer/polymer/lib/utils/render-status.js';
-import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings.js';
+import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
+import { GestureEventListeners } from '@polymer/polymer/lib/mixins/gesture-event-listeners.js';
+import { afterNextRender } from '@polymer/polymer/lib/utils/render-status.js';
+import { setPassiveTouchGestures } from '@polymer/polymer/lib/utils/settings.js';
 
 import '@polymer/app-layout/app-grid/app-grid-style.js';
 import '@polymer/app-layout/app-header/app-header.js';
-import '@polymer/app-layout/app-scroll-effects/effects/resize-title.js';
 import '@polymer/app-layout/app-header-layout/app-header-layout.js';
+import '@polymer/app-layout/app-scroll-effects/effects/resize-title.js';
 import '@polymer/app-layout/app-toolbar/app-toolbar.js';
 
 import '@polymer/iron-icons/iron-icons.js';
@@ -89,6 +89,11 @@ class SmartSensorApp extends GestureEventListeners(PolymerElement) {
           @apply --layout-flex;
           width: 100%;
         }
+
+        .alert {
+          background: var(--paper-red-500);
+          text-align: center;
+        }
       </style>
       
       <!-- service components -->
@@ -105,6 +110,7 @@ class SmartSensorApp extends GestureEventListeners(PolymerElement) {
       <parse-auth app="{{app}}" user="app" password="123456789" status="{{status}}"></parse-auth>
 
       <!-- UI components -->
+      
       <app-header-layout fullbleed>
         
         <!-- header area -->
@@ -181,7 +187,7 @@ class SmartSensorApp extends GestureEventListeners(PolymerElement) {
 
   constructor() {
     super();
-    
+
     // set passive gestures globally for all elements using Polymer gestures
     setPassiveTouchGestures(true);
 
