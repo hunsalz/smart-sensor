@@ -8,10 +8,6 @@
     "manifest/**",
     "package.json"
   ],
-  "extraDependencies": [
-    "manifest.json",
-    "node_modules/@webcomponents/webcomponentsjs/bundles/**"
-  ],
   "builds": [
     {
       "name": "public",
