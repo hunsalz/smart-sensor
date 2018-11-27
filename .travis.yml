@@ -25,8 +25,8 @@ install:
   - arduino --pref "compiler.warning_level=all" --save-prefs
 script:
   - cd Parse-Server/smart-sensor-app/
-  - polymer install -v
-  - polymer build -v
+  - npm install
+  - polymer build
   - cd ..
   - source $TRAVIS_BUILD_DIR/travis/build.sh
 after_success:
