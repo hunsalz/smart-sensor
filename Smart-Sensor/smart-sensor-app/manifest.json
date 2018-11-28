@@ -1,6 +1,7 @@
 {
-  "name": "Smart-Sensor for various sensor values",
+  "name": "Smart-Sensor",
   "short_name": "Smart-Sensor",
+  "description": "Smart-Sensor for various sensor values",
   "start_url": "/",
   "display": "fullscreen",
   "orientation": "landscape",
