@@ -28,7 +28,7 @@ install:
   - arduino --pref "compiler.warning_level=all" --save-prefs
 script:
   - source $TRAVIS_BUILD_DIR/travis/build.sh
-  - cd smart-sensor/smart-sensor-app/
+  - cd smart-sensor-1/smart-sensor-app/
   - npm install
   - polymer build
 after_success:
