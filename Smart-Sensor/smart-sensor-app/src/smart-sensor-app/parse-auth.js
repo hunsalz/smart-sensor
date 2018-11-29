@@ -19,7 +19,7 @@ class ParseAuth extends PolymerElement {
         type: Object,
         notify: true
       },
-      status: {
+      login: {
         type: Boolean,
         value: false,
         notify: true,
@@ -45,12 +45,12 @@ class ParseAuth extends PolymerElement {
 
     var self = this;
     app.User.logIn(this.user, this.password).then(function (user) {
-      self._setStatus(true);
+      self._setLogin(true);
       // notify about successful authentication
       self.dispatchEvent(new CustomEvent('parse-authenticated', { bubbles: true, composed: true }));
       console.info("Login successful.", user);
     }, function (error) {
-      self._setStatus(false);
+      self._setLogin(false);
       console.error("Login failed.", error);
     });
   }

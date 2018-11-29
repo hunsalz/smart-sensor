@@ -107,7 +107,7 @@ class SmartSensorApp extends GestureEventListeners(PolymerElement) {
         verbose>
       </parse-app>
 
-      <parse-auth app="{{app}}" user="app" password="123456789" status="{{status}}"></parse-auth>
+      <parse-auth app="{{app}}" user="app" password="123456789" login="{{login}}"></parse-auth>
 
       <!-- UI components -->
       
