@@ -9,7 +9,7 @@ node_js:
   - "stable"
 stages:
   - deploy
-  - ':deploy it to GH-PAGES'
+  - ':ship it to Back4App'
 cache:
   directories:
     - node_modules
