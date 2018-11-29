@@ -27,10 +27,9 @@ install:
   - arduino --board esp8266:esp8266:generic --save-prefs
   - arduino --pref "compiler.warning_level=all" --save-prefs
 script:
-  - cd Parse-Server/smart-sensor-app/
+  - source $TRAVIS_BUILD_DIR/travis/build.sh
+  - cd smart-sensor/smart-sensor-app/
   - npm install
   - polymer build
-  - cd ..
-  - source $TRAVIS_BUILD_DIR/travis/build.sh
 after_success:
   - bash <(curl -s https://codecov.io/bash);
