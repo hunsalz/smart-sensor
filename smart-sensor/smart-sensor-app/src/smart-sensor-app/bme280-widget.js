@@ -62,6 +62,10 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
 
   static get properties() {
     return {
+      ticks: {
+        type: Number,
+        value: 5
+      },
       temperatures: {
         type: Object,
         notify: true
@@ -202,7 +206,7 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
       const BME280 = this.app.Object.extend('BME280');
       const query = new this.app.Query(BME280);
       query.descending("createdAt");
-      query.limit(5);
+      query.limit(this.ticks);
 
       // initially query all entries to draw chart once
       query.find().then((results) => {
