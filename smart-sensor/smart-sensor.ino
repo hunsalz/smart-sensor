@@ -1,19 +1,11 @@
+#include <ArduinoJson.h> // https://github.com/bblanchon/ArduinoJson
+#include <ESP8266HTTPClient.h> // https://github.com/esp8266/Arduino
 #include <Esp8266Utils.h>     // https://github.com/hunsalz/esp8266utils
-#include <Parse.h>            // https://github.com/parse-community/Parse-SDK-Arduino
 #include <Log4Esp.h>          // https://github.com/hunsalz/log4Esp
 
 #include "config.h"
 
-// web server settings
-const static int PORT = 80;
-
-esp8266utils::BME280Sensor _bme280;
-//esp8266utils::BMP280Sensor _bmp280;
-//esp8266utils::DHTSensor _dht11;
-//esp8266utils::DHTSensor _dht22;
-//esp8266utils::MQ135Sensor _mq135;
-
-ParseClient parse = ParseClient();
+const char* sessionToken = "";
 
 void setup() {
 
@@ -46,126 +38,95 @@ void setup() {
   Serial.println();
   LOG.verbose(F("Serial baud rate is [%d]"), Serial.baudRate());
 
-  // sensor setup
-  if (_bme280.begin(0x76)) {
-    LOG.verbose(F("BME280 is ready."));
-  } else {
-    LOG.error(F("Setup BME280 failed!"));
-  }
-  //_dht11.begin(4, 11); // 2, 3, 5, 7
-  //_dht22.begin(2, 22);
-  //_mq135.begin(A0);
-
   // WiFi setup
   WIFI_STA_CFG.addAP(WIFI_SSID_1, WIFI_PSK_1);
   WIFI_STA_CFG.addAP(WIFI_SSID_2, WIFI_PSK_2);
   WIFI_STA_CFG.begin();
 
-  // Parse setup
-  parse.begin(APPLICATION_ID, CLIENT_KEY);
-
-  // increase loop interval
-  SYS_CFG.setLoopInterval(LOOP_INTERVAL);
-
-  #ifdef ENABLE_WEBSERVER
-
-  // MDNS setup
-  MDNS_CFG.begin("esp8266");
-  MDNS.addService("http", "tcp", PORT);
-
-  // file system setup to enable static web server content
-  FILESYSTEM.begin();
-
-  // web server setup
-  SERVER.begin();
-  // rewrite root context
-  SERVER.getWebServer().rewrite("/", "/index.build.html");
-  // handle static web resources
-  SERVER.getWebServer().serveStatic("/", SPIFFS, "/www/", "max-age:15");
-  // cache-control 15 seconds
-  // add dynamic http resources
-  SERVER.on("/fs", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::APP_JSON, FILESYSTEM.getStorageDetails());
-  });
-  SERVER.on("/files", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::APP_JSON, FILESYSTEM.getFileListing());
-  });
-  SERVER.on("/sta", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::APP_JSON, WIFI_STA_CFG.getDetails());
-  });
-  SERVER.on("/esp", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::APP_JSON, SYS_CFG.getDetails());
-  });
-  SERVER.on("/bme280", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::APP_JSON, _bme280.getValuesAsJson());
-  });
-  SERVER.on("/dht11", HTTP_GET, [](AsyncWebServerRequest* request) {
-    //SERVER.send(request, esp8266utils::APP_JSON, _dht11.getValuesAsJson());
-  });
-  SERVER.on("/dht22", HTTP_GET, [](AsyncWebServerRequest* request) {
-    //SERVER.send(request, esp8266utils::APP_JSON, _dht22.getValuesAsJson());
-  });
-  SERVER.on("/mq135", HTTP_GET, [](AsyncWebServerRequest* request) {
-    //SERVER.send(request, esp8266utils::APP_JSON, _mq135.getValuesAsJson());
-  });
-
-  #endif // NO_WEBSERVER
-
-  // save current ESP settings to Firebase
+  // save current ESP settings
   set("esp", SYS_CFG.getDetails());
 
-  LOG.verbose(F("========================="));
-  LOG.verbose(F("Setup finished. Have fun."));
-  LOG.verbose(F("========================="));
+  // sensor setup
+  esp8266utils::BME680Sensor bme680;
+  if (bme680.begin(0x77)) {
+    LOG.verbose(F("BME680 is ready."));
+    // read sensor data
+    bme680.update(USE_MOCK_DATA);
+    // push sensor data
+    push("bme680", bme680.getValuesAsJson());
+  } else {
+    LOG.error(F("Setup BME680 failed!"));
+  }
+
+  // deep sleep mode
+  LOG.verbose("Going into deep sleep for the next %d microseconds.", DEEP_SLEEP_INTERVAL);
+  ESP.deepSleep(DEEP_SLEEP_INTERVAL);
 }
 
 void set(const char *name, String json) {
   
   LOG.verbose(F("Set value|%s|%s"), name, json.c_str());
-
-
-
-  // Firebase.setRawJson(name, json);
-  // if (Firebase.failed()) {
-  //   LOG.error(F("Saving %s value to Firebase failed: Reason: %s"), name, Firebase.error().c_str());
-  // }
 }
 
 void push(const char *name, String json) {
-  
-  LOG.verbose(F("Push value|%s|%s"), name, json.c_str());
 
-
-
-  // Firebase.pushRawJson(name, json);
-  // if (Firebase.failed()) {
-  //   LOG.error(F("Saving %s value to Firebase failed: Reason: %s"), name, Firebase.error().c_str());
-  // }
+  int httpCode = login();
+  if (httpCode == HTTP_CODE_OK) {
+    LOG.verbose(F("Push value|%s|%s"), name, json.c_str());
+    send(json);
+    logout();
+  }
 }
 
-void loop() {
-  
-  ESP.wdtDisable();
-  if (SYS_CFG.nextLoopInterval()) {
-       
-    #ifdef ENABLE_WEBSERVER
-    MDNS.update();
-    #endif // NO_WEBSERVER
+int login() {
 
-    _bme280.update(USE_MOCK_DATA);
-    //_dht11.update();
-    //_dht22.update(USE_MOCK_DATA);
-    //_mq135.update(USE_MOCK_DATA);
+  HTTPClient http;
+  http.begin((String)"http://" + PARSE_SERVER + "/login?username=" + PARSE_USERNAME + "&password=" + PARSE_PASSWORD);
+  http.addHeader("X-Parse-Application-Id", PARSE_APPLICATION_ID);
+  http.addHeader("X-Parse-REST-API-Key", PARSE_REST_API_KEY);
+  http.addHeader("X-Parse-Revocable-Session", "1");
+  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+  int httpCode = http.GET();
 
-    // push sensor values to Firebase
-    push("bme280", _bme280.getValuesAsJson());
-    //push("dht11", _dht11.getValuesAsJson());
-    //push("dht22", _dht22.getValuesAsJson());
-    //push("mq135", _mq135.getValuesAsJson());
+  if (httpCode == HTTP_CODE_OK) {
+    DynamicJsonBuffer jsonBuffer;
+    JsonObject& json = jsonBuffer.parseObject(http.getStream());
+    sessionToken = json.get<const char*>("sessionToken");
+  } else {
+    LOG.error("Login failed for [%s]", PARSE_USERNAME);
   }
-  ESP.wdtEnable(30000);
 
-  //ESP.deepSleep(30e6);
-  // reserve time for core processes
-  delay(500);
+  return httpCode;
+}
+
+int send(String json) {
+  
+  HTTPClient http;
+  http.begin((String)"http://" + PARSE_SERVER + "/classes/BME680");
+  http.addHeader("X-Parse-Application-Id", PARSE_APPLICATION_ID);
+  http.addHeader("X-Parse-REST-API-Key", PARSE_REST_API_KEY);
+  http.addHeader("session", sessionToken);
+  http.addHeader("Content-Type", "application/json");
+  int httpCode = http.POST(json);
+  http.end();
+}
+
+int logout() {
+  
+  HTTPClient http;
+  http.begin((String)"http://" + PARSE_SERVER + "/logout");
+  http.addHeader("X-Parse-Application-Id", PARSE_APPLICATION_ID);
+  http.addHeader("X-Parse-REST-API-Key", PARSE_REST_API_KEY);
+  http.addHeader("session", sessionToken);
+  int httpCode = http.POST("");
+  http.end();
+
+  LOG.verbose("here ...");
+
+  return httpCode;
+}
+
+
+void loop() {
+  // NOTHING - unless ESP deep sleep is disabled
 }
