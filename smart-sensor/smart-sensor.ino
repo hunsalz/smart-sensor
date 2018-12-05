@@ -66,6 +66,8 @@ void setup() {
 void set(const char *name, String json) {
   
   LOG.verbose(F("Set value|%s|%s"), name, json.c_str());
+
+  // TODO
 }
 
 void push(const char *name, String json) {
@@ -120,8 +122,6 @@ int logout() {
   http.addHeader("session", sessionToken);
   int httpCode = http.POST("");
   http.end();
-
-  LOG.verbose("here ...");
 
   return httpCode;
 }
