@@ -30,16 +30,16 @@ Parse.Cloud.afterSave("BME280", (request) => {
   });
 });
 
-Parse.Cloud.afterSave("BMP680", (request) => {
-  const query = new Parse.Query("BMP680");
+Parse.Cloud.afterSave("BME680", (request) => {
+  const query = new Parse.Query("BME680");
   query.descending("createdAt");
   query.skip(100); // keep the last 100 entries
-  query.find({sessionToken: request.user.getSessionToken()})
+  query.find()
     .then((results) => {
       results.forEach(e => {
-        e.destroy({sessionToken: user.getSessionToken()});
+        e.destroy();
       });
     }, (error) => {
-      console.error("Query BMP680 entries failed.", error);
+      console.error("Query BME680 entries failed.", error);
   });
 });
