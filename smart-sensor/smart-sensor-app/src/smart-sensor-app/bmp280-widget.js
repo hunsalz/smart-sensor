@@ -167,9 +167,8 @@ class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
 
   async __queryBMP280Entries() {
 
-    // verify that Parse is initialized
-    if (this.app) {
-
+    // proceed if user is available
+    if (Parse.User.current()) {
       // try to query BMP280 entries
       const BMP280 = Parse.Object.extend('BMP280');
       const query = new Parse.Query(BMP280);

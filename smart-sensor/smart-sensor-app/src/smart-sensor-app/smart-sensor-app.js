@@ -9,18 +9,18 @@ import '@polymer/app-layout/app-header-layout/app-header-layout.js';
 import '@polymer/app-layout/app-scroll-effects/effects/resize-title.js';
 import '@polymer/app-layout/app-toolbar/app-toolbar.js';
 
+import '@polymer/app-route/app-location.js';
+import '@polymer/app-route/app-route.js';
+
 import '@polymer/iron-icons/iron-icons.js';
+import '@polymer/iron-pages/iron-pages.js';
 
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-styles/paper-styles.js';
 
 import './parse-app.js';
 import './parse-auth.js';
-import './bmp280-widget.js';
-import './bme280-widget.js';
-import './bme680-widget.js';
-import './hardware-widget.js';
-import './widget-layout.js';
+import './sensor-viewer.js';
 
 class SmartSensorApp extends GestureEventListeners(PolymerElement) {
   static get template() {
@@ -38,16 +38,6 @@ class SmartSensorApp extends GestureEventListeners(PolymerElement) {
           color: white;
           background-color: var(--paper-blue-500);
           z-index: 1;
-        }
-
-        [main-title] {
-          font-size: 2em;
-          font-weight: bold;
-        }
-
-        [condensed-title] {
-          font-size: 1em;
-          font-weight: normal;
         }
 
         @media screen and (orientation: landscape) {
@@ -68,32 +58,8 @@ class SmartSensorApp extends GestureEventListeners(PolymerElement) {
           }
         }
 
-        .content-area {
-          background-color: white;
-        }
-
-        .widget-label {
-          margin: 0px 2px 0px 2px;
-          padding: 5px 15px 5px 15px;
-          border-radius: 20px;
-          background-color: var(--paper-red-500);
-          color: white;
-          font-size: 0.8em;
-          font-weight: 500;
-          line-height: 1.5em;
-          white-space: nowrap;
-          @apply --layout-horizontal;
-          @apply --layout-center;
-        }
-
-        .spacer {
-          @apply --layout-flex;
-          width: 100%;
-        }
-
-        .alert {
-          background: var(--paper-red-500);
-          text-align: center;
+        iron-pages {
+          transition: transform 0.3s;
         }
       </style>
       
@@ -108,7 +74,12 @@ class SmartSensorApp extends GestureEventListeners(PolymerElement) {
         verbose>
       </parse-app>
 
-      <parse-auth app="{{app}}" user="app" password="123456789" login="{{login}}"></parse-auth>
+      <parse-auth id="auth" app="{{app}}" user="app" password="123456789" valid></parse-auth>
+
+      <!-- app routing -->
+
+      <app-location route="{{route}}" use-hash-as-path></app-location>
+      <app-route route="{{route}}" pattern="/:page" data="{{routeData}}"></app-route>
 
       <!-- UI components -->
       
@@ -127,61 +98,10 @@ class SmartSensorApp extends GestureEventListeners(PolymerElement) {
 
         <!-- content area -->
         <div class="content-area">
-          <div id="_grid" class="app-grid">
-
-            <!--widget-layout key="__bmp280">
-              <div slot="title">
-                <div>Temperature [[__bmp280_temperature]]°</div>
-                <div>Pressure [[__bmp280_pressure]] Pa</div>
-                <div>Altitude [[__bmp280_altitude]] m</div>
-              </div>
-              <div class="widget-label" slot="label">
-                <div>BMP280</div>
-                <iron-icon icon="icons:assessment"></iron-icon>
-              </div>
-              <bmp280-widget app="{{app}}" ticks="8" last-temperature="{{__bmp280_temperature}}" last-pressure="{{__bmp280_pressure}}" last-altitude="{{__bmp280_altitude}}"></bmp280-widget>
-            </widget-layout-->
-
-            <!--widget-layout key="__bme280">
-              <div slot="title">
-                <div>Temperature [[__bme280_temperature]]°</div>
-                <div>Humidity [[__bme280_humidity]] %</div>
-                <div>Pressure [[__bme280_pressure]] Pa</div>
-                <div>Altitude [[__bme280_altitude]] m</div>
-              </div>
-              <div class="widget-label" slot="label">
-                <div>BME280</div>
-                <iron-icon icon="icons:assessment"></iron-icon>
-              </div>
-              <bme280-widget app="{{app}}" ticks="8" last-temperature="{{__bme280_temperature}}" last-humidity="{{__bme280_humidity}}" last-pressure="{{__bme280_pressure}}" last-altitude="{{__bme280_altitude}}"></bme280-widget>
-            </widget-layout-->
-
-            <widget-layout key="__bmp6280">
-              <div slot="title">
-                <div>Temperature [[__bme680_temperature]]°</div>
-                <div>Humidity [[__bme680_humidity]] %</div>
-                <div>Pressure [[__bme680_pressure]] Pa</div>
-                <div>Gas resistance [[__bme680_gas]] Ω</div>
-                <div>Altitude approx. [[__bme680_altitude]] m</div>
-              </div>
-              <div class="widget-label" slot="label">
-                <div>BME680</div>
-                <iron-icon icon="icons:assessment"></iron-icon>
-              </div>
-              <bme680-widget app="{{app}}" ticks="8" last-temperature="{{__bme680_temperature}}" last-humidity="{{__bme680_humidity}}" last-pressure="{{__bme680_pressure}}" last-gas="{{__bme680_gas}}" last-altitude="{{__bme680_altitude}}"></bme680-widget>
-            </widget-layout>
-
-            <widget-layout key="__hardware">
-              <div slot="title">
-                <div>Hardware diagnostics</div>
-              </div>
-              <div class="widget-label" slot="label">
-                <div>ESP8266</div>
-                <iron-icon icon="icons:settings"></iron-icon>
-              </div>
-              <hardware-widget></hardware-widget>
-            </widget-layout>
-          </div>
+          <iron-pages attr-for-selected="id" selected="{{routeData.page}}">
+            <div id="login">LOGIN</div>
+            <sensor-viewer id="dashboard" collapsed="{{collapsed}}"></sensor-viewer>
+          </iron-pages>
         </div>
 
       </app-header-layout>
@@ -189,16 +109,39 @@ class SmartSensorApp extends GestureEventListeners(PolymerElement) {
   }
   static get properties() {
     return {
+      route: {
+        type: Object,
+        notify: true
+      },
+      routeData: {
+        type: Object,
+        value: function() {
+          return { page: '/login/' }; // default
+        },
+        observer: "__echo",
+        notify: true
+      },
       app_title: {
         type: String,
         value: 'Smart-Sensor',
-      },
-      collapsed: {
-        type: Boolean,
-        value: true,
-        notify: true
       }
     };
+  }
+
+  __echo() {
+    console.log(this.routeData);
+  }
+
+  ready() {
+    super.ready();
+
+    console.log(this.$.auth.valid);
+
+    if (this.$.auth.valid) {
+      this.set('route.path', '/dashboard');
+    } else {
+      this.set('route.path', '/login');
+    }
   }
 
   constructor() {
@@ -206,19 +149,6 @@ class SmartSensorApp extends GestureEventListeners(PolymerElement) {
 
     // set passive gestures globally for all elements using Polymer gestures
     setPassiveTouchGestures(true);
-
-    // add tasks after next render ...
-    afterNextRender(this, function () {
-      // listen to toggle events from widgets
-      this.addEventListener('iron-resize', e => { this.__applyIconToggle() });
-      // listen to window resizing events
-      this.__updateGridStyles = this.__updateGridStyles || function () {
-        this.updateStyles();
-      }.bind(this);
-      window.addEventListener('resize', this.__updateGridStyles);
-      // apply icon toogle state initially
-      this.__applyIconToggle();
-    });
   }
 
   /**
@@ -228,30 +158,11 @@ class SmartSensorApp extends GestureEventListeners(PolymerElement) {
     return collapsed ? 'icons:expand-more' : 'icons:expand-less';
   }
 
-  /**
-   * apply icon toggle according to all containing widgets
-   */
-  __applyIconToggle() {
-    // compute toggle state of all <widget-layout> elements
-    var nodes = this.$._grid.querySelectorAll('widget-layout');
-    var state = 0;
-    for (var i = 0; i < nodes.length; i++) {
-      state += nodes[i].isCollapsed();
-    }
-    // switch toggle according to state result
-    this.collapsed = state === 0 ? false : true;
-  }
-
   /*
    * toggle all widgets synchronous
    */
   __toggleAllWidgets() {
-    // toggle all <widget-layout> elements
-    var nodes = this.$._grid.querySelectorAll('widget-layout');
-    this.collapsed = !this.collapsed;
-    for (var i = 0; i < nodes.length; i++) {
-      nodes[i].collapse(this.collapsed);
-    }
+    this.$.dashboard.__toggleAllWidgets();
   }
 }
 

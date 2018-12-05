@@ -60,7 +60,7 @@ class WidgetLayout extends GestureEventListeners(PolymerElement) {
           <slot name="label"></slot>
         </div>
       </div>
-      <iron-collapse id="collapse_id" opened="{{opened}}" tabindex="0">
+      <iron-collapse id="collapse" opened="{{opened}}" tabindex="0">
         <slot></slot>
       </iron-collapse>
     `;
@@ -85,22 +85,22 @@ class WidgetLayout extends GestureEventListeners(PolymerElement) {
    * true if widget is collapsed
    */
   isCollapsed() {
-    return !this.$.collapse_id.opened;
+    return !this.$.collapse.opened;
   }
 
   /**
-   * collapses widget more or less 
+   * collapse widget more or less 
    */
   collapse(collapse) {
-    this.$.collapse_id.opened = !collapse;
+    this.$.collapse.opened = !collapse;
   }
 
   /**
-   * toggle between collapsed or expanded widget
+   * toggle widget between collapsed and expanded
    */
   toggle() {
-    this.$.collapse_id.toggle();
-    this.$.collapse_id.notifyResize();
+    this.$.collapse.toggle();
+    this.$.collapse.notifyResize();
   }
 }
 

@@ -3,12 +3,13 @@
   "description": "Smart Sensor App",
   "version": "2.0.0",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/hunsalz/smart-sensor"
+    "type": "git",
+    "url": "https://github.com/hunsalz/smart-sensor"
   },
   "dependencies": {
     "@polymer/polymer": "^3.1.0",
     "@polymer/app-layout": "^3.0.1",
+    "@polymer/app-route": "^3.0.2",
     "@polymer/app-storage": "^3.0.2",
     "@polymer/iron-ajax": "^3.0.1",
     "@polymer/iron-collapse": "^3.0.1",
@@ -16,8 +17,8 @@
     "@polymer/iron-icons": "^3.0.1",
     "@polymer/iron-iconset-svg": "^3.0.1",
     "@polymer/iron-flex-layout": "^3.0.1",
+    "@polymer/iron-pages": "^3.0.1",
     "@polymer/paper-icon-button": "^3.0.1",
-    "paper-loginscreen": "^2.0.2",
     "parse": "^2.1.0",
     "chart.js": "^2.7.3"
   },

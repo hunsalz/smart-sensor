@@ -199,12 +199,11 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
 
   async __queryBME280Entries() {
 
-    // verify that Parse is initialized
-    if (this.app) {
-
+    // proceed if user is available
+    if (Parse.User.current()) {
       // try to query BME280 entries
-      const BME280 = this.app.Object.extend('BME280');
-      const query = new this.app.Query(BME280);
+      const BME280 = Parse.Object.extend('BME280');
+      const query = new Parse.Query(BME280);
       query.descending("createdAt");
       query.limit(this.ticks);
 
