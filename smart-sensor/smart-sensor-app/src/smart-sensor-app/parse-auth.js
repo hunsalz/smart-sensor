@@ -52,19 +52,17 @@ class ParseAuth extends PolymerElement {
   __isCurrentUserKnown() {
 
     if (Parse.User.current()) {
-        // TODO https://docs.parseplatform.org/js/guide/#handling-invalid-session-token-error
+        // TODO handle invalid session token: https://docs.parseplatform.org/js/guide/#handling-invalid-session-token-error
 
         console.log(Parse.User.current().getSessionToken());
 
         // reflect and notify authentication state
-        this._setAuthenticated(true);
-        this.dispatchEvent(new CustomEvent('user-authenticated', { bubbles: true, composed: true }));
+        //this._setAuthenticated(true);
+        //this.dispatchEvent(new CustomEvent('user-authenticated', { bubbles: true, composed: true }));
     }
   }
 
   __handleLoginEvent(event) {
-    console.log(event);
-
     this.__login(event.detail.username, event.detail.password);
   }
 
@@ -78,6 +76,7 @@ class ParseAuth extends PolymerElement {
       console.info("Login successful.", user);
     }, function (error) {
       self._setAuthenticated(false);
+      self.dispatchEvent(new CustomEvent('login-failed', { bubbles: true, composed: true }));
       console.error("Login failed.", error);
     });
   }

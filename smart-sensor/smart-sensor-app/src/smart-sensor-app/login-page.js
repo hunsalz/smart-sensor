@@ -7,7 +7,7 @@ import '@polymer/iron-icons/places-icons.js';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-styles/paper-styles.js';
-
+import '@polymer/paper-toast/paper-toast.js';
 
 class LoginPage extends GestureEventListeners(PolymerElement) {
   static get template() {
@@ -80,6 +80,10 @@ class LoginPage extends GestureEventListeners(PolymerElement) {
           width: 100%;
         }
 
+        paper-toast {
+          width: 100%;
+          text-align: center;
+        }
       </style>
       
       <div class="full-page">
@@ -90,9 +94,10 @@ class LoginPage extends GestureEventListeners(PolymerElement) {
             <paper-input label="Password" type="password" value="{{password}}"></paper-input>
           </div>
           <div style="margin-top: 8vh">
-            <paper-button on-click="submit">LOGIN</paper-button>
+            <paper-button on-click="__submit">LOGIN</paper-button>
           </div>
         </div>
+        <paper-toast id="toast" text="Login failed." duration="3000"></paper-toast>
       </div>
     `;
   }
@@ -107,7 +112,27 @@ class LoginPage extends GestureEventListeners(PolymerElement) {
     };
   }
 
-  submit() {
+  constructor() {
+    super();
+
+    this._boundListener = this.__handleLoginFailure.bind(this);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener('login-failed', this._boundListener);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener('login-failed', this._boundListener);
+  }
+
+  __handleLoginFailure(event) {
+    this.$.toast.open();
+  }
+
+  __submit() {
     
     self.dispatchEvent(new CustomEvent('login-event', {
       bubbles: true, 
@@ -117,6 +142,15 @@ class LoginPage extends GestureEventListeners(PolymerElement) {
         password: this.password
       }
     }));
+  }
+
+  /**
+   * Show a human readable WS state message
+   * @param {*} state 
+   */
+  __showWSMessage(state) {
+
+    this.$.toast.open();
   }
 }
 
