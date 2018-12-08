@@ -57,8 +57,8 @@ class ParseAuth extends PolymerElement {
         console.log(Parse.User.current().getSessionToken());
 
         // reflect and notify authentication state
-        //this._setAuthenticated(true);
-        //this.dispatchEvent(new CustomEvent('user-authenticated', { bubbles: true, composed: true }));
+        this._setAuthenticated(true);
+        this.dispatchEvent(new CustomEvent('user-authenticated', { bubbles: true, composed: true }));
     }
   }
 
