@@ -71,7 +71,7 @@ class Bme680Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
     return {
       ticks: {
         type: Number,
-        value: 5
+        value: 16
       },
       temperatures: {
         type: Object,
@@ -128,7 +128,7 @@ class Bme680Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
   constructor() {
     super();
 
-    this._boundListener = this.__queryBME680Entries.bind(this);
+    this._boundListener = this.__isUserAuthenticated.bind(this);
 
     afterNextRender(this, function () {
       // global chart properties
@@ -266,15 +266,19 @@ class Bme680Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
 
   connectedCallback() {
     super.connectedCallback();
-    window.addEventListener('parse-authenticated', this._boundListener);
+    window.addEventListener('user-authenticated', this._boundListener);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    window.removeEventListener('parse-authenticated', this._boundListener);
+    window.removeEventListener('user-authenticated', this._boundListener);
   }
 
-  async __queryBME680Entries() {
+  __isUserAuthenticated() {
+    this.__queryBME680Entries(this.ticks);
+  }
+
+  async __queryBME680Entries(limit) {
 
     // proceed if user is available
     if (Parse.User.current()) {
@@ -282,7 +286,7 @@ class Bme680Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
       const BME680 = Parse.Object.extend('BME680');
       const query = new Parse.Query(BME680);
       query.descending("createdAt");
-      query.limit(this.ticks);
+      query.limit(limit);
 
       // initially query all entries to draw chart once
       query.find().then((results) => {

@@ -112,7 +112,7 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
   constructor() {
     super();
 
-    this._boundListener = this.__queryBME280Entries.bind(this);
+    this._boundListener = this.__isUserAuthenticated.bind(this);
 
     afterNextRender(this, function () {
       // global chart properties
@@ -197,15 +197,19 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
     window.removeEventListener('parse-authenticated', this._boundListener);
   }
 
-  async __queryBME280Entries() {
+  __isUserAuthenticated() {
+    this.__queryBME680Entries(this.ticks);
+  }
+
+  async __queryBME680Entries(limit) {
 
     // proceed if user is available
     if (Parse.User.current()) {
-      // try to query BME280 entries
-      const BME280 = Parse.Object.extend('BME280');
-      const query = new Parse.Query(BME280);
+      // try to query BME680 entries
+      const BME680 = Parse.Object.extend('BME680');
+      const query = new Parse.Query(BME680);
       query.descending("createdAt");
-      query.limit(this.ticks);
+      query.limit(limit);
 
       // initially query all entries to draw chart once
       query.find().then((results) => {
