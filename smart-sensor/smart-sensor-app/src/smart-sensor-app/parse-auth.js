@@ -15,29 +15,41 @@ class ParseAuth extends PolymerElement {
 
   static get properties() {
     return {
-      valid: {
+      app: {
+        type: Object
+      },
+      authenticated: {
         type: Boolean,
         value: false,
         notify: true,
-        readOnly: true,
-        reflectToAttribute: true
-      },
-      user: {
-        type: String
-      },
-      password: {
-        type: String
+        readOnly: true
       }
     };
   }
 
   static get observers() {
     return [
-      '__auth(app)'
+      '__isCurrentUserKnown(app)'
     ]
   }
 
-  __auth() {
+  constructor() {
+    super();
+
+    this._boundListener = this.__handleLoginEvent.bind(this);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener('login-event', this._boundListener);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener('login-event', this._boundListener);
+  }
+
+  __isCurrentUserKnown() {
 
     if (Parse.User.current()) {
         // TODO https://docs.parseplatform.org/js/guide/#handling-invalid-session-token-error
@@ -45,27 +57,30 @@ class ParseAuth extends PolymerElement {
         console.log(Parse.User.current().getSessionToken());
 
         // reflect and notify authentication state
-        this._setValid(true);
-        this.dispatchEvent(new CustomEvent('parse-authenticated', { bubbles: true, composed: true }));
-    } else {
-      this.__login();
+        this._setAuthenticated(true);
+        this.dispatchEvent(new CustomEvent('user-authenticated', { bubbles: true, composed: true }));
     }
   }
 
-  __login() {
+  __handleLoginEvent(event) {
+    console.log(event);
+
+    this.__login(event.detail.username, event.detail.password);
+  }
+
+  __login(username, password) {
     
     var self = this;
-    Parse.User.logIn(this.user, this.password).then(function(user) {
+    Parse.User.logIn(username, password).then(function(user) {
       // reflect and notify authentication state
-      self._setValid(true);
-      self.dispatchEvent(new CustomEvent('parse-authenticated', { bubbles: true, composed: true }));
+      self._setAuthenticated(true);
+      self.dispatchEvent(new CustomEvent('user-authenticated', { bubbles: true, composed: true }));
       console.info("Login successful.", user);
     }, function (error) {
-      self._setLogin(false);
+      self._setAuthenticated(false);
       console.error("Login failed.", error);
     });
   }
-
 }
 
 window.customElements.define('parse-auth', ParseAuth);
