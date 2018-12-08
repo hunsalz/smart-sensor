@@ -18,7 +18,9 @@
     "@polymer/iron-iconset-svg": "^3.0.1",
     "@polymer/iron-flex-layout": "^3.0.1",
     "@polymer/iron-pages": "^3.0.1",
+    "@polymer/paper-button": "^3.0.1",
     "@polymer/paper-icon-button": "^3.0.1",
+    "@polymer/paper-input": "^3.0.1",
     "parse": "^2.1.0",
     "chart.js": "^2.7.3"
   },
