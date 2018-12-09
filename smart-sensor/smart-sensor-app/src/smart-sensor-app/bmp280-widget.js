@@ -166,16 +166,16 @@ class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
   }
 
   __isUserAuthenticated() {
-    this.__queryBME680Entries(this.ticks);
+    this.__queryBMP680Entries(this.ticks);
   }
 
-  async __queryBME680Entries(limit) {
+  async __queryBMP680Entries(limit) {
 
     // proceed if user is available
     if (Parse.User.current()) {
-      // try to query BME680 entries
-      const BME680 = Parse.Object.extend('BME680');
-      const query = new Parse.Query(BME680);
+      // try to query BMP680 entries
+      const BMP680 = Parse.Object.extend('BMP680');
+      const query = new Parse.Query(BMP680);
       query.descending("createdAt");
       query.limit(limit);
 
