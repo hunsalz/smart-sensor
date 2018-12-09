@@ -92,6 +92,12 @@ class SmartSensorApp extends PolymerElement {
 
     // set passive gestures globally for all elements using Polymer gestures
     setPassiveTouchGestures(true);
+    // global error event handler
+    //window.addEventListener('error', this.__handleError(event));
+  }
+
+  __handleError(event) {
+    console.log("Catched by global", event);
   }
 }
 
