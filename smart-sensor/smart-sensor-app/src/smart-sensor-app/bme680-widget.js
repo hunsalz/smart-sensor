@@ -331,6 +331,8 @@ class Bme680Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
         }
       }, (error) => {
         console.error("Query BME680 entries failed.", error);
+        
+        // TODO handle session error
       });
 
       // subscribe to get updates
