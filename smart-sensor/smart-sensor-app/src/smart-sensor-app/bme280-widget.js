@@ -130,6 +130,15 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
             backgroundColor: 'rgba(229, 115, 115, 0.2)',
             data: []
           }]
+        },
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
         }
       });
       // initialize humidity chart
@@ -145,6 +154,15 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
             backgroundColor: 'rgba(79, 195, 247, 0.2)',
             data: []
           }]
+        },
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
         }
       });
       // initialize pressure chart
@@ -160,6 +178,15 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
             backgroundColor: 'rgba(121, 134, 203, 0.2)',
             data: []
           }]
+        },
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
         }
       });
       // initialize altitude chart
@@ -175,6 +202,15 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
             backgroundColor: 'rgba(255, 183, 77, 0.2)',
             data: []
           }]
+        },
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
         }
       });
       // handle resize event
@@ -189,25 +225,25 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
 
   connectedCallback() {
     super.connectedCallback();
-    window.addEventListener('parse-authenticated', this._boundListener);
+    window.addEventListener('user-authenticated', this._boundListener);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    window.removeEventListener('parse-authenticated', this._boundListener);
+    window.removeEventListener('user-authenticated', this._boundListener);
   }
 
   __isUserAuthenticated() {
-    this.__queryBME680Entries(this.ticks);
+    this.__queryBME280Entries(this.ticks);
   }
 
-  async __queryBME680Entries(limit) {
+  async __queryBME280Entries(limit) {
 
     // proceed if user is available
     if (Parse.User.current()) {
-      // try to query BME680 entries
-      const BME680 = Parse.Object.extend('BME680');
-      const query = new Parse.Query(BME680);
+      // try to query BME280 entries
+      const BME280 = Parse.Object.extend('BME280');
+      const query = new Parse.Query(BME280);
       query.descending("createdAt");
       query.limit(limit);
 
@@ -248,6 +284,8 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
         }
       }, (error) => {
         console.error("Query BME280 entries failed.", error);
+
+        // TODO handle session error
       });
 
       // subscribe to get updates
