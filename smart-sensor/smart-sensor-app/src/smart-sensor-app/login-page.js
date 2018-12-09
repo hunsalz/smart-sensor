@@ -143,15 +143,6 @@ class LoginPage extends GestureEventListeners(PolymerElement) {
       }
     }));
   }
-
-  /**
-   * Show a human readable WS state message
-   * @param {*} state 
-   */
-  __showWSMessage(state) {
-
-    this.$.toast.open();
-  }
 }
 
 window.customElements.define('login-page', LoginPage);
