@@ -47,15 +47,15 @@ void setup() {
   set("esp", SYS_CFG.getDetails());
 
   // sensor setup
-  esp8266utils::BME680Sensor bme680;
-  if (bme680.begin(0x77)) {
-    LOG.verbose(F("BME680 is ready."));
+  esp8266utils::BME280Sensor bme280;
+  if (bme280.begin(0x76)) {
+    LOG.verbose(F("BME280 is ready."));
     // read sensor data
-    bme680.update(USE_MOCK_DATA);
+    bme280.update(USE_MOCK_DATA);
     // push sensor data
-    push("bme680", bme680.getValuesAsJson());
+    push("bme280", bme280.getValuesAsJson());
   } else {
-    LOG.error(F("Setup BME680 failed!"));
+    LOG.error(F("Setup BME280 failed!"));
   }
 
   // deep sleep mode
@@ -104,7 +104,7 @@ int login() {
 int send(String json) {
   
   HTTPClient http;
-  http.begin((String)"http://" + PARSE_SERVER + "/classes/BME680");
+  http.begin((String)"http://" + PARSE_SERVER + "/classes/BME280");
   http.addHeader("X-Parse-Application-Id", PARSE_APPLICATION_ID);
   http.addHeader("X-Parse-REST-API-Key", PARSE_REST_API_KEY);
   http.addHeader("session", sessionToken);
