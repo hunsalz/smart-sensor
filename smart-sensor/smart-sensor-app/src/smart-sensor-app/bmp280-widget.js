@@ -114,6 +114,15 @@ class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
             backgroundColor: 'rgba(229, 115, 115, 0.2)',
             data: []
           }]
+        },
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
         }
       });
       // initialize pressure chart
@@ -129,6 +138,15 @@ class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
             backgroundColor: 'rgba(121, 134, 203, 0.2)',
             data: []
           }]
+        },
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
         }
       });
       // initialize altitude chart
@@ -144,6 +162,15 @@ class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
             backgroundColor: 'rgba(255, 183, 77, 0.2)',
             data: []
           }]
+        },
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
         }
       });
       // handle resize event
@@ -157,25 +184,25 @@ class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
 
   connectedCallback() {
     super.connectedCallback();
-    window.addEventListener('parse-authenticated', this._boundListener);
+    window.addEventListener('user-authenticated', this._boundListener);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    window.removeEventListener('parse-authenticated', this._boundListener);
+    window.removeEventListener('user-authenticated', this._boundListener);
   }
 
   __isUserAuthenticated() {
-    this.__queryBMP680Entries(this.ticks);
+    this.__queryBMP280Entries(this.ticks);
   }
 
-  async __queryBMP680Entries(limit) {
+  async __queryBMP280Entries(limit) {
 
     // proceed if user is available
     if (Parse.User.current()) {
-      // try to query BMP680 entries
-      const BMP680 = Parse.Object.extend('BMP680');
-      const query = new Parse.Query(BMP680);
+      // try to query BMP280 entries
+      const BMP280 = Parse.Object.extend('BMP280');
+      const query = new Parse.Query(BMP280);
       query.descending("createdAt");
       query.limit(limit);
 
@@ -210,6 +237,8 @@ class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
         }
       }, (error) => {
         console.error("Query BMP280 entries failed.", error);
+
+        // TODO handle session error
       });
 
       // subscribe to get updates
