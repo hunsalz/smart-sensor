@@ -53,9 +53,6 @@ class ParseAuth extends PolymerElement {
 
     if (Parse.User.current()) {
         // TODO handle invalid session token: https://docs.parseplatform.org/js/guide/#handling-invalid-session-token-error
-
-        console.log(Parse.User.current().getSessionToken());
-
         // reflect and notify authentication state
         this._setAuthenticated(true);
         this.dispatchEvent(new CustomEvent('user-authenticated', { bubbles: true, composed: true }));
