@@ -237,8 +237,7 @@ class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
         }
       }, (error) => {
         console.error("Query BMP280 entries failed.", error);
-
-        // TODO handle session error
+        this.__handleParseError(error);
       });
 
       // subscribe to get updates
@@ -276,6 +275,16 @@ class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
         // update last altitude value
         self.lastAltitude = bmp280.get('altitude');
       });
+    }
+  }
+
+  __handleParseError(error) {
+    
+    switch (error.code) {
+      case Parse.Error.INVALID_SESSION_TOKEN:
+        // logout current user
+        self.dispatchEvent(new CustomEvent('logout-event', { bubbles: true, composed: true }));
+        break;
     }
   }
 
