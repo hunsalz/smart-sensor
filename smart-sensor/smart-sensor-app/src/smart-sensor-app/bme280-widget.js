@@ -112,7 +112,7 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
   constructor() {
     super();
 
-    this._boundListener = this.__isUserAuthenticated.bind(this);
+    this._authListener = this.__isUserAuthenticated.bind(this);
 
     afterNextRender(this, function () {
       // global chart properties
@@ -225,12 +225,12 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
 
   connectedCallback() {
     super.connectedCallback();
-    window.addEventListener('user-authenticated', this._boundListener);
+    window.addEventListener('user-authenticated', this._authListener);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    window.removeEventListener('user-authenticated', this._boundListener);
+    window.removeEventListener('user-authenticated', this._authListener);
   }
 
   __isUserAuthenticated() {
@@ -238,6 +238,9 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
   }
 
   async __queryBME280Entries(limit) {
+
+    console.log(Parse.Session.current());
+
 
     // proceed if user is available
     if (Parse.User.current()) {
@@ -285,7 +288,7 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
       }, (error) => {
         console.error("Query BME280 entries failed.", error);
 
-        // TODO handle session error
+        this.__handleParseError(error);
       });
 
       // subscribe to get updates
@@ -340,6 +343,16 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
 
   __getShortTime(date) {
     return date.toTimeString().substring(0, 8);
+  }
+
+  __handleParseError(error) {
+    
+    switch (error.code) {
+      case Parse.Error.INVALID_SESSION_TOKEN:
+        // logout current user
+        self.dispatchEvent(new CustomEvent('logout-event', { bubbles: true, composed: true }));
+        break;
+    }
   }
 }
 

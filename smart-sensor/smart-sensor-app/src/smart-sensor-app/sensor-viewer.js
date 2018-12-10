@@ -116,7 +116,7 @@ class SensorViewer extends GestureEventListeners(PolymerElement) {
               <bme280-widget ticks="24" last-temperature="{{__bme280_temperature}}" last-humidity="{{__bme280_humidity}}" last-pressure="{{__bme280_pressure}}" last-altitude="{{__bme280_altitude}}"></bme280-widget>
             </widget-layout>
 
-            <widget-layout key="__bmp6280">
+            <!--widget-layout key="__bmp6280">
               <div slot="title">
                 <div>Temperature [[__bme680_temperature]]°</div>
                 <div>Humidity [[__bme680_humidity]] %</div>
@@ -129,7 +129,7 @@ class SensorViewer extends GestureEventListeners(PolymerElement) {
                 <iron-icon icon="icons:assessment"></iron-icon>
               </div>
               <bme680-widget ticks="24" last-temperature="{{__bme680_temperature}}" last-humidity="{{__bme680_humidity}}" last-pressure="{{__bme680_pressure}}" last-gas="{{__bme680_gas}}" last-altitude="{{__bme680_altitude}}"></bme680-widget>
-            </widget-layout>
+            </widget-layout-->
 
             <widget-layout key="__hardware">
               <div slot="title">

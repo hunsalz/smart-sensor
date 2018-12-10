@@ -115,17 +115,17 @@ class LoginPage extends GestureEventListeners(PolymerElement) {
   constructor() {
     super();
 
-    this._boundListener = this.__handleLoginFailure.bind(this);
+    this._loginListener = this.__handleLoginFailure.bind(this);
   }
 
   connectedCallback() {
     super.connectedCallback();
-    window.addEventListener('login-failed', this._boundListener);
+    window.addEventListener('login-failed', this._loginListener);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    window.removeEventListener('login-failed', this._boundListener);
+    window.removeEventListener('login-failed', this._loginListener);
   }
 
   __handleLoginFailure(event) {

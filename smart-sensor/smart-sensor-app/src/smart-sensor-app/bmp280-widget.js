@@ -96,7 +96,7 @@ class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
   constructor() {
     super();
 
-    this._boundListener = this.__isUserAuthenticated.bind(this);
+    this._authListener = this.__isUserAuthenticated.bind(this);
 
     afterNextRender(this, function () {
       // global chart properties
@@ -184,12 +184,12 @@ class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
 
   connectedCallback() {
     super.connectedCallback();
-    window.addEventListener('user-authenticated', this._boundListener);
+    window.addEventListener('user-authenticated', this._authListener);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    window.removeEventListener('user-authenticated', this._boundListener);
+    window.removeEventListener('user-authenticated', this._authListener);
   }
 
   __isUserAuthenticated() {
