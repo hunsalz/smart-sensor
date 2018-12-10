@@ -1,6 +1,6 @@
 {
   "entrypoint": "index.html",
-  "shell": "src/smart-sensor-app/smart-sensor-app.js",
+  "shell": "src/smart-sensor-app/main-app.js",
   "sources": [
     "fonts/**/*",
     "images/**/*",

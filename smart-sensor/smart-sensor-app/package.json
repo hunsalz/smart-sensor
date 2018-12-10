@@ -1,6 +1,6 @@
 {
   "name": "smart-sensor-app",
-  "description": "Smart Sensor App",
+  "description": "A smart sensor Progressive Web App",
   "version": "2.0.0",
   "repository": {
     "type": "git",

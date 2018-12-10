@@ -13,9 +13,9 @@ import '@polymer/paper-styles/paper-styles.js';
 import './login-page.js';
 import './parse-app.js';
 import './parse-auth.js';
-import './sensor-viewer.js';
+import './smart-sensor.js';
 
-class SmartSensorApp extends PolymerElement {
+class MainApp extends PolymerElement {
   static get template() {
     return html`
       <style>
@@ -50,7 +50,7 @@ class SmartSensorApp extends PolymerElement {
       <div class="content-area">
         <iron-pages attr-for-selected="id" selected="{{routeData.page}}">
           <login-page id="login"></login-page>
-          <sensor-viewer id="dashboard" collapsed="{{collapsed}}"></sensor-viewer>  
+          <smart-sensor id="dashboard" collapsed="{{collapsed}}"></smart-sensor>  
         </iron-pages>
       </div>
     `;
@@ -95,4 +95,4 @@ class SmartSensorApp extends PolymerElement {
   }
 }
 
-window.customElements.define('smart-sensor-app', SmartSensorApp);
+window.customElements.define('main-app', MainApp);

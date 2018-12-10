@@ -19,7 +19,7 @@ import './bme680-widget.js';
 import './hardware-widget.js';
 import './widget-layout.js';
 
-class SensorViewer extends GestureEventListeners(PolymerElement) {
+class SmartSensor extends GestureEventListeners(PolymerElement) {
   static get template() {
     return html`
       <style include="app-grid-style">
@@ -80,6 +80,7 @@ class SensorViewer extends GestureEventListeners(PolymerElement) {
           <app-toolbar>
             <div spacer condensed-title>[[app_title]]</div>
             <paper-icon-button icon="{{__isCollapsed(collapsed)}}" on-tap="__toggleAllWidgets" role="button" tabindex="0" aria-disabled="false"></paper-icon-button>
+            <paper-icon-button icon="icons:more-vert" on-tap="__showSettings" role="button" tabindex="0" aria-disabled="false"></paper-icon-button>
           </app-toolbar>
           <app-toolbar>
             <div spacer main-title>[[app_title]]</div>
@@ -207,6 +208,14 @@ class SensorViewer extends GestureEventListeners(PolymerElement) {
       nodes[i].collapse(this.collapsed);
     }
   }
+
+  /**
+   * 
+   */
+  __showSettings() {
+
+    console.log("settings called");
+  }
 }
 
-window.customElements.define('sensor-viewer', SensorViewer);
+window.customElements.define('smart-sensor', SmartSensor);
