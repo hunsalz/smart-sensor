@@ -5,8 +5,6 @@
 
 #include "config.h"
 
-const char* sessionToken = "";
-
 void setup() {
 
   // logger setup
@@ -59,7 +57,7 @@ void setup() {
   }
 
   // deep sleep mode
-  LOG.verbose("Going into deep sleep for the next %d microseconds.", DEEP_SLEEP_INTERVAL);
+  LOG.verbose("Going into deep sleep for the next %lu seconds.", (unsigned long)(DEEP_SLEEP_INTERVAL / 1e6));
   ESP.deepSleep(DEEP_SLEEP_INTERVAL);
 }
 
@@ -72,61 +70,18 @@ void set(const char *name, String json) {
 
 void push(const char *name, String json) {
 
-  int httpCode = login();
-  if (httpCode == HTTP_CODE_OK) {
-    LOG.verbose(F("Push value|%s|%s"), name, json.c_str());
-    send(json);
-    logout();
-  }
-}
-
-int login() {
-
-  HTTPClient http;
-  http.begin((String)"http://" + PARSE_SERVER + "/login?username=" + PARSE_USERNAME + "&password=" + PARSE_PASSWORD);
-  http.addHeader("X-Parse-Application-Id", PARSE_APPLICATION_ID);
-  http.addHeader("X-Parse-REST-API-Key", PARSE_REST_API_KEY);
-  http.addHeader("X-Parse-Revocable-Session", "1");
-  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-  int httpCode = http.GET();
-
-  if (httpCode == HTTP_CODE_OK) {
-    DynamicJsonBuffer jsonBuffer;
-    JsonObject& json = jsonBuffer.parseObject(http.getStream());
-    sessionToken = json.get<const char*>("sessionToken");
-  } else {
-    LOG.error("Login failed for [%s]", PARSE_USERNAME);
-  }
-
-  return httpCode;
-}
-
-int send(String json) {
+  LOG.verbose(F("Push value|%s|%s"), name, json.c_str());
   
   HTTPClient http;
   http.begin((String)"http://" + PARSE_SERVER + "/classes/BME280");
   http.addHeader("X-Parse-Application-Id", PARSE_APPLICATION_ID);
   http.addHeader("X-Parse-REST-API-Key", PARSE_REST_API_KEY);
-  http.addHeader("session", sessionToken);
+  http.addHeader("X-Parse-Session-Token", PARSE_SESSION);
   http.addHeader("Content-Type", "application/json");
   int httpCode = http.POST(json);
   http.end();
 }
 
-int logout() {
-  
-  HTTPClient http;
-  http.begin((String)"http://" + PARSE_SERVER + "/logout");
-  http.addHeader("X-Parse-Application-Id", PARSE_APPLICATION_ID);
-  http.addHeader("X-Parse-REST-API-Key", PARSE_REST_API_KEY);
-  http.addHeader("session", sessionToken);
-  int httpCode = http.POST("");
-  http.end();
-
-  return httpCode;
-}
-
-
 void loop() {
-  // NOTHING - unless ESP deep sleep is disabled
+  // nothing to do, unless ESP deep sleep is disabled
 }
