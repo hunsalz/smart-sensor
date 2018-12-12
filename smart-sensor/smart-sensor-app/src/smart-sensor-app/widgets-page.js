@@ -72,7 +72,12 @@ class WidgetsPage extends PolymerElement {
               <div>BMP280</div>
               <iron-icon icon="icons:assessment"></iron-icon>
             </div>
-            <bmp280-widget ticks="24" last-temperature="{{__bmp280_temperature}}" last-pressure="{{__bmp280_pressure}}" last-altitude="{{__bmp280_altitude}}"></bmp280-widget>
+            <bmp280-widget 
+              ticks="{{ticks}}" 
+              last-temperature="{{__bmp280_temperature}}" 
+              last-pressure="{{__bmp280_pressure}}" 
+              last-altitude="{{__bmp280_altitude}}">
+            </bmp280-widget>
           </widget-layout-->
 
           <widget-layout key="__bme280">
@@ -86,7 +91,13 @@ class WidgetsPage extends PolymerElement {
               <div>BME280</div>
               <iron-icon icon="icons:assessment"></iron-icon>
             </div>
-            <bme280-widget ticks="24" last-temperature="{{__bme280_temperature}}" last-humidity="{{__bme280_humidity}}" last-pressure="{{__bme280_pressure}}" last-altitude="{{__bme280_altitude}}"></bme280-widget>
+            <bme280-widget 
+              ticks="{{ticks}}" 
+              last-temperature="{{__bme280_temperature}}" 
+              last-humidity="{{__bme280_humidity}}" 
+              last-pressure="{{__bme280_pressure}}" 
+              last-altitude="{{__bme280_altitude}}">
+            </bme280-widget>
           </widget-layout>
 
           <!--widget-layout key="__bmp6280">
@@ -101,7 +112,14 @@ class WidgetsPage extends PolymerElement {
               <div>BME680</div>
               <iron-icon icon="icons:assessment"></iron-icon>
             </div>
-            <bme680-widget ticks="24" last-temperature="{{__bme680_temperature}}" last-humidity="{{__bme680_humidity}}" last-pressure="{{__bme680_pressure}}" last-gas="{{__bme680_gas}}" last-altitude="{{__bme680_altitude}}"></bme680-widget>
+            <bme680-widget 
+              ticks="{{ticks}}" 
+              last-temperature="{{__bme680_temperature}}" 
+              last-humidity="{{__bme680_humidity}}" 
+              last-pressure="{{__bme680_pressure}}" 
+              last-gas="{{__bme680_gas}}" 
+              last-altitude="{{__bme680_altitude}}"><
+            /bme680-widget>
           </widget-layout-->
 
           <widget-layout key="__hardware">
@@ -121,6 +139,10 @@ class WidgetsPage extends PolymerElement {
 
   static get properties() {
     return {
+      ticks: {
+        type: Number,
+        value: 12 // default
+      },
       collapsed: {
         type: Boolean,
         notify: true

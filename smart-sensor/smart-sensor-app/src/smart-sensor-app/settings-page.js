@@ -36,28 +36,17 @@ class SettingsPage extends GestureEventListeners(PolymerElement) {
       </style>
       
       <div class="content-area">
-        TODO
+        Default ticks: [[ticks]]
       </div>
     `;
   }
   static get properties() {
     return {
-      username: {
-        type: String
-      },
-      password: {
-        type: String
+      ticks: {
+        type: Number,
+        value: 24 // default
       }
     };
-  }
-
-  constructor() {
-    super();
-
-  }
-
-  __submit() {
-    
   }
 }
 
