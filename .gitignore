@@ -1,8 +1,8 @@
 .gitignore
 **/config.h
-**/back4app/public
-**/back4app/.parse.local
-**/back4app/.parse.project
+**/parse-server/public
+**/parse-server/.parse.local
+**/parse-server/.parse.project
 **/build/
 **/node_modules
 **/www/
