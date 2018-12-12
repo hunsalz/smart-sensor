@@ -1,6 +1,5 @@
-language: node_js
 dist: trusty
-os: linux
+language: cpp
 env:
   global:
     - ARDUINO_VERSION=1.8.8
@@ -9,10 +8,10 @@ node_js:
   - "stable"
 stages:
   - deploy
-  - ':ship it to Back4App'
+  - ':ship it to GitHub Pages'
 cache:
   directories:
-    - node_modules
+    - $HOME/.npm
 before_install:
   - wget https://downloads.arduino.cc/arduino-${ARDUINO_VERSION}-linux64.tar.xz
   - tar xf arduino-${ARDUINO_VERSION}-linux64.tar.xz
