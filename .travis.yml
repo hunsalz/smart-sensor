@@ -35,9 +35,9 @@ script:
   - source $TRAVIS_BUILD_DIR/travis/build.sh
   - cd smart-sensor-app
   - npm install
-  - sed -i 's|service-worker.js|smart-sensor-app/service-worker.js|g' index.html # expand path to match GH-PAGES root dir
-  - sed -i 's|src="node_modules|src="smart-sensor-app/node_modules|g' index.html # expand path to match GH-PAGES root dir
-  - sed -i 's|src="src|src="smart-sensor-app/src|g' index.html # expand path to match GH-PAGES root dir
+  - sed -i 's|service-worker.js|smart-sensor/service-worker.js|g' index.html # expand path to match GH-PAGES root dir
+  - sed -i 's|src="node_modules|src="smart-sensor/node_modules|g' index.html # expand path to match GH-PAGES root dir
+  - sed -i 's|src="src|src="smart-sensor/src|g' index.html # expand path to match GH-PAGES root dir
   - polymer build
 deploy:
   provider: pages
