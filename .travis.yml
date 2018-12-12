@@ -38,7 +38,6 @@ script:
   - sed -i 's|src="node_modules|src="smart-sensor/node_modules|g' index.html # expand path to match GH-PAGES root dir
   - sed -i 's|src="src|src="smart-sensor/src|g' index.html # expand path to match GH-PAGES root dir
   - polymer build
-  - ls -la
 deploy:
   provider: pages
   skip-cleanup: true
