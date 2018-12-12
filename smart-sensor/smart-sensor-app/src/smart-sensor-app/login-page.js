@@ -34,7 +34,7 @@ class LoginPage extends GestureEventListeners(PolymerElement) {
           }
         }
 
-        .full-page {
+        .content-area {
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -86,7 +86,7 @@ class LoginPage extends GestureEventListeners(PolymerElement) {
         }
       </style>
       
-      <div class="full-page">
+      <div class="content-area">
         <div class="container">
           <iron-icon class="logo" icon="places:all-inclusive"></iron-icon>
           <div style="margin-top: 4vh">
