@@ -3,7 +3,7 @@ dist: trusty
 os: linux
 env:
   global:
-    - ARDUINO_VERSION=1.8.7
+    - ARDUINO_VERSION=1.8.8
 node_js:
   - "node"
   - "stable"
@@ -20,16 +20,33 @@ before_install:
   - sudo ln -s /usr/local/share/arduino/arduino /usr/local/bin/arduino
 install:
   - npm install -g polymer-cli
-  - curl https://raw.githubusercontent.com/back4app/parse-cli/back4app/installer.sh | sudo /bin/bash
-  - ln -s $PWD /usr/local/share/arduino/libraries/log4Esp
+  - mkdir -p ~/Arduino/libraries
+  - ln -s $PWD ~/Arduino/libraries/
+  - git clone https://github.com/hunsalz/esp8266utils.git ~/Arduino/libraries/esp8266utils
+  - arduino --install-library "log4Esp:1.0.0"
+  - arduino --install-library "ArduinoJson:5.13.2"
+  - git clone https://github.com/me-no-dev/ESPAsyncTCP.git ~/Arduino/libraries/ESPAsyncTCP
+  - git clone https://github.com/me-no-dev/ESPAsyncWebServer.git ~/Arduino/libraries/ESPAsyncWebServer
   - arduino --pref "boardsmanager.additional.urls=http://arduino.esp8266.com/stable/package_esp8266com_index.json" --install-boards esp8266:esp8266;
   - arduino --pref "boardsmanager.additional.urls=" --save-prefs;
   - arduino --board esp8266:esp8266:generic --save-prefs
   - arduino --pref "compiler.warning_level=all" --save-prefs
 script:
   - source $TRAVIS_BUILD_DIR/travis/build.sh
-  - cd smart-sensor/smart-sensor-app/
+  - cd smart-sensor-app
   - npm install
+  - sed -i 's|service-worker.js|smart-sensor-app/service-worker.js|g' index.html # expand path to match GH-PAGES root dir
+  - sed -i 's|src="node_modules|src="smart-sensor-app/node_modules|g' index.html # expand path to match GH-PAGES root dir
+  - sed -i 's|src="src|src="smart-sensor-app/src|g' index.html # expand path to match GH-PAGES root dir
   - polymer build
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GH_PAGES_TOKEN
+  keep-history: true
+  local-dir: smart-sensor-app/build/public
+  verbose: true
+  on:
+    branch: master
 after_success:
   - bash <(curl -s https://codecov.io/bash);
