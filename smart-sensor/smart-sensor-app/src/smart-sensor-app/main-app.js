@@ -13,7 +13,7 @@ import '@polymer/paper-styles/paper-styles.js';
 import './login-page.js';
 import './parse-app.js';
 import './parse-auth.js';
-import './smart-sensor.js';
+import './smart-sensor-app.js';
 
 class MainApp extends PolymerElement {
   static get template() {
@@ -22,10 +22,6 @@ class MainApp extends PolymerElement {
         :host {
           display: block;
           @apply --paper-font-common-base;
-        }
-
-        iron-pages {
-          transition: transform 0.3s;
         }
       </style>
       
@@ -44,13 +40,14 @@ class MainApp extends PolymerElement {
       <!-- app routing -->
 
       <app-location route="{{route}}" use-hash-as-path></app-location>
-      <app-route route="{{route}}" pattern="/:page" data="{{routeData}}"></app-route>
+      <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{subroute}}"></app-route>
 
       <!-- UI components -->
+
       <div class="content-area">
         <iron-pages attr-for-selected="id" selected="{{routeData.page}}">
           <login-page id="login"></login-page>
-          <smart-sensor id="dashboard" collapsed="{{collapsed}}"></smart-sensor>  
+          <smart-sensor-app id="main" route="{{route}}" subroute={{subroute}}></smart-sensor-app>  
         </iron-pages>
       </div>
     `;
@@ -64,7 +61,7 @@ class MainApp extends PolymerElement {
       routeData: {
         type: Object,
         value: function() {
-          return { page: '/login/' }; // default
+          return { page: 'login' }; // default page
         }
       },
       authenticated: {
@@ -81,7 +78,7 @@ class MainApp extends PolymerElement {
   __isAuthenticated() {
 
     if (this.authenticated) {
-      this.set('route.path', '/dashboard');
+      this.set('route.path', '/main');
     } else {
       this.set('route.path', '/login');
     }
