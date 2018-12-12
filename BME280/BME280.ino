@@ -1,14 +1,11 @@
-#include <Esp8266Utils.h>     // https://github.com/hunsalz/esp8266utils
-#include <Log4Esp.h>          // https://github.com/hunsalz/log4Esp
+#include <ESP8266HTTPClient.h> // https://github.com/esp8266/Arduino
+#include <Esp8266Utils.h>      // https://github.com/hunsalz/esp8266utils
+#include <Log4Esp.h>           // https://github.com/hunsalz/log4Esp
 
 #include "config.h"
 
-// web server settings
-const static int PORT = 80;
-
-esp8266utils::BME280Sensor _bme280;
-
 void setup() {
+
   // logger setup
   LOG.addLevelToAll(Appender::VERBOSE);
   LOG.addFormatterToAll(
@@ -38,76 +35,52 @@ void setup() {
   Serial.println();
   LOG.verbose(F("Serial baud rate is [%d]"), Serial.baudRate());
 
-  // sensor setup
-  if (_bme280.begin(0x76)) {
-    LOG.verbose(F("BME280 is ready."));
-  } else {
-    LOG.error(F("Setup BME280 failed!"));
-  }
-
   // WiFi setup
   WIFI_STA_CFG.addAP(WIFI_SSID_1, WIFI_PSK_1);
   WIFI_STA_CFG.addAP(WIFI_SSID_2, WIFI_PSK_2);
   WIFI_STA_CFG.begin();
 
-  // increase loop interval
-  SYS_CFG.setLoopInterval(LOOP_INTERVAL);
+  // save current ESP settings
+  set("esp", SYS_CFG.getDetails());
 
-  #ifdef ENABLE_WEBSERVER
+  // sensor setup
+  esp8266utils::BME280Sensor bme280;
+  if (bme280.begin(0x76)) {
+    LOG.verbose(F("BME280 is ready."));
+    // read sensor data
+    bme280.update(USE_MOCK_DATA);
+    // push sensor data
+    push("bme280", bme280.getValuesAsJson());
+  } else {
+    LOG.error(F("Setup BME280 failed!"));
+  }
 
-  // MDNS setup
-  MDNS_CFG.begin("esp8266");
-  MDNS.addService("http", "tcp", PORT);
+  // deep sleep mode
+  LOG.verbose("Going into deep sleep for the next %lu seconds.", (unsigned long)(DEEP_SLEEP_INTERVAL / 1e6));
+  ESP.deepSleep(DEEP_SLEEP_INTERVAL);
+}
 
-  // file system setup to enable static web server content
-  FILESYSTEM.begin();
+void set(const char *name, String json) {
+  
+  LOG.verbose(F("Set value|%s|%s"), name, json.c_str());
 
-  // web server setup
-  SERVER.begin();
-  // rewrite root context
-  SERVER.getWebServer().rewrite("/", "/index.build.html");
-  // handle static web resources
-  SERVER.getWebServer().serveStatic("/", SPIFFS, "/www/", "max-age:15");
-  // cache-control 15 seconds
-  // add dynamic http resources
-  SERVER.on("/fs", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::APP_JSON, FILESYSTEM.getStorageDetails());
-  });
-  SERVER.on("/files", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::APP_JSON, FILESYSTEM.getFileListing());
-  });
-  SERVER.on("/sta", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::APP_JSON, WIFI_STA_CFG.getDetails());
-  });
-  SERVER.on("/esp", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::APP_JSON, SYS_CFG.getDetails());
-  });
-  SERVER.on("/bme280", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::APP_JSON, _bme280.getValuesAsJson());
-  });
+  // TODO
+}
 
-  #endif // NO_WEBSERVER
+void push(const char *name, String json) {
 
-  LOG.verbose(F("========================="));
-  LOG.verbose(F("Setup finished. Have fun."));
-  LOG.verbose(F("========================="));
+  LOG.verbose(F("Push value|%s|%s"), name, json.c_str());
+  
+  HTTPClient http;
+  http.begin((String)"http://" + PARSE_SERVER + "/classes/BME280");
+  http.addHeader("X-Parse-Application-Id", PARSE_APPLICATION_ID);
+  http.addHeader("X-Parse-REST-API-Key", PARSE_REST_API_KEY);
+  http.addHeader("X-Parse-Session-Token", PARSE_SESSION);
+  http.addHeader("Content-Type", "application/json");
+  int httpCode = http.POST(json);
+  http.end();
 }
 
 void loop() {
-  
-  ESP.wdtDisable();
-  if (SYS_CFG.nextLoopInterval()) {
-       
-    #ifdef ENABLE_WEBSERVER
-    MDNS.update();
-    #endif // NO_WEBSERVER
-
-    _bme280.update(USE_MOCK_DATA);
-    LOG.verbose(F("Set value|%s|%s"), "BME280", _bme280.getValuesAsJson().c_str());
-  }
-  ESP.wdtEnable(30000);
-
-  //ESP.deepSleep(30e6);
-  // reserve time for core processes
-  delay(500);
+  // nothing to do, unless ESP deep sleep is disabled
 }
