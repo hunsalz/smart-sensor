@@ -141,7 +141,8 @@ class WidgetsPage extends PolymerElement {
     return {
       ticks: {
         type: Number,
-        value: 12 // default
+        value: 12, // default
+        notify: true
       },
       collapsed: {
         type: Boolean,

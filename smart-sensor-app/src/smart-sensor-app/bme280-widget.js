@@ -64,7 +64,8 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
     return {
       ticks: {
         type: Number,
-        value: 5
+        value: 5,
+        observer: '__echo'
       },
       temperatures: {
         type: Object,
@@ -107,6 +108,10 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
         notify: true
       }
     };
+  }
+
+  __echo() {
+    console.log("ticks", this.ticks);
   }
 
   constructor() {

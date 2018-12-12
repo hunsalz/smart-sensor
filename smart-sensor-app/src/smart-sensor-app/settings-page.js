@@ -1,7 +1,7 @@
 import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 import { GestureEventListeners } from '@polymer/polymer/lib/mixins/gesture-event-listeners.js';
 
-import '@polymer/paper-button/paper-button.js';
+import '@polymer/paper-slider/paper-slider.js';
 import '@polymer/paper-styles/paper-styles.js';
 
 class SettingsPage extends GestureEventListeners(PolymerElement) {
@@ -11,6 +11,9 @@ class SettingsPage extends GestureEventListeners(PolymerElement) {
         :host {
           display: block;
           @apply --paper-font-common-base;
+          font-size: 1em;
+          color: var(--paper-blue-grey-700);
+          font-weight: normal;
         }
 
         @media screen and (orientation: landscape) {
@@ -22,21 +25,30 @@ class SettingsPage extends GestureEventListeners(PolymerElement) {
         }
 
         .content-area {
-          
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          background-color: white;
         }
 
-        paper-button {
+        .container {
+          margin-top: 4vh;
+          width: 80%;
+          height: auto;
+          max-width: 300px;
+        }
+
+        paper-slider {
           margin: 0;
-          border: 2px solid white;
-          border-radius: 2em;
-          background: var(--paper-blue-500);
-          color: white;
           width: 100%;
         }
       </style>
       
       <div class="content-area">
-        Default ticks: [[ticks]]
+        <div class="container">
+          <paper-slider min="4" max="80" value="12" pin immediate-value="{{ticks}}"></paper-slider>
+          <span>Current ticks: [[ticks]]</span>
+        </div>
       </div>
     `;
   }
@@ -44,7 +56,8 @@ class SettingsPage extends GestureEventListeners(PolymerElement) {
     return {
       ticks: {
         type: Number,
-        value: 24 // default
+        value: 24, // default
+        notify: true
       }
     };
   }
