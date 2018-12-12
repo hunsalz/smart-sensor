@@ -45,7 +45,7 @@ class MainApp extends PolymerElement {
       <!-- UI components -->
 
       <div class="content-area">
-        <iron-pages attr-for-selected="id" selected="{{routeData.page}}">
+        <iron-pages attr-for-selected="id" selected="{{routeData.page}}" fallback-selection="main">
           <login-page id="login"></login-page>
           <smart-sensor-app id="main" route="{{route}}" subroute={{subroute}}></smart-sensor-app>  
         </iron-pages>
@@ -61,7 +61,7 @@ class MainApp extends PolymerElement {
       routeData: {
         type: Object,
         value: function() {
-          return { page: 'login' }; // default page
+          return { page: 'main' }; // default page
         }
       },
       authenticated: {
