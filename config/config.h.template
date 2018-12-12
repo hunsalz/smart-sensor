@@ -4,14 +4,17 @@ const char *WIFI_PSK_1 = "YOUR PRE SHARED KEY";
 const char *WIFI_SSID_2 = "YOUR SSID";
 const char *WIFI_PSK_2 = "YOUR PRE SHARED KEY";
 
-// Parse settings
-const char *APPLICATION_ID = "YOUR APPLICATION_ID";
-const char *CLIENT_KEY = "YOUR CLIENT_KEY";
-
-// loop interval in ms
-const uint16_t LOOP_INTERVAL = 20 * 1000;
+// Parse Server settings
+const char *PARSE_SERVER = "YOUR PARSE SERVER";
+const char *PARSE_APPLICATION_ID = "YOUR PARSE APPLICATION ID";
+const char *PARSE_REST_API_KEY = "YOUR PARSE REST API KEY";
+const char *PARSE_SESSION_TOKEN = "A RESTRICTED SESSION TOKEN";
 
 // mock sensor data
-const bool USE_MOCK_DATA = true;
+const bool USE_MOCK_DATA = false;
 
-#define ENABLE_WEBSERVER
+// deep sleep interval in micro seconds
+const uint32_t DEEP_SLEEP_INTERVAL = 1 * 60 * 1e6; // 1 minute
+
+// loop interval in micro seconds
+const uint16_t LOOP_INTERVAL = 1 * 60 * 1000; // 60s

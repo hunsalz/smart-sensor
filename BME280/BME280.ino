@@ -75,7 +75,7 @@ void push(const char *name, String json) {
   http.begin((String)"http://" + PARSE_SERVER + "/classes/BME280");
   http.addHeader("X-Parse-Application-Id", PARSE_APPLICATION_ID);
   http.addHeader("X-Parse-REST-API-Key", PARSE_REST_API_KEY);
-  http.addHeader("X-Parse-Session-Token", PARSE_SESSION);
+  http.addHeader("X-Parse-Session-Token", PARSE_SESSION_TOKEN);
   http.addHeader("Content-Type", "application/json");
   int httpCode = http.POST(json);
   http.end();
