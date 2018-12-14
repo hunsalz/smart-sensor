@@ -46,7 +46,7 @@ class SettingsPage extends GestureEventListeners(PolymerElement) {
       
       <div class="content-area">
         <div class="container">
-          <paper-slider min="4" max="80" value="12" pin immediate-value="{{ticks}}"></paper-slider>
+          <paper-slider min="4" max="80" value="{{ticks}}" pin></paper-slider>
           <span>Current ticks: [[ticks]]</span>
         </div>
       </div>

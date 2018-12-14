@@ -51,18 +51,11 @@ class Bme680Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
         <canvas id="chart3" aria-label="Pressure chart" role="chart"></canvas>
       </div>
       <div class="container">
-        <div class="subtitle">Last gas measured on
-          <b>[[lastUpdate]]</b> is
-          <b>[[lastGas]] m</b>
-        </div>
-        <canvas id="chart4" aria-label="Gas chart" role="chart"></canvas>
-      </div>
-      <div class="container">
         <div class="subtitle">Last altitude measured on
           <b>[[lastUpdate]]</b> is
           <b>[[lastAltitude]] m</b>
         </div>
-        <canvas id="chart5" aria-label="Altitude chart" role="chart"></canvas>
+        <canvas id="chart4" aria-label="Altitude chart" role="chart"></canvas>
       </div>
     `;
   }
@@ -99,15 +92,6 @@ class Bme680Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
         value: 'n.a.',
         notify: true
       },
-      gases: {
-        type: Array,
-        notify: true
-      },
-      lastGas: {
-        type: String,
-        value: 'n.a.',
-        notify: true
-      },
       altitudes: {
         type: Array,
         notify: true
@@ -122,7 +106,19 @@ class Bme680Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
         notify: true
       },
       ticks: {
-        type: Number
+        type: Number,
+        notify: true,
+        observer: '__handleTicksChanged'
+      },
+      query: {
+        type: Object,
+        notify: true,
+        computed: '__computeQuery(ticks)'
+      },
+      initialized: {
+        type: Boolean,
+        value: false,
+        readOnly: true
       }
     };
   }
@@ -130,11 +126,9 @@ class Bme680Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
   constructor() {
     super();
 
-    this._authListener = this.__isUserAuthenticated.bind(this);
-
+    this._authListener = this.__initData.bind(this);
+    Chart.defaults.global.legend.display = false; // disable chart legend
     afterNextRender(this, function () {
-      // global chart properties
-      Chart.defaults.global.legend.display = false; // disable chart legend   
       // initialize temperature chart
       var ctx = this.$.chart1.getContext('2d');
       this.temperatures = new Chart(ctx, {
@@ -207,32 +201,8 @@ class Bme680Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
           }
         }
       });
-      // initialize gas chart
-      var ctx = this.$.chart4.getContext('2d');
-      this.gases = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: [],
-          datasets: [{
-            label: 'Gas',
-            borderColor: '#e0e0e0',
-            borderWidth: 1,
-            backgroundColor: 'rgba(88, 88, 88, 0.2)',
-            data: []
-          }]
-        },
-        options: {
-          scales: {
-            yAxes: [{
-              ticks: {
-                beginAtZero: true
-              }
-            }]
-          }
-        }
-      });
       // initialize altitude chart
-      var ctx = this.$.chart5.getContext('2d');
+      var ctx = this.$.chart4.getContext('2d');
       this.altitudes = new Chart(ctx, {
         type: 'line',
         data: {
@@ -260,7 +230,6 @@ class Bme680Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
         this.temperatures.resize();
         this.humidities.resize();
         this.pressures.resize();
-        this.gases.resize();
         this.altitudes.resize();
       });
     });
@@ -276,126 +245,150 @@ class Bme680Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
     window.removeEventListener('user-authenticated', this._authListener);
   }
 
-  __isUserAuthenticated() {
-    this.__queryBME680Entries(this.ticks);
+  __initData() {
+
+    if (!this.initialized) {
+      this.__queryData();
+      this.__subscribeData();
+      this._setInitialized(true);
+    }
   }
 
-  async __queryBME680Entries(limit) {
+  __handleTicksChanged() {
 
-    // proceed if user is available
+    // only call if first initialization is done
+    if (this.initialized) {
+      this.__queryData();
+    }
+  }
+
+  __computeQuery(ticks) {
+
+    // query BME680 entries
+    const BME680 = Parse.Object.extend('BME680');
+    const query = new Parse.Query(BME680);
+    // narrow by device if given
+    if (this.device) {
+      query.equalTo("device", this.device);
+    }
+    query.descending("createdAt");
+    query.limit(ticks);
+
+    return query;
+  }
+
+  __queryData() {
+
+    // only proceed if user is known
     if (Parse.User.current()) {
-      // try to query BME680 entries
-      const BME680 = Parse.Object.extend('BME680');
-      const query = new Parse.Query(BME680);
-      // filter by device if given
-      if (this.device) {
-        query.equalTo("device", this.device);
-      }
-      query.descending("createdAt");
-      query.limit(limit);
-
-      // initially query all entries to draw chart once
-      query.find().then((results) => {
-        if (results.length > 0) {
-          // add each entry
-          results.forEach(e => {
-            let label = self.__getShortTime(e.get('createdAt'));
-            // update temperature chart
-            this.temperatures.data.labels.push(label);
-            this.temperatures.data.datasets[0].data.push(e.get('temperature'));
-            // update humidity chart
-            this.humidities.data.labels.push(label);
-            this.humidities.data.datasets[0].data.push(e.get('humidity'));
-            // update pressure chart
-            this.pressures.data.labels.push(label);
-            this.pressures.data.datasets[0].data.push(e.get('pressure'));
-            // update gas chart
-            this.gases.data.labels.push(label);
-            this.gases.data.datasets[0].data.push(e.get('gas'));
-            // update altitude chart
-            this.altitudes.data.labels.push(label);
-            this.altitudes.data.datasets[0].data.push(e.get('altitude'));
-          });
-          // update charts
-          this.temperatures.update();
-          this.humidities.update();
-          this.pressures.update();
-          this.gases.update();
-          this.altitudes.update();
-          // update last update date
-          this.lastUpdate = self.__getShortDate(results[0].get('createdAt'));
-          // update last temperature value
-          this.lastTemperature = results[0].get('temperature');
-          // update last humidity value
-          this.lastHumidity = results[0].get('humidity');
-          // update last pressure value
-          this.lastPressure = results[0].get('pressure');
-          // update last gas value
-          this.lastGas = results[0].get('gas');
-          // update last altitude value
-          this.lastAltitude = results[0].get('altitude');
-        }
-      }, (error) => {
-        console.error("Query BME680 entries failed.", error);
-        this.__handleParseError(error);
+      // be sure that element is ready
+      afterNextRender(this, function () {
+        // reset chart entry points in case query is called again
+        this.temperatures.data.labels = [];
+        this.temperatures.data.datasets[0].data = [];
+        this.humidities.data.labels = [];
+        this.humidities.data.datasets[0].data = [];
+        this.pressures.data.labels = [];
+        this.pressures.data.datasets[0].data = [];
+        this.altitudes.data.labels = [];
+        this.altitudes.data.datasets[0].data = [];
+        // query entries and fill charts
+        this.query.find().then((results) => {
+          if (results.length > 0) {
+            // add each entry
+            results.forEach(e => {
+              let label = this.__getShortTime(e.get('createdAt'));
+              // update temperature chart
+              this.temperatures.data.labels.push(label);
+              this.temperatures.data.datasets[0].data.push(e.get('temperature'));
+              // update humidity chart
+              this.humidities.data.labels.push(label);
+              this.humidities.data.datasets[0].data.push(e.get('humidity'));
+              // update pressure chart
+              this.pressures.data.labels.push(label);
+              this.pressures.data.datasets[0].data.push(e.get('pressure'));
+              // update altitude chart
+              this.altitudes.data.labels.push(label);
+              this.altitudes.data.datasets[0].data.push(e.get('altitude'));
+            });
+            // update charts
+            this.temperatures.update();
+            this.humidities.update();
+            this.pressures.update();
+            this.altitudes.update();
+            // update last update date
+            this.lastUpdate = this.__getShortDate(results[0].get('createdAt'));
+            // update last temperature value
+            this.lastTemperature = results[0].get('temperature');
+            // update last humidity value
+            this.lastHumidity = results[0].get('humidity');
+            // update last pressure value
+            this.lastPressure = results[0].get('pressure');
+            // update last altitude value
+            this.lastAltitude = results[0].get('altitude');
+          }
+        }, (error) => {
+          console.error("Query BME680 entries failed.", error);
+          this.__handleParseError(error);
+        });
       });
+    }
+  }
 
-      // subscribe to get updates
-      var subscription = query.subscribe();
-      // handle incoming event
+  __subscribeData() {
+
+    // only proceed if user is known
+    if (Parse.User.current()) {
+      // subscribe for new entries
+      var subscription = this.query.subscribe();
       var self = this;
-      subscription.on('create', function (bme680) {
-        // add new entry and drop the oldest one
-        let label = self.__getShortTime(bme680.get('createdAt'));
-        // update temperature chart
-        self.temperatures.data.labels.unshift(label);
-        self.temperatures.data.labels.pop();
-        self.temperatures.data.datasets[0].data.unshift(bme680.get('temperature'));
-        self.temperatures.data.datasets[0].data.pop();
-        // update humidity chart
-        self.humidities.data.labels.unshift(label);
-        self.humidities.data.labels.pop();
-        self.humidities.data.datasets[0].data.unshift(bme680.get('humidity'));
-        self.humidities.data.datasets[0].data.pop();
-        // update pressure chart
-        self.pressures.data.labels.unshift(label);
-        self.pressures.data.labels.pop();
-        self.pressures.data.datasets[0].data.unshift(bme680.get('pressure'));
-        self.pressures.data.datasets[0].data.pop();
-        // update altitude chart
-        self.gases.data.labels.unshift(label);
-        self.gases.data.labels.pop();
-        self.gases.data.datasets[0].data.unshift(bme680.get('gas'));
-        self.gases.data.datasets[0].data.pop();
-        // update altitude chart
-        self.altitudes.data.labels.unshift(label);
-        self.altitudes.data.labels.pop();
-        self.altitudes.data.datasets[0].data.unshift(bme680.get('pressure'));
-        self.altitudes.data.datasets[0].data.pop();
-        // update charts
-        self.temperatures.update();
-        self.humidities.update();
-        self.pressures.update();
-        self.gases.update();
-        self.altitudes.update();
-        // update last update date
-        self.lastUpdate = self.__getShortDate(bme680.get('createdAt'));
-        // update last temperature value
-        self.lastTemperature = bme680.get('temperature');
-        // update last humidity value
-        self.lastHumidity = bme680.get('humidity');
-        // update last pressure value
-        self.lastPressure = bme680.get('pressure');
-        // update last gas value
-        self.lastGas = bme680.get('gas');
-        // update last altitude value
-        self.lastAltitude = bme680.get('altitude');
+      subscription.on('create', function(bme680) {
+        // be sure that element is ready
+        afterNextRender(this, function () {
+          // add new entry and drop the oldest one
+          let label = self.__getShortTime(bme680.get('createdAt'));
+          // update temperature chart
+          self.temperatures.data.labels.unshift(label);
+          self.temperatures.data.labels.pop();
+          self.temperatures.data.datasets[0].data.unshift(bme680.get('temperature'));
+          self.temperatures.data.datasets[0].data.pop();
+          // update humidity chart
+          self.humidities.data.labels.unshift(label);
+          self.humidities.data.labels.pop();
+          self.humidities.data.datasets[0].data.unshift(bme680.get('humidity'));
+          self.humidities.data.datasets[0].data.pop();
+          // update pressure chart
+          self.pressures.data.labels.unshift(label);
+          self.pressures.data.labels.pop();
+          self.pressures.data.datasets[0].data.unshift(bme680.get('pressure'));
+          self.pressures.data.datasets[0].data.pop();
+          // update altitude chart
+          self.altitudes.data.labels.unshift(label);
+          self.altitudes.data.labels.pop();
+          self.altitudes.data.datasets[0].data.unshift(bme680.get('pressure'));
+          self.altitudes.data.datasets[0].data.pop();
+          // update charts
+          self.temperatures.update();
+          self.humidities.update();
+          self.pressures.update();
+          self.altitudes.update();
+          // update last update date
+          self.lastUpdate = self.__getShortDate(bme680.get('createdAt'));
+          // update last temperature value
+          self.lastTemperature = bme680.get('temperature');
+          // update last humidity value
+          self.lastHumidity = bme680.get('humidity');
+          // update last pressure value
+          self.lastPressure = bme680.get('pressure');
+          // update last altitude value
+          self.lastAltitude = bme680.get('altitude');
+        });
       });
     }
   }
 
   __handleParseError(error) {
-    
+
     switch (error.code) {
       case Parse.Error.INVALID_SESSION_TOKEN:
         // logout current user
