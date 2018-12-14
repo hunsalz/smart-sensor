@@ -1,8 +1,6 @@
 import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 import { afterNextRender } from '@polymer/polymer/lib/utils/render-status.js';
 
-import '@polymer/iron-icons/iron-icons.js';
-
 import '@polymer/paper-styles/paper-styles.js';
 
 import './bmp280-widget.js';
@@ -62,7 +60,61 @@ class WidgetsPage extends PolymerElement {
       <div class="content-area">
         <div id="_grid" class="app-grid">
 
-          <!--widget-layout key="__bmp280">
+          <widget-layout key="__office">
+            <div slot="title">
+              <div>Temperature [[__office_temperature]]°</div>
+              <div>Humidity [[__office_humidity]] %</div>
+              <div>Pressure [[__office_pressure]] Pa</div>
+              <div>Altitude [[__office_altitude]] m</div>
+            </div>
+            <div class="widget-label" slot="label">
+              <div>Office</div>
+            </div>
+            <bme280-widget 
+              device="ESP8266-0001"
+              last-temperature="{{__office_temperature}}" 
+              last-humidity="{{__office_humidity}}" 
+              last-pressure="{{__office_pressure}}" 
+              last-altitude="{{__office_altitude}}"
+              ticks="{{ticks}}">
+            </bme280-widget>
+          </widget-layout>
+
+          <!--widget-layout key="__bedroom">
+            <div slot="title">
+              <div>Temperature [[__bedroom_temperature]]°</div>
+              <div>Humidity [[__bedroom_humidity]] %</div>
+              <div>Pressure [[__bedroom_pressure]] Pa</div>
+              <div>Altitude [[__bedroom_altitude]] m</div>
+            </div>
+            <div class="widget-label" slot="label">
+              <div>Bedroom</div>
+            </div>
+            <bme280-widget 
+              device="ESP8266-0002"
+              last-temperature="{{__bedroom_temperature}}" 
+              last-humidity="{{__bedroom_humidity}}" 
+              last-pressure="{{__bedroom_pressure}}" 
+              last-altitude="{{__bedroom_altitude}}"
+              ticks="{{ticks}}">
+            </bme280-widget>
+          </widget-layout-->
+
+          <widget-layout key="__hardware">
+            <div slot="title">
+              <div>Hardware diagnostics</div>
+            </div>
+            <div class="widget-label" slot="label">
+              <div>ESP8266</div>
+            </div>
+            <hardware-widget></hardware-widget>
+          </widget-layout>
+
+          <!--
+          
+          Inactive widgets ...
+          
+          <widget-layout key="__bmp280">
             <div slot="title">
               <div>Temperature [[__bmp280_temperature]]°</div>
               <div>Pressure [[__bmp280_pressure]] Pa</div>
@@ -70,37 +122,17 @@ class WidgetsPage extends PolymerElement {
             </div>
             <div class="widget-label" slot="label">
               <div>BMP280</div>
-              <iron-icon icon="icons:assessment"></iron-icon>
             </div>
             <bmp280-widget 
-              ticks="{{ticks}}" 
+              device="ESP8266-0001"
               last-temperature="{{__bmp280_temperature}}" 
               last-pressure="{{__bmp280_pressure}}" 
-              last-altitude="{{__bmp280_altitude}}">
+              last-altitude="{{__bmp280_altitude}}"
+              ticks="{{ticks}}">
             </bmp280-widget>
-          </widget-layout-->
-
-          <widget-layout key="__bme280">
-            <div slot="title">
-              <div>Temperature [[__bme280_temperature]]°</div>
-              <div>Humidity [[__bme280_humidity]] %</div>
-              <div>Pressure [[__bme280_pressure]] Pa</div>
-              <div>Altitude [[__bme280_altitude]] m</div>
-            </div>
-            <div class="widget-label" slot="label">
-              <div>BME280</div>
-              <iron-icon icon="icons:assessment"></iron-icon>
-            </div>
-            <bme280-widget 
-              ticks="{{ticks}}" 
-              last-temperature="{{__bme280_temperature}}" 
-              last-humidity="{{__bme280_humidity}}" 
-              last-pressure="{{__bme280_pressure}}" 
-              last-altitude="{{__bme280_altitude}}">
-            </bme280-widget>
           </widget-layout>
 
-          <!--widget-layout key="__bmp6280">
+          <widget-layout key="__bmp6280">
             <div slot="title">
               <div>Temperature [[__bme680_temperature]]°</div>
               <div>Humidity [[__bme680_humidity]] %</div>
@@ -110,28 +142,20 @@ class WidgetsPage extends PolymerElement {
             </div>
             <div class="widget-label" slot="label">
               <div>BME680</div>
-              <iron-icon icon="icons:assessment"></iron-icon>
             </div>
             <bme680-widget 
-              ticks="{{ticks}}" 
+              device="ESP8266-0001"
               last-temperature="{{__bme680_temperature}}" 
               last-humidity="{{__bme680_humidity}}" 
               last-pressure="{{__bme680_pressure}}" 
               last-gas="{{__bme680_gas}}" 
-              last-altitude="{{__bme680_altitude}}"><
-            /bme680-widget>
-          </widget-layout-->
-
-          <widget-layout key="__hardware">
-            <div slot="title">
-              <div>Hardware diagnostics</div>
-            </div>
-            <div class="widget-label" slot="label">
-              <div>ESP8266</div>
-              <iron-icon icon="icons:settings"></iron-icon>
-            </div>
-            <hardware-widget></hardware-widget>
+              last-altitude="{{__bme680_altitude}}"
+              ticks="{{ticks}}">
+            </bme680-widget>
           </widget-layout>
+
+          -->
+
         </div>
       </div>
     `;
@@ -141,7 +165,6 @@ class WidgetsPage extends PolymerElement {
     return {
       ticks: {
         type: Number,
-        value: 12, // default
         notify: true
       },
       collapsed: {
