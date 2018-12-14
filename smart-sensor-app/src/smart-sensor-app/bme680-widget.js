@@ -69,9 +69,8 @@ class Bme680Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
 
   static get properties() {
     return {
-      ticks: {
-        type: Number,
-        value: 16
+      device: {
+        type: String
       },
       temperatures: {
         type: Object,
@@ -121,6 +120,9 @@ class Bme680Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
       lastUpdate: {
         type: String,
         notify: true
+      },
+      ticks: {
+        type: Number
       }
     };
   }
@@ -285,6 +287,10 @@ class Bme680Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
       // try to query BME680 entries
       const BME680 = Parse.Object.extend('BME680');
       const query = new Parse.Query(BME680);
+      // filter by device if given
+      if (this.device) {
+        query.equalTo("device", this.device);
+      }
       query.descending("createdAt");
       query.limit(limit);
 

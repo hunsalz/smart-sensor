@@ -45,8 +45,8 @@ void setup() {
 
   // sensor setup
   esp8266utils::BMP085Sensor bmp085;
-  if (bmp085.begin(0x76)) {
-    LOG.verbose(F("BMP085 is ready."));
+  if (bmp085.begin(0x76, DEVICE)) {
+    LOG.verbose(F("BMP085 is ready for %s"), DEVICE);
     // read sensor data
     bmp085.update(USE_MOCK_DATA);
     // push sensor data

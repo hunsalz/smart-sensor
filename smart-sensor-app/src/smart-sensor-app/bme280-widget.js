@@ -30,6 +30,8 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
       </style>
 
       <div class="container">
+        <span>ticks: [[ticks]]</span>  
+
         <div class="subtitle">Last temperature measured on
           <b>[[lastUpdate]]</b> is
           <b>[[lastTemperature]]°</b>
@@ -62,10 +64,8 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
 
   static get properties() {
     return {
-      ticks: {
-        type: Number,
-        value: 5,
-        observer: '__echo'
+      device: {
+        type: String
       },
       temperatures: {
         type: Object,
@@ -106,12 +106,17 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
       lastUpdate: {
         type: String,
         notify: true
+      },
+      ticks: {
+        type: Number,
+        observer: '__echo'
       }
     };
   }
 
   __echo() {
     console.log("ticks", this.ticks);
+    this.__queryBME280Entries(this.ticks);
   }
 
   constructor() {
@@ -246,9 +251,16 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
 
     // proceed if user is available
     if (Parse.User.current()) {
+
+      console.log("Query entries", this.ticks, this.device);
+
       // try to query BME280 entries
       const BME280 = Parse.Object.extend('BME280');
       const query = new Parse.Query(BME280);
+      // filter by device if given
+      if (this.device) {
+        query.equalTo("device", this.device);
+      }
       query.descending("createdAt");
       query.limit(limit);
 

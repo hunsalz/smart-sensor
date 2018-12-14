@@ -55,9 +55,8 @@ class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
 
   static get properties() {
     return {
-      ticks: {
-        type: Number,
-        value: 5
+      device: {
+        type: String
       },
       temperatures: {
         type: Object,
@@ -89,6 +88,9 @@ class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
       lastUpdate: {
         type: String,
         notify: true
+      },
+      ticks: {
+        type: Number
       }
     };
   }
@@ -203,6 +205,10 @@ class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
       // try to query BMP280 entries
       const BMP280 = Parse.Object.extend('BMP280');
       const query = new Parse.Query(BMP280);
+      // filter by device if given
+      if (this.device) {
+        query.equalTo("device", this.device);
+      }
       query.descending("createdAt");
       query.limit(limit);
 

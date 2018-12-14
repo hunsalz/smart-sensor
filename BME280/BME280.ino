@@ -45,8 +45,8 @@ void setup() {
 
   // sensor setup
   esp8266utils::BME280Sensor bme280;
-  if (bme280.begin(0x76)) {
-    LOG.verbose(F("BME280 is ready."));
+  if (bme280.begin(0x76, DEVICE)) {
+    LOG.verbose(F("BME280 is ready for %s"), DEVICE);
     // read sensor data
     bme280.update(USE_MOCK_DATA);
     // push sensor data
