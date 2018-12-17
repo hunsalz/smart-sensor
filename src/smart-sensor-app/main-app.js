@@ -3195,7 +3195,7 @@ and this string can then be deleted`;function elementIsScrollLocked(element){var
           <span>Current ticks: [[ticks]]</span>
         </div>
       </div>
-    `}static get properties(){return{ticks:{type:Number,value:24,notify:!0}}}}window.customElements.define("settings-page",SettingsPage);class WidgetLayout extends GestureEventListeners(PolymerElement){static get template(){return html`
+    `}static get properties(){return{ticks:{type:Number,value:function(){let ticks=window.localStorage.getItem("__ticks");if(!ticks){ticks=12}return+ticks},observer:function(){window.localStorage.setItem("__ticks",this.ticks)},notify:!0},verbose:{type:Boolean,value:!1}}}}window.customElements.define("settings-page",SettingsPage);class WidgetLayout extends GestureEventListeners(PolymerElement){static get template(){return html`
       <style>
         :host {
           display: inline-block;
@@ -3317,7 +3317,7 @@ and this string can then be deleted`;function elementIsScrollLocked(element){var
             </bme280-widget>
           </widget-layout>
 
-          <!--widget-layout key="__bedroom">
+          <widget-layout key="__bedroom">
             <div slot="title">
               <div>Temperature [[__bedroom_temperature]]°</div>
               <div>Humidity [[__bedroom_humidity]] %</div>
@@ -3335,7 +3335,7 @@ and this string can then be deleted`;function elementIsScrollLocked(element){var
               last-altitude="{{__bedroom_altitude}}"
               ticks="{{ticks}}">
             </bme280-widget>
-          </widget-layout-->
+          </widget-layout>
 
           <widget-layout key="__hardware">
             <div slot="title">
