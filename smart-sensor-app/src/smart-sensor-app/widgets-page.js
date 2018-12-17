@@ -80,7 +80,7 @@ class WidgetsPage extends PolymerElement {
             </bme280-widget>
           </widget-layout>
 
-          <!--widget-layout key="__bedroom">
+          <widget-layout key="__bedroom">
             <div slot="title">
               <div>Temperature [[__bedroom_temperature]]°</div>
               <div>Humidity [[__bedroom_humidity]] %</div>
@@ -98,7 +98,7 @@ class WidgetsPage extends PolymerElement {
               last-altitude="{{__bedroom_altitude}}"
               ticks="{{ticks}}">
             </bme280-widget>
-          </widget-layout-->
+          </widget-layout>
 
           <widget-layout key="__hardware">
             <div slot="title">
