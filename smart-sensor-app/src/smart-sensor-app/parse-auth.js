@@ -42,14 +42,14 @@ class ParseAuth extends PolymerElement {
 
   connectedCallback() {
     super.connectedCallback();
-    
+
     window.addEventListener('login-event', this._loginListener);
     window.addEventListener('logout-event', this._logoutListener);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    
+
     window.removeEventListener('login-event', this._loginListener);
     window.removeEventListener('logout-event', this._logoutListener);
   }
@@ -57,11 +57,11 @@ class ParseAuth extends PolymerElement {
   __isCurrentUserKnown() {
 
     if (Parse.User.current()) {
-        // Note: No invalid session handling here: https://docs.parseplatform.org/js/guide/#handling-invalid-session-token-error
-        //       Every request must be able to handle session invalid state anyway.
-        // reflect and notify authentication state
-        this._setAuthenticated(true);
-        this.dispatchEvent(new CustomEvent('user-authenticated', { bubbles: true, composed: true }));
+      // Note: No invalid session handling here: https://docs.parseplatform.org/js/guide/#handling-invalid-session-token-error
+      //       Every request must be able to handle session invalid state anyway.
+      // reflect and notify authentication state
+      this._setAuthenticated(true);
+      this.dispatchEvent(new CustomEvent('user-authenticated', { bubbles: true, composed: true }));
     }
   }
 
@@ -70,9 +70,9 @@ class ParseAuth extends PolymerElement {
   }
 
   __login(username, password) {
-    
+
     var self = this;
-    Parse.User.logIn(username, password).then(function(user) {
+    Parse.User.logIn(username, password).then(function (user) {
       // notify listeners about authentication state and set corrensponding attribute value
       self._setAuthenticated(true);
       self.dispatchEvent(new CustomEvent('user-authenticated', { bubbles: true, composed: true }));

@@ -133,10 +133,10 @@ class LoginPage extends GestureEventListeners(PolymerElement) {
   }
 
   __submit() {
-    
+
     self.dispatchEvent(new CustomEvent('login-event', {
-      bubbles: true, 
-      composed: true, 
+      bubbles: true,
+      composed: true,
       detail: {
         username: this.username,
         password: this.password

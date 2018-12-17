@@ -60,7 +60,7 @@ class MainApp extends PolymerElement {
       },
       routeData: {
         type: Object,
-        value: function() {
+        value: function () {
           return { page: 'main' }; // default page
         }
       },

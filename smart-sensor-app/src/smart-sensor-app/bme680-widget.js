@@ -342,7 +342,7 @@ class Bme680Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
       // subscribe for new entries
       var subscription = this.query.subscribe();
       var self = this;
-      subscription.on('create', function(bme680) {
+      subscription.on('create', function (bme680) {
         // be sure that element is ready
         afterNextRender(this, function () {
           // add new entry and drop the oldest one

@@ -117,7 +117,7 @@ class SmartSensorApp extends GestureEventListeners(PolymerElement) {
       },
       routeData: {
         type: Object,
-        value: function() {
+        value: function () {
           return { page: 'dashboard' }; // default page
         },
         observer: '__computeAppIcons'
@@ -159,7 +159,7 @@ class SmartSensorApp extends GestureEventListeners(PolymerElement) {
     this.$.dashboard.__toggleWidgets();
   }
 
-  __showDashboard() {  
+  __showDashboard() {
     this.set('route.path', '/main/dashboard');
   }
 
