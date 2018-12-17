@@ -47,7 +47,7 @@ class SettingsPage extends GestureEventListeners(PolymerElement) {
       <div class="content-area">
         <div class="container">
           <paper-slider min="4" max="80" value="{{ticks}}" pin></paper-slider>
-          <span>Current ticks: [[ticks]]</span>
+          <span>Current ticks: [[value]]</span>
         </div>
       </div>
     `;
@@ -56,8 +56,23 @@ class SettingsPage extends GestureEventListeners(PolymerElement) {
     return {
       ticks: {
         type: Number,
-        value: 24, // default
+        value: function () {
+          // search for stored ticks
+          let ticks = window.localStorage.getItem('__ticks');
+          // otherwise use a default value
+          if (!ticks) {
+            ticks = 12;
+          }
+          return Number(ticks);
+        },
+        observer: function () {
+          window.localStorage.setItem('__ticks', this.ticks);
+        },
         notify: true
+      },
+      verbose: {
+        type: Boolean,
+        value: false
       }
     };
   }
