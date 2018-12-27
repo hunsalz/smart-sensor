@@ -18,3 +18,39 @@ const uint32_t DEEP_SLEEP_INTERVAL = 1 * 60 * 1e6; // 1 minute
 
 // loop interval in micro seconds
 const uint16_t LOOP_INTERVAL = 1 * 60 * 1000; // 60s
+
+// logging
+#ifdef DEBUG_ESP_PORT
+
+#define LOG_SEPARATOR '|'
+#define VERBOSE_MSG(format, ...) _log(F("VERBOSE"), format, ##__VA_ARGS__)
+#define ERROR_MSG(format, ...) _log(F("ERROR"), format, ##__VA_ARGS__)
+
+const size_t _log(const __FlashStringHelper *prefix, const char *format, ...) {
+  
+  va_list args;
+  va_start(args, format);
+  // determine buffer length for formatted data
+  size_t length = vsnprintf(NULL, 0, format, args) + 1;
+  char buffer[length];
+  // write formatted data to buffer
+  vsnprintf(buffer, length, format, args);
+  va_end(args);
+
+  DEBUG_ESP_PORT.print(prefix);
+  DEBUG_ESP_PORT.print(LOG_SEPARATOR);
+  DEBUG_ESP_PORT.print(millis());
+  DEBUG_ESP_PORT.print(LOG_SEPARATOR);
+  DEBUG_ESP_PORT.print(ESP.getFreeHeap());
+  DEBUG_ESP_PORT.print(LOG_SEPARATOR);
+  DEBUG_ESP_PORT.println(buffer);
+
+  return length;
+}
+
+#else
+
+#define VERBOSE_MSG(...)
+#define ERROR_MSG(...)
+
+#endif
