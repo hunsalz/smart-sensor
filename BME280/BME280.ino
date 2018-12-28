@@ -7,7 +7,7 @@ void setup() {
   
   // init Serial with desired baud rate
   esp8266utils::Logging::init(115200);
-  VERBOSE_MSG_P(F("Serial baud rate is [%d]"), Serial.baudRate());
+  VERBOSE_MSG_P(F("Serial baud rate is %lu"), Serial.baudRate());
 
   // WiFi setup
   WIFI_STA_CFG.addAP(WIFI_SSID_1, WIFI_PSK_1);
