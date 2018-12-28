@@ -10,34 +10,9 @@ esp8266utils::BME280Sensor bme280;
 
 void setup() {
 
-  // logger setup
-  LOG.addLevelToAll(Appender::VERBOSE);
-  LOG.addFormatterToAll(
-      [](Print &output, Appender::Level level, const char *msg, va_list *args) {
-        // output log level
-        output.print(Appender::toString(level, true));
-        output.print(Appender::DEFAULT_SEPARATOR);
-        // output uptime of this program in milliseconds
-        output.print(millis());
-        output.print(Appender::DEFAULT_SEPARATOR);
-        // output free heap space
-        output.print(ESP.getFreeHeap());
-        output.print(Appender::DEFAULT_SEPARATOR);
-        // determine buffer length for formatted data
-        size_t length = vsnprintf(NULL, 0, msg, *args) + 1;
-        char buffer[length];
-        // output formatted data
-        vsnprintf(buffer, length, msg, *args);
-        output.print(buffer);
-      });
-
-  // serial setup
-  Serial.begin(115200);
-  Serial.setDebugOutput(false);
-  while (!Serial && !Serial.available()) {
-  };
-  Serial.println();
-  LOG.verbose(F("Serial baud rate is [%d]"), Serial.baudRate());
+  // init Serial with desired baud rate
+  esp8266utils::Logging::init(115200);
+  VERBOSE_MSG_P(F("Serial baud rate is [%lu]"), Serial.baudRate());
 
   // WiFi setup
   WIFI_STA_CFG.addAP(WIFI_SSID_1, WIFI_PSK_1);
@@ -46,9 +21,9 @@ void setup() {
 
   // sensor setup
   if (bme280.begin(0x76)) {
-    LOG.verbose(F("BME280 is ready."));
+    VERBOSE_MSG_P(F("BME280 is ready."));
   } else {
-    LOG.error(F("Setup BME280 failed!"));
+    ERROR_MSG_P(F("Setup BME280 failed!"));
   }
 
   // MDNS setup
@@ -82,9 +57,9 @@ void setup() {
     SERVER.send(request, esp8266utils::APP_JSON, bme280.getValuesAsJson());
   });
 
-  LOG.verbose(F("========================="));
-  LOG.verbose(F("Setup finished. Have fun."));
-  LOG.verbose(F("========================="));
+  VERBOSE_MSG_P(F("========================="));
+  VERBOSE_MSG_P(F("Setup finished. Have fun."));
+  VERBOSE_MSG_P(F("========================="));
 }
 
 void loop() {
@@ -94,7 +69,7 @@ void loop() {
     MDNS.update();
 
     bme280.update(USE_MOCK_DATA);
-    LOG.verbose(F("Set value|%s|%s"), "BME280", bme280.getValuesAsJson().c_str());
+    VERBOSE_MSG_P(F("Set value|%s|%s"), "BME280", bme280.getValuesAsJson().c_str());
   }
 
   // reserve time for core processes
