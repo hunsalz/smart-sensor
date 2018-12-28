@@ -5,32 +5,25 @@
 
 void setup() {
 
-  // serial setup
-  Serial.begin(115200);
-  Serial.setDebugOutput(false);
-  while (!Serial && !Serial.available()) {
-  };
-  Serial.println();
-  VERBOSE_MSG("Serial baud rate is [%d]", Serial.baudRate());
+  // init Serial with desired baud rate
+  esp8266utils::Logging::init(115200);
+  VERBOSE_MSG_P(F("Serial baud rate is [%d]"), Serial.baudRate());
 
   // WiFi setup
   WIFI_STA_CFG.addAP(WIFI_SSID_1, WIFI_PSK_1);
   WIFI_STA_CFG.addAP(WIFI_SSID_2, WIFI_PSK_2);
   WIFI_STA_CFG.begin();
 
-  // save current ESP settings
-  set("esp", SYS_CFG.getDetails());
-
   // sensor setup
   esp8266utils::BMP280Sensor bmp280;
   if (bmp280.begin(0x76, BMP280_CHIPID, DEVICE)) {
-    VERBOSE_MSG("BMP280 is ready for %s", DEVICE);
+    VERBOSE_MSG_P(F("BMP280 is ready for %s"), DEVICE);
     // read sensor data
     bmp280.update(USE_MOCK_DATA);
     // push sensor data
     push("bmp280", bmp280.getValuesAsJson());
   } else {
-    ERROR_MSG("Setup BMP280 failed!");
+    ERROR_MSG_P(F("Setup BMP280 failed!"));
   }
 
   // deep sleep mode
@@ -38,16 +31,9 @@ void setup() {
   ESP.deepSleep(DEEP_SLEEP_INTERVAL);
 }
 
-void set(const char *name, String json) {
-  
-  VERBOSE_MSG("Set value|%s|%s", name, json.c_str());
-
-  // TODO
-}
-
 void push(const char *name, String json) {
 
-  VERBOSE_MSG("Push value|%s|%s", name, json.c_str());
+  VERBOSE_MSG_P(F("Push value|%s|%s"), name, json.c_str());
   
   HTTPClient http;
   http.begin((String)"http://" + PARSE_SERVER + "/classes/BMP280");

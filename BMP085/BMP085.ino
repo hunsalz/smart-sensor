@@ -5,49 +5,35 @@
 
 void setup() {
 
-  // serial setup
-  Serial.begin(115200);
-  Serial.setDebugOutput(false);
-  while (!Serial && !Serial.available()) {
-  };
-  Serial.println();
-  VERBOSE_MSG("Serial baud rate is [%d]", Serial.baudRate());
+  // init Serial with desired baud rate
+  esp8266utils::Logging::init(115200);
+  VERBOSE_MSG_P(F("Serial baud rate is [%d]"), Serial.baudRate());
 
   // WiFi setup
   WIFI_STA_CFG.addAP(WIFI_SSID_1, WIFI_PSK_1);
   WIFI_STA_CFG.addAP(WIFI_SSID_2, WIFI_PSK_2);
   WIFI_STA_CFG.begin();
 
-  // save current ESP settings
-  set("esp", SYS_CFG.getDetails());
-
   // sensor setup
   esp8266utils::BMP085Sensor bmp085;
   if (bmp085.begin(0x76, DEVICE)) {
-    VERBOSE_MSG("BMP085 is ready for %s", DEVICE);
+    VERBOSE_MSG_P(F("BMP085 is ready for %s"), DEVICE);
     // read sensor data
     bmp085.update(USE_MOCK_DATA);
     // push sensor data
     push("bmp085", bmp085.getValuesAsJson());
   } else {
-    ERROR_MSG("Setup BMP085 failed!");
+    ERROR_MSG_P(F("Setup BMP085 failed!"));
   }
 
   // deep sleep mode
-  VERBOSE_MSG("Going into deep sleep for the next %lu seconds.", (unsigned long)(DEEP_SLEEP_INTERVAL / 1e6));
+  VERBOSE_MSG_P(F("Going into deep sleep for the next %lu seconds."), (unsigned long)(DEEP_SLEEP_INTERVAL / 1e6));
   ESP.deepSleep(DEEP_SLEEP_INTERVAL);
-}
-
-void set(const char *name, String json) {
-  
-  VERBOSE_MSG("Set value|%s|%s", name, json.c_str());
-
-  // TODO
 }
 
 void push(const char *name, String json) {
 
-  VERBOSE_MSG("Push value|%s|%s", name, json.c_str());
+  VERBOSE_MSG_P(F("Push value|%s|%s"), name, json.c_str());
   
   HTTPClient http;
   http.begin((String)"http://" + PARSE_SERVER + "/classes/BMP085");
