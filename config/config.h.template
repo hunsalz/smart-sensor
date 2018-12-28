@@ -1,56 +1,51 @@
-// WiFi settings
+#ifndef CONFIG_H
+#define CONFIG_H
+
+// provide WiFi settings
 const char *WIFI_SSID_1 = "YOUR SSID";
 const char *WIFI_PSK_1 = "YOUR PRE SHARED KEY";
 const char *WIFI_SSID_2 = "YOUR SSID";
 const char *WIFI_PSK_2 = "YOUR PRE SHARED KEY";
 
-// Parse Server settings
+// provide Parse Server settings
 const char *PARSE_SERVER = "YOUR PARSE SERVER";
 const char *PARSE_APPLICATION_ID = "YOUR PARSE APPLICATION ID";
 const char *PARSE_REST_API_KEY = "YOUR PARSE REST API KEY";
 const char *PARSE_SESSION_TOKEN = "A RESTRICTED SESSION TOKEN";
 
-// mock sensor data
+// name device with a unique identifier
+const char *DEVICE = "ESP8266-0001";
+
+// enable or disbale usage of mock data
 const bool USE_MOCK_DATA = false;
 
-// deep sleep interval in micro seconds
-const uint32_t DEEP_SLEEP_INTERVAL = 1 * 60 * 1e6; // 1 minute
+// define deep sleep interval in micro seconds
+const uint32_t DEEP_SLEEP_INTERVAL = 15 * 60 * 1e6; // 15 minutes
 
-// loop interval in micro seconds
+// define loop interval in milli seconds
 const uint16_t LOOP_INTERVAL = 1 * 60 * 1000; // 60s
 
-// logging
+// enable logging directives
 #ifdef DEBUG_ESP_PORT
 
-#define LOG_SEPARATOR '|'
-#define VERBOSE_MSG(format, ...) _log(F("VERBOSE"), format, ##__VA_ARGS__)
-#define ERROR_MSG(format, ...) _log(F("ERROR"), format, ##__VA_ARGS__)
+#include <Esp8266Utils.h>
 
-const size_t _log(const __FlashStringHelper *prefix, const char *format, ...) {
-  
-  va_list args;
-  va_start(args, format);
-  // determine buffer length for formatted data
-  size_t length = vsnprintf(NULL, 0, format, args) + 1;
-  char buffer[length];
-  // write formatted data to buffer
-  vsnprintf(buffer, length, format, args);
-  va_end(args);
-
-  DEBUG_ESP_PORT.print(prefix);
-  DEBUG_ESP_PORT.print(LOG_SEPARATOR);
-  DEBUG_ESP_PORT.print(millis());
-  DEBUG_ESP_PORT.print(LOG_SEPARATOR);
-  DEBUG_ESP_PORT.print(ESP.getFreeHeap());
-  DEBUG_ESP_PORT.print(LOG_SEPARATOR);
-  DEBUG_ESP_PORT.println(buffer);
-
-  return length;
-}
+#define INFO_MSG(format, ...) esp8266utils::Logging::log(FPSTR(Logging::INFO), format, ##__VA_ARGS__)
+#define INFO_MSG_P(format, ...) esp8266utils::Logging::log_P(FPSTR(Logging::INFO), format, ##__VA_ARGS__)
+#define VERBOSE_MSG(format, ...) esp8266utils::Logging::log(FPSTR(Logging::VERBOSE), format, ##__VA_ARGS__)
+#define VERBOSE_MSG_P(format, ...) esp8266utils::Logging::log_P(FPSTR(Logging::VERBOSE), format, ##__VA_ARGS__)
+#define ERROR_MSG(format, ...) esp8266utils::Logging::log(FPSTR(Logging::ERROR), format, ##__VA_ARGS__)
+#define ERROR_MSG_P(format, ...) esp8266utils::Logging::log_P(FPSTR(Logging::ERROR), format, ##__VA_ARGS__)
 
 #else
 
+#define INFO_MSG(...)
+#define INFO_MSG_P(...)
 #define VERBOSE_MSG(...)
+#define VERBOSE_MSG_P(...)
 #define ERROR_MSG(...)
+#define ERROR_MSG_P(...)
 
 #endif
+
+#endif // CONFIG_H
