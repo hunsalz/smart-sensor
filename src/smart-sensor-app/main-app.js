@@ -3328,7 +3328,7 @@ and this string can then be deleted`;function elementIsScrollLocked(element){var
               <div>Bedroom</div>
             </div>
             <bme280-widget 
-              device="ESP8266-0002"
+              device="ESP-2355357"
               last-temperature="{{__bedroom_temperature}}" 
               last-humidity="{{__bedroom_humidity}}" 
               last-pressure="{{__bedroom_pressure}}" 
