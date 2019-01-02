@@ -1,5 +1,7 @@
-#include <ESP8266HTTPClient.h> // https://github.com/esp8266/Arduino
-#include <Esp8266Utils.h>      // https://github.com/hunsalz/esp8266utils
+#include <ESP8266HTTPClient.h>  // https://github.com/esp8266/Arduino
+#include <ESP8266WiFiMulti.h>   // https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/src/ESP8266WiFiMulti.h
+
+#include <Esp8266Utils.h>       // https://github.com/hunsalz/esp8266utils
 
 #include "config.h"
 
@@ -10,9 +12,10 @@ void setup() {
   VERBOSE_MSG_P(F("Serial baud rate is %lu"), Serial.baudRate());
 
   // WiFi setup
-  WIFI_STA_CFG.addAP(WIFI_SSID_1, WIFI_PSK_1);
-  WIFI_STA_CFG.addAP(WIFI_SSID_2, WIFI_PSK_2);
-  WIFI_STA_CFG.begin();
+  ESP8266WiFiMulti wifiMulti;
+  wifiMulti.addAP(WIFI_SSID_1, WIFI_PSK_1);
+  wifiMulti.addAP(WIFI_SSID_2, WIFI_PSK_2);
+  esp8266utils::setupWiFiSta(wifiMulti);
 
   // sensor setup
   esp8266utils::BMP085Sensor bmp085;
