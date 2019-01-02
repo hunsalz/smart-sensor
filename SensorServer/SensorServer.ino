@@ -1,5 +1,7 @@
-#include <Esp8266Utils.h>     // https://github.com/hunsalz/esp8266utils
-#include <Log4Esp.h>          // https://github.com/hunsalz/log4Esp
+#include <ESP8266HTTPClient.h>  // https://github.com/esp8266/Arduino
+#include <ESP8266WiFiMulti.h>   // https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/src/ESP8266WiFiMulti.h
+
+#include <Esp8266Utils.h>       // https://github.com/hunsalz/esp8266utils
 
 #include "config.h"
 
@@ -15,9 +17,10 @@ void setup() {
   VERBOSE_MSG_P(F("Serial baud rate is [%lu]"), Serial.baudRate());
 
   // WiFi setup
-  WIFI_STA_CFG.addAP(WIFI_SSID_1, WIFI_PSK_1);
-  WIFI_STA_CFG.addAP(WIFI_SSID_2, WIFI_PSK_2);
-  WIFI_STA_CFG.begin();
+  ESP8266WiFiMulti wifiMulti;
+  wifiMulti.addAP(WIFI_SSID_1, WIFI_PSK_1);
+  wifiMulti.addAP(WIFI_SSID_2, WIFI_PSK_2);
+  esp8266utils::setupWiFiSta(wifiMulti);
 
   // sensor setup
   if (bme280.begin(0x76)) {
@@ -48,7 +51,7 @@ void setup() {
     SERVER.send(request, esp8266utils::APP_JSON, FILESYSTEM.getFileListing());
   });
   SERVER.on("/sta", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::APP_JSON, WIFI_STA_CFG.getDetails());
+    SERVER.send(request, esp8266utils::APP_JSON, esp8266utils::getWiFiStaDetails());
   });
   SERVER.on("/esp", HTTP_GET, [](AsyncWebServerRequest* request) {
     SERVER.send(request, esp8266utils::APP_JSON, SYS_CFG.getDetails());
