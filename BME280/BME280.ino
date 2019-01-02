@@ -16,8 +16,8 @@ void setup() {
 
   // sensor setup
   esp8266utils::BME280Sensor bme280;
-  if (bme280.begin(0x76, DEVICE)) {
-    VERBOSE_MSG_P(F("BME280 is ready for %s"), DEVICE);
+  if (bme280.begin(0x76)) {
+    VERBOSE_MSG_P(F("BME280 is ready for %s"), bme280.getDeviceName().c_str());
     // read sensor data
     bme280.update(USE_MOCK_DATA);
     // push sensor data
@@ -35,7 +35,7 @@ void push(const char *name, String json) {
   
   VERBOSE_MSG_P(F("Push value|%s|%s"), name, json.c_str());
   HTTPClient http;
-  http.begin((String) "http://" + PARSE_SERVER + "/classes/BME280");
+  http.begin((String)"http://" + PARSE_SERVER + "/classes/BME280");
   http.addHeader("X-Parse-Application-Id", PARSE_APPLICATION_ID);
   http.addHeader("X-Parse-REST-API-Key", PARSE_REST_API_KEY);
   http.addHeader("X-Parse-Session-Token", PARSE_SESSION_TOKEN);
