@@ -24,7 +24,7 @@ void setup() {
 
   // sensor setup
   if (bme280.begin(0x76)) {
-    VERBOSE_FP(F("BME280 is ready."));
+    VERBOSE_FP(F("BME280 is ready for %s"), bme280.getDeviceName());
   } else {
     ERROR_FP(F("Setup BME280 failed!"));
   }

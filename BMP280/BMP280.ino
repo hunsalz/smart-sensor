@@ -21,7 +21,7 @@ void setup() {
   // try to read sensor data
   esp8266utils::BMP280Sensor bmp280;
   if (bmp280.begin(0x76, BMP280_CHIPID)) {
-    VERBOSE_FP(F("BMP280 is ready for %s"), bmp280.getDeviceName().c_str());
+    VERBOSE_FP(F("BMP280 is ready for %s"), bmp280.getDeviceName());
     // read sensor data
     bmp280.update(USE_MOCK_DATA);
     // serialize sensor data

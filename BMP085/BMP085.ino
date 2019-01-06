@@ -21,7 +21,7 @@ void setup() {
   // try to read sensor data
   esp8266utils::BMP085Sensor bmp085;
   if (bmp085.begin(0x76)) {
-    VERBOSE_FP(F("BMP085 is ready for %s"), bmp085.getDeviceName().c_str());
+    VERBOSE_FP(F("BMP085 is ready for %s"), bmp085.getDeviceName());
     // read sensor data
     bmp085.update(USE_MOCK_DATA);
     // serialize sensor data

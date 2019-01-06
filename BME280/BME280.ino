@@ -23,7 +23,7 @@ void setup() {
   // try to read sensor data
   esp8266utils::BME280Sensor bme280;
   if (bme280.begin(0x76)) {
-    VERBOSE_FP(F("BME280 is ready for %s"), bme280.getDeviceName().c_str());
+    VERBOSE_FP(F("BME280 is ready for %s"), bme280.getDeviceName());
     // read sensor data
     bme280.update(USE_MOCK_DATA);
     // serialize sensor data
