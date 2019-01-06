@@ -1,20 +1,20 @@
 #include <ESP8266HTTPClient.h>  // https://github.com/esp8266/Arduino
 #include <ESP8266WiFiMulti.h>   // https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/src/ESP8266WiFiMulti.h
+#include <StreamString.h>       // https://github.com/esp8266/Arduino/blob/master/cores/esp8266/StreamString.h
 
 #include <Esp8266Utils.h>       // https://github.com/hunsalz/esp8266utils
 
 #include "config.h"
 
-// web server settings
-const static int PORT = 80;
-
 esp8266utils::BME280Sensor bme280;
+
+unsigned long next = 0;
 
 void setup() {
 
   // init Serial with desired baud rate
   esp8266utils::Logging::init(115200);
-  VERBOSE_MSG_P(F("Serial baud rate is [%lu]"), Serial.baudRate());
+  VERBOSE_FP(F("Serial baud rate is [%lu]"), Serial.baudRate());
 
   // WiFi setup
   ESP8266WiFiMulti wifiMulti;
@@ -24,55 +24,96 @@ void setup() {
 
   // sensor setup
   if (bme280.begin(0x76)) {
-    VERBOSE_MSG_P(F("BME280 is ready."));
+    VERBOSE_FP(F("BME280 is ready."));
   } else {
-    ERROR_MSG_P(F("Setup BME280 failed!"));
+    ERROR_FP(F("Setup BME280 failed!"));
   }
 
   // MDNS setup
-  MDNS_CFG.begin("esp8266");
-  MDNS.addService("http", "tcp", PORT);
+  //MDNS_CFG.begin("esp8266");
+  //MDNS.addService("http", "tcp", PORT);
 
   // file system setup to enable static web server content
-  FILESYSTEM.begin();
+  esp8266utils::FileSystem fs; 
+  fs.begin();
 
   // web server setup
-  SERVER.begin();
+  esp8266utils::WebService webService(80);
+  webService.begin();
   // rewrite root context
-  SERVER.getWebServer().rewrite("/", "/index.build.html");
+  webService.getWebServer().rewrite("/", "/index.html");
   // handle static web resources
-  SERVER.getWebServer().serveStatic("/", SPIFFS, "/www/", "max-age:15");
+  webService.getWebServer().serveStatic("/", SPIFFS, "/www/", "max-age:15");
   // cache-control 15 seconds
   // add dynamic http resources
-  SERVER.on("/fs", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::APP_JSON, FILESYSTEM.getStorageDetails());
+  webService.on("/fs", HTTP_GET, [&fs](AsyncWebServerRequest* request) {
+
+    AsyncResponseStream *response = request->beginResponseStream("application/json");  
+    StreamString* payload = new StreamString();
+    size_t size = fs.serializeInfo(*payload);
+    response->print(*payload); 
+    request->send(response);
+    delete payload;
   });
-  SERVER.on("/files", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::APP_JSON, FILESYSTEM.getFileListing());
+  webService.on("/files", HTTP_GET, [&fs](AsyncWebServerRequest* request) {
+
+    AsyncResponseStream *response = request->beginResponseStream("application/json");  
+    StreamString* payload = new StreamString();
+    size_t size = fs.serializeListing(*payload);
+    response->print(*payload); 
+    request->send(response);
+    delete payload;
   });
-  SERVER.on("/sta", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::APP_JSON, esp8266utils::getWiFiStaDetails());
+  webService.on("/sta", HTTP_GET, [](AsyncWebServerRequest* request) {
+
+    AsyncResponseStream *response = request->beginResponseStream("application/json");  
+    StreamString* payload = new StreamString();
+    size_t size = esp8266utils::serializeWiFiSta(*payload);
+    response->print(*payload); 
+    request->send(response);
+    delete payload;
   });
-  SERVER.on("/esp", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::APP_JSON, SYS_CFG.getDetails());
+  webService.on("/esp", HTTP_GET, [](AsyncWebServerRequest* request) {
+    
+    AsyncResponseStream *response = request->beginResponseStream("application/json");  
+    StreamString* payload = new StreamString();
+    size_t size = esp8266utils::serializeESP(*payload);
+    response->print(*payload); 
+    request->send(response);
+    delete payload;
   });
-  SERVER.on("/bme280", HTTP_GET, [](AsyncWebServerRequest* request) {
-    SERVER.send(request, esp8266utils::APP_JSON, bme280.getValuesAsJson());
+  webService.on("/bme280", HTTP_GET, [](AsyncWebServerRequest* request) {
+
+    AsyncResponseStream *response = request->beginResponseStream("application/json");  
+    StreamString* payload = new StreamString();
+    size_t size = bme280.serialize(*payload);
+    response->print(*payload); 
+    request->send(response);
+    delete payload;
   });
 
-  VERBOSE_MSG_P(F("========================="));
-  VERBOSE_MSG_P(F("Setup finished. Have fun."));
-  VERBOSE_MSG_P(F("========================="));
+  VERBOSE_FP(F("========================="));
+  VERBOSE_FP(F("Setup finished. Have fun."));
+  VERBOSE_FP(F("========================="));
 }
 
-void loop() {
-  
-  if (SYS_CFG.nextLoopInterval()) {
-       
-    MDNS.update();
+StreamString* payload;
 
+void loop() {
+
+  if (millis() > next) {
+    
+    next = millis() + 5000;
+    
+    //MDNS.update();
+
+    // read sensor values
     bme280.update(USE_MOCK_DATA);
-    VERBOSE_MSG_P(F("Set value|%s|%s"), "BME280", bme280.getValuesAsJson().c_str());
+    // serialize sensor data
+    payload = new StreamString();
+    bme280.serialize(*payload);
+    VERBOSE(*payload);
+    delete payload;
   }
 
   // reserve time for core processes
