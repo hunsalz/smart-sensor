@@ -1,22 +1,42 @@
 #pragma once
 
 // provide WiFi settings
-const char *WIFI_SSID_1 = "YOUR SSID";
-const char *WIFI_PSK_1 = "YOUR PRE SHARED KEY";
-const char *WIFI_SSID_2 = "YOUR SSID";
-const char *WIFI_PSK_2 = "YOUR PRE SHARED KEY";
+static const char *WIFI_SSID_1 = "YOUR SSID";
+static const char *WIFI_PSK_1 = "YOUR PRE SHARED KEY";
+static const char *WIFI_SSID_2 = "YOUR SSID";
+static const char *WIFI_PSK_2 = "YOUR PRE SHARED KEY";
 
 // provide Parse Server settings
-const char *PARSE_SERVER = "YOUR PARSE SERVER";
-const char *PARSE_APPLICATION_ID = "YOUR PARSE APPLICATION ID";
-const char *PARSE_REST_API_KEY = "YOUR PARSE REST API KEY";
-const char *PARSE_SESSION_TOKEN = "A RESTRICTED SESSION TOKEN";
+const char *PARSE_HOST = "YOUR PARSE SERVER";
+static const char *PARSE_URI = "YOUR URI PATH";
+static const char *PARSE_APPLICATION_ID = "YOUR PARSE APPLICATION ID";
+static const char *PARSE_REST_API_KEY = "YOUR PARSE REST API KEY";
+static const char *PARSE_SESSION_TOKEN = "A RESTRICTED SESSION TOKEN";
+
+// X.509 settings
+static const char PARSE_PROVIDER_PUB_KEY[] PROGMEM = R"KEY(
+-----BEGIN PUBLIC KEY-----
+
+ENTER PUBLIC KEY OF YOUR PARSE PROVIDER
+
+$openssl s_client -showcerts -connect smart-sensor.back4app.io:443
+
+Copy appropriate certificate and save as cert.pem
+
+$openssl x509 -pubkey -noout -in cert.pem
+
+Copy output and paste it here.
+
+-----END PUBLIC KEY-----
+)KEY";
+
+//#define INSECURE // bypass X.509 - use with care
 
 // enable or disbale usage of mock data
-const bool USE_MOCK_DATA = false;
+static const bool USE_MOCK_DATA = false;
 
 // define deep sleep interval in micro seconds
-const uint32_t DEEP_SLEEP_INTERVAL = 15 * 60 * 1e6; // 15 minutes
+static const uint32_t DEEP_SLEEP_INTERVAL = 15 * 60 * 1e6; // 15 minutes
 
 // define loop interval in milli seconds
-const uint16_t LOOP_INTERVAL = 1 * 60 * 1000; // 60s
+static const uint16_t LOOP_INTERVAL = 1 * 60 * 1000; // 60s
