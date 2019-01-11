@@ -32,6 +32,9 @@ Copy output and paste it here.
 
 //#define INSECURE // bypass X.509 - use with care
 
+// define appropriate http settings
+static const uint32_t HTTP_TIMEOUT = 10000;
+
 // enable or disbale usage of mock data
 static const bool USE_MOCK_DATA = false;
 
