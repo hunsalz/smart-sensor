@@ -52,7 +52,7 @@ void setup() {
   FileSystem fs; 
   fs.begin();
 
-   // add dynamic http resources
+  // add dynamic http resources
   server.on("/fs", HTTP_GET, [&fs]() {
   
     StreamString* payload = new StreamString();
