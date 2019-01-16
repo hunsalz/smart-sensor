@@ -60,22 +60,22 @@ class WidgetsPage extends PolymerElement {
       <div class="content-area">
         <div id="_grid" class="app-grid">
 
-          <widget-layout key="__office">
+          <widget-layout key="__kitchen">
             <div slot="title">
-              <div>Temperature [[__office_temperature]]°</div>
-              <div>Humidity [[__office_humidity]] %</div>
-              <div>Pressure [[__office_pressure]] Pa</div>
-              <div>Altitude [[__office_altitude]] m</div>
+              <div>Temperature [[__kitchen_temperature]]°</div>
+              <div>Humidity [[__kitchen_humidity]] %</div>
+              <div>Pressure [[__kitchen_pressure]] Pa</div>
+              <div>Altitude [[__kitchen_altitude]] m</div>
             </div>
             <div class="widget-label" slot="label">
-              <div>Office</div>
+              <div>Kitchen</div>
             </div>
             <bme280-widget 
-              device="ESP8266-0001"
-              last-temperature="{{__office_temperature}}" 
-              last-humidity="{{__office_humidity}}" 
-              last-pressure="{{__office_pressure}}" 
-              last-altitude="{{__office_altitude}}"
+              device="ESP-2391099"
+              last-temperature="{{__kitchen_temperature}}" 
+              last-humidity="{{__kitchen_humidity}}" 
+              last-pressure="{{__kitchen_pressure}}" 
+              last-altitude="{{__kitchen_altitude}}"
               ticks="{{ticks}}">
             </bme280-widget>
           </widget-layout>
@@ -100,6 +100,10 @@ class WidgetsPage extends PolymerElement {
             </bme280-widget>
           </widget-layout>
 
+          <!--
+          
+          Inactive widgets ...
+          
           <widget-layout key="__hardware">
             <div slot="title">
               <div>Hardware diagnostics</div>
@@ -110,10 +114,6 @@ class WidgetsPage extends PolymerElement {
             <hardware-widget></hardware-widget>
           </widget-layout>
 
-          <!--
-          
-          Inactive widgets ...
-          
           <widget-layout key="__bmp280">
             <div slot="title">
               <div>Temperature [[__bmp280_temperature]]°</div>
