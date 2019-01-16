@@ -6,6 +6,10 @@ static const char *WIFI_PSK_1 = "YOUR PRE SHARED KEY";
 static const char *WIFI_SSID_2 = "YOUR SSID";
 static const char *WIFI_PSK_2 = "YOUR PRE SHARED KEY";
 
+// provide WiFi AP settings
+const char *WIFI_AP_SSID = "MyESP8266";
+const char *WIFI_AP_PSK = "password";
+
 // provide Parse Server settings
 const char *PARSE_HOST = "YOUR PARSE SERVER";
 static const char *PARSE_URI = "YOUR URI PATH";

@@ -6,23 +6,27 @@
 
 #include "config.h"
 
-esp8266utils::BME280Sensor bme280;
+using namespace esp8266utils;
+
+ESPAsyncWebService webService(80);
+BME280Sensor bme280;
 
 unsigned long nextLoopInterval = 0;
-
-StreamString* payload;
 
 void setup() {
 
   // init Serial with desired baud rate
-  esp8266utils::Logging::init(115200);
+  Logging::init(115200);
   VERBOSE_FP(F("Serial baud rate is [%lu]"), Serial.baudRate());
 
   // WiFi setup
   ESP8266WiFiMulti wifiMulti;
   wifiMulti.addAP(WIFI_SSID_1, WIFI_PSK_1);
   wifiMulti.addAP(WIFI_SSID_2, WIFI_PSK_2);
-  esp8266utils::setupWiFiSta(wifiMulti);
+  setupWiFiSta(wifiMulti);
+
+  // WiFi AP setup
+  setupWiFiAp(WIFI_AP_SSID, WIFI_AP_PSK);
 
   // MDNS setup
   const char* hostname = "esp8266";
@@ -42,11 +46,10 @@ void setup() {
   }
 
   // file system setup to enable static web server content
-  esp8266utils::FileSystem fs; 
+  FileSystem fs; 
   fs.begin();
 
   // general web server setup
-  esp8266utils::WebService webService(80);
   webService.begin();
   // rewrite root context
   webService.getWebServer().rewrite("/", "/index.html");
@@ -78,7 +81,7 @@ void setup() {
 
     AsyncResponseStream *response = request->beginResponseStream("application/json");  
     StreamString* payload = new StreamString();
-    size_t size = esp8266utils::serializeWiFiSta(*payload);
+    size_t size = serializeWiFiSta(*payload);
     response->print(*payload); 
     request->send(response);
     VERBOSE(*payload);
@@ -88,7 +91,7 @@ void setup() {
     
     AsyncResponseStream *response = request->beginResponseStream("application/json");  
     StreamString* payload = new StreamString();
-    size_t size = esp8266utils::serializeESP(*payload);
+    size_t size = serializeESP(*payload);
     response->print(*payload); 
     request->send(response);
     VERBOSE(*payload);
@@ -113,14 +116,14 @@ void setup() {
 void loop() {
 
   if (millis() > nextLoopInterval) {  
-    nextLoopInterval = millis() + 5000;
+    nextLoopInterval = millis() + LOOP_INTERVAL;
     
     MDNS.update();
 
     // read sensor values
     bme280.update(USE_MOCK_DATA);
     // serialize sensor data
-    payload = new StreamString();
+    StreamString* payload = new StreamString();
     bme280.serialize(*payload);
     VERBOSE(*payload);
     delete payload;
