@@ -46,4 +46,4 @@ static const bool USE_MOCK_DATA = false;
 static const uint32_t DEEP_SLEEP_INTERVAL = 15 * 60 * 1e6; // 15 minutes
 
 // define loop interval in milli seconds
-static const uint16_t LOOP_INTERVAL = 1 * 60 * 1000; // 60s
+static const uint16_t LOOP_INTERVAL = 15 * 1000; // 15s
