@@ -61,7 +61,7 @@ void setup() {
   // add dynamic http resources
   webService.on("/fs", HTTP_GET, [&fs](AsyncWebServerRequest* request) {
 
-    AsyncResponseStream *response = request->beginResponseStream("application/json");  
+    AsyncResponseStream* response = request->beginResponseStream("application/json");  
     StreamString* payload = new StreamString();
     size_t size = fs.serializeInfo(*payload);
     response->print(*payload); 
@@ -71,7 +71,7 @@ void setup() {
   });
   webService.on("/files", HTTP_GET, [&fs](AsyncWebServerRequest* request) {
 
-    AsyncResponseStream *response = request->beginResponseStream("application/json");  
+    AsyncResponseStream* response = request->beginResponseStream("application/json");  
     StreamString* payload = new StreamString();
     size_t size = fs.serializeListing(*payload);
     response->print(*payload); 
@@ -81,7 +81,7 @@ void setup() {
   });
   webService.on("/sta", HTTP_GET, [](AsyncWebServerRequest* request) {
 
-    AsyncResponseStream *response = request->beginResponseStream("application/json");  
+    AsyncResponseStream* response = request->beginResponseStream("application/json");  
     StreamString* payload = new StreamString();
     size_t size = serializeWiFiSta(*payload);
     response->print(*payload); 
@@ -91,7 +91,7 @@ void setup() {
   });
   webService.on("/esp", HTTP_GET, [](AsyncWebServerRequest* request) {
     
-    AsyncResponseStream *response = request->beginResponseStream("application/json");  
+    AsyncResponseStream* response = request->beginResponseStream("application/json");  
     StreamString* payload = new StreamString();
     size_t size = serializeESP(*payload);
     response->print(*payload); 
@@ -101,7 +101,7 @@ void setup() {
   });
   webService.on("/bme280", HTTP_GET, [](AsyncWebServerRequest* request) {
 
-    AsyncResponseStream *response = request->beginResponseStream("application/json");  
+    AsyncResponseStream* response = request->beginResponseStream("application/json");  
     StreamString* payload = new StreamString();
     size_t size = bme280.serialize(*payload);
     response->print(*payload); 
