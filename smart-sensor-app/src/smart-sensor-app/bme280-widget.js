@@ -1,7 +1,7 @@
 import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class.js';
 import { IronResizableBehavior } from '@polymer/iron-resizable-behavior/iron-resizable-behavior.js';
-import { afterNextRender } from '@polymer/polymer/lib/utils/render-status.js';
+import { afterNextRender, flush } from '@polymer/polymer/lib/utils/render-status.js';
 
 import '@polymer/app-storage/app-localstorage/app-localstorage-document.js';
 
@@ -38,11 +38,11 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
 
       <app-localstorage-document key="[[__computeKey(device)]]" data="{{selected}}"></app-localstorage-document>
 
-      <paper-tabs selected="{{selected}}">
+      <paper-tabs selected="{{selected}}" fallback-selection="0">
         <paper-tab>Last 4h</paper-tab>
-        <paper-tab>Today</paper-tab>
-        <paper-tab>Week</paper-tab>
-        <paper-tab>Last 10</paper-tab>
+        <paper-tab>Last 24h</paper-tab>
+        <paper-tab>Last 7days</paper-tab>
+        <paper-tab>Last 10 values</paper-tab>
       </paper-tabs>
 
       <div class="container">
@@ -70,58 +70,55 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
         type: String
       },
       temperatures: {
-        type: Object,
-        notify: true
+        type: Object
       },
       lastTemperature: {
         type: String,
-        value: 'n.a.',
+        value: 'N/A',
         notify: true
       },
       humidities: {
-        type: Array,
-        notify: true
+        type: Array
       },
       lastHumidity: {
         type: String,
-        value: 'n.a.',
+        value: 'N/A',
         notify: true
       },
       pressures: {
-        type: Array,
-        notify: true
+        type: Array
       },
       lastPressure: {
         type: String,
-        value: 'n.a.',
+        value: 'N/A',
         notify: true
       },
       altitudes: {
-        type: Array,
-        notify: true
+        type: Array
       },
       lastAltitude: {
         type: String,
-        value: 'n.a.',
+        value: 'N/A',
         notify: true
       },
       lastUpdate: {
         type: String,
+        value: 'N/A',
         notify: true
       },
-      ticks: {
-        type: Number,
-        notify: true,
-        observer: '__handleTicksChanged'
-      },
       query: {
-        type: Object,
-        notify: true,
-        computed: '__computeQuery(ticks)'
+        type: Object
+      },
+      from: {
+        type: Date
+      },
+      limit: {
+        type: Number
       },
       selected: {
         type: Number,
-        value: 0
+        value: 0,
+        observer: '__handleSelectedChanged'
       },
       initialized: {
         type: Boolean,
@@ -253,57 +250,95 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
     window.removeEventListener('user-authenticated', this._authListener);
   }
 
+  __computeKey(device) {
+    return device + '/selected';
+  }
+
   __initData() {
 
     if (!this.initialized) {
+
+      this.query = this.__computeQuery();
       this.__queryData();
       this.__subscribeData();
       this._setInitialized(true);
     }
   }
 
-  __handleTicksChanged() {
-
-    // only call if first initialization is done
+  __handleSelectedChanged() {
+    
+    // only call if first initialization is already done
     if (this.initialized) {
+      // compute query
+      this.query = this.__computeQuery();
+      // query data
       this.__queryData();
     }
   }
 
-  __computeKey(device) {
-    return device + '/selected';
+  __computeQueryParams() {
+
+    let date = new Date();
+    let limit = 1000;
+    switch (this.selected) {
+      case 0:
+        date.setHours(date.getHours() - 4); // 4 hours
+        break;
+      case 1:
+        date.setHours(date.getHours() - 24); // 24 hours
+        break;
+      case 2:
+        date.setHours(date.getHours() - 24*7); // week
+        break;
+      default:
+        limit = 10;
+        date = new Date('January 1, 1970 00:00:00'); // since 'The Epoch'
+        break;
+    }
+    this.from = date;
+    this.limit = limit;
   }
 
-  __computeQuery(ticks) {
+  __computeQuery() {
 
+    // compute query params
+    this.__computeQueryParams();
     // query BME280 entries
     const BME280 = Parse.Object.extend('BME280');
     const query = new Parse.Query(BME280);
-    // narrow by device if given
+    // narrow by device
     if (this.device) {
       query.equalTo("device", this.device);
-    }
+    }  
+    query.greaterThan("createdAt", this.from);
     query.descending("createdAt");
-    query.limit(ticks);
+    query.limit(this.limit);
 
     return query;
   }
 
   __queryData() {
 
+    console.log(this.device, this.query);
+
     // only proceed if user is known
     if (Parse.User.current()) {
       // be sure that element is ready
       afterNextRender(this, function () {
-        // reset chart entry points in case query is called again
+        // reset any existing data sets
         this.temperatures.data.labels = [];
         this.temperatures.data.datasets[0].data = [];
+        this.lastTemperature = 'N/A';
         this.humidities.data.labels = [];
         this.humidities.data.datasets[0].data = [];
+        this.lastHumidity = 'N/A';
         this.pressures.data.labels = [];
         this.pressures.data.datasets[0].data = [];
+        this.lastPressure = 'N/A';
         this.altitudes.data.labels = [];
         this.altitudes.data.datasets[0].data = [];
+        this.lastAltitude = 'N/A';
+        this.lastUpdate = 'N/A';
         // query entries and fill charts
         this.query.find().then((results) => {
           if (results.length > 0) {
@@ -323,13 +358,6 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
               this.altitudes.data.labels.push(label);
               this.altitudes.data.datasets[0].data.push(e.get('altitude'));
             });
-            // update charts
-            this.temperatures.update();
-            this.humidities.update();
-            this.pressures.update();
-            this.altitudes.update();
-            // update last update date
-            this.lastUpdate = this.__formatDateTime(results[0].get('createdAt'));
             // update last temperature value
             this.lastTemperature = results[0].get('temperature');
             // update last humidity value
@@ -338,12 +366,20 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
             this.lastPressure = results[0].get('pressure');
             // update last altitude value
             this.lastAltitude = results[0].get('altitude');
+            // update last update date
+            this.lastUpdate = this.__formatDateTime(results[0].get('createdAt'));
           }
+          // update charts
+          this.temperatures.update();
+          this.humidities.update();
+          this.pressures.update();
+          this.altitudes.update();
         }, (error) => {
           console.error("Query BME280 entries failed.", error);
           this.__handleParseError(error);
         });
       });
+      flush(); // flush render-status of all '__queryData' calls
     }
   }
 
@@ -379,13 +415,6 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
           self.altitudes.data.labels.pop();
           self.altitudes.data.datasets[0].data.unshift(bme280.get('pressure'));
           self.altitudes.data.datasets[0].data.pop();
-          // update charts
-          self.temperatures.update();
-          self.humidities.update();
-          self.pressures.update();
-          self.altitudes.update();
-          // update last update date
-          self.lastUpdate = self.__formatDateTime(bme280.get('createdAt'));
           // update last temperature value
           self.lastTemperature = bme280.get('temperature');
           // update last humidity value
@@ -394,6 +423,13 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
           self.lastPressure = bme280.get('pressure');
           // update last altitude value
           self.lastAltitude = bme280.get('altitude');
+          // update last update date
+          self.lastUpdate = self.__formatDateTime(bme280.get('createdAt'));
+          // update charts
+          self.temperatures.update();
+          self.humidities.update();
+          self.pressures.update();
+          self.altitudes.update();
         });
       });
     }
