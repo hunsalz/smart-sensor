@@ -69,10 +69,6 @@ class SettingsPage extends GestureEventListeners(PolymerElement) {
           window.localStorage.setItem('__ticks', this.ticks);
         },
         notify: true
-      },
-      verbose: {
-        type: Boolean,
-        value: false
       }
     };
   }
