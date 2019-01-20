@@ -18,16 +18,17 @@
     "@polymer/iron-iconset-svg": "^3.0.1",
     "@polymer/iron-pages": "^3.0.1",
     "@polymer/paper-button": "^3.0.1",
-    "@polymer/paper-icon-button": "^3.0.1",
+    "@polymer/paper-icon-button": "^3.0.2",
     "@polymer/paper-input": "^3.0.1",
     "@polymer/paper-slider": "^3.0.1",
+    "@polymer/paper-tabs": "^3.0.1",
     "@polymer/paper-toast": "^3.0.1",
     "@polymer/polymer": "^3.1.0",
     "chart.js": "^2.7.3",
     "parse": "^2.1.0"
   },
   "devDependencies": {
-    "@webcomponents/webcomponentsjs": "^2.2.1",
+    "@webcomponents/webcomponentsjs": "^2.2.4",
     "wct-browser-legacy": "^1.0.2"
   },
   "engines": {
