@@ -3,7 +3,10 @@ import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class.js';
 import { IronResizableBehavior } from '@polymer/iron-resizable-behavior/iron-resizable-behavior.js';
 import { afterNextRender } from '@polymer/polymer/lib/utils/render-status.js';
 
+import '@polymer/app-storage/app-localstorage/app-localstorage-document.js';
+
 import '@polymer/paper-styles/paper-styles.js';
+import '@polymer/paper-tabs/paper-tabs.js';
 
 import 'parse/dist/parse.min.js';
 import 'chart.js/dist/Chart.bundle.min.js';
@@ -17,10 +20,14 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
         }
 
         .container {
-          margin-bottom: 4vh;
+          margin-top: 4vh;
         }
 
-        .subtitle {
+        paper-tabs {
+          --paper-tabs-selection-bar-color: var(--paper-blue-500);
+        }
+
+        .title {
           text-align: center;
           color: var(--paper-blue-grey-700);
           font-size: 0.8em;
@@ -29,32 +36,29 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
         }
       </style>
 
+      <app-localstorage-document key="[[__computeKey(device)]]" data="{{selected}}"></app-localstorage-document>
+
+      <paper-tabs selected="{{selected}}">
+        <paper-tab>4h ago</paper-tab>
+        <paper-tab>Today</paper-tab>
+        <paper-tab>Week</paper-tab>
+        <paper-tab>Last 10</paper-tab>
+      </paper-tabs>
+
       <div class="container">
-        <div class="subtitle">Last temperature measured on
-          <b>[[lastUpdate]]</b> is
-          <b>[[lastTemperature]]°</b>
-        </div>
+        <div class="title">Temperature</div>
         <canvas id="chart1" aria-label="Temperature chart" role="chart"></canvas>
       </div>
       <div class="container">
-        <div class="subtitle">Last humidity measured on
-          <b>[[lastUpdate]]</b> is
-          <b>[[lastHumidity]] %</b>
-        </div>
+        <div class="title">Humidity</div>
         <canvas id="chart2" aria-label="Humidity chart" role="chart"></canvas>
       </div>
       <div class="container">
-        <div class="subtitle">Last pressure measured on
-          <b>[[lastUpdate]]</b> is
-          <b>[[lastPressure]] P</b>
-        </div>
+        <div class="title">Pressure</div>
         <canvas id="chart3" aria-label="Pressure chart" role="chart"></canvas>
       </div>
       <div class="container">
-        <div class="subtitle">Last altitude measured on
-          <b>[[lastUpdate]]</b> is
-          <b>[[lastAltitude]] m</b>
-        </div>
+        <div class="title">Altitude</div>
         <canvas id="chart4" aria-label="Altitude chart" role="chart"></canvas>
       </div>
     `;
@@ -260,6 +264,10 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
     if (this.initialized) {
       this.__queryData();
     }
+  }
+
+  __computeKey(device) {
+    return device + '/selected';
   }
 
   __computeQuery(ticks) {
