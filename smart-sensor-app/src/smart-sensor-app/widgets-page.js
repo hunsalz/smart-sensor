@@ -9,7 +9,6 @@ import '@polymer/paper-styles/paper-styles.js';
 import './bmp280-widget.js';
 import './bme280-widget.js';
 import './bme680-widget.js';
-import './hardware-widget.js';
 import './widget-layout.js';
 
 class WidgetsPage extends PolymerElement {
