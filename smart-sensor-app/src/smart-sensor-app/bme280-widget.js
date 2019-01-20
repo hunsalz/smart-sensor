@@ -328,17 +328,17 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
         // reset any existing data sets
         this.temperatures.data.labels = [];
         this.temperatures.data.datasets[0].data = [];
-        this.lastTemperature = 'N/A';
+        let lastTemperature = 'N/A';
         this.humidities.data.labels = [];
         this.humidities.data.datasets[0].data = [];
-        this.lastHumidity = 'N/A';
+        let lastHumidity = 'N/A';
         this.pressures.data.labels = [];
         this.pressures.data.datasets[0].data = [];
-        this.lastPressure = 'N/A';
+        let lastPressure = 'N/A';
         this.altitudes.data.labels = [];
         this.altitudes.data.datasets[0].data = [];
-        this.lastAltitude = 'N/A';
-        this.lastUpdate = 'N/A';
+        let lastAltitude = 'N/A';
+        let lastUpdate = 'N/A';
         // query entries and fill charts
         this.query.find().then((results) => {
           if (results.length > 0) {
@@ -358,17 +358,19 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
               this.altitudes.data.labels.push(label);
               this.altitudes.data.datasets[0].data.push(e.get('altitude'));
             });
-            // update last temperature value
-            this.lastTemperature = results[0].get('temperature');
-            // update last humidity value
-            this.lastHumidity = results[0].get('humidity');
-            // update last pressure value
-            this.lastPressure = results[0].get('pressure');
-            // update last altitude value
-            this.lastAltitude = results[0].get('altitude');
-            // update last update date
-            this.lastUpdate = this.__formatDateTime(results[0].get('createdAt'));
+            // save latest values
+            lastTemperature = results[0].get('temperature') + ' °';
+            lastHumidity = results[0].get('humidity') + ' %';
+            lastPressure = results[0].get('pressure') + ' Pa';
+            lastAltitude = results[0].get('altitude') + ' m';
+            lastUpdate = this.__formatDateTime(results[0].get('createdAt'));
           }
+          // update latest values
+          this.lastTemperature = lastTemperature;
+          this.lastHumidity = lastHumidity;
+          this.lastPressure = lastPressure;
+          this.lastAltitude = lastAltitude;
+          this.lastUpdate = lastUpdate;
           // update charts
           this.temperatures.update();
           this.humidities.update();
@@ -415,15 +417,11 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
           self.altitudes.data.labels.pop();
           self.altitudes.data.datasets[0].data.unshift(bme280.get('pressure'));
           self.altitudes.data.datasets[0].data.pop();
-          // update last temperature value
+          // update latest values
           self.lastTemperature = bme280.get('temperature');
-          // update last humidity value
           self.lastHumidity = bme280.get('humidity');
-          // update last pressure value
           self.lastPressure = bme280.get('pressure');
-          // update last altitude value
           self.lastAltitude = bme280.get('altitude');
-          // update last update date
           self.lastUpdate = self.__formatDateTime(bme280.get('createdAt'));
           // update charts
           self.temperatures.update();
