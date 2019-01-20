@@ -18,6 +18,7 @@ class WidgetsPage extends PolymerElement {
       <style include="app-grid-style">
         :host {
           display: block;
+          color: var(--paper-blue-grey-700);
           @apply --paper-font-common-base;
           --app-grid-columns: 2;
           --app-grid-item-height: 100%;
@@ -41,7 +42,7 @@ class WidgetsPage extends PolymerElement {
         }
 
         .header {
-          color: var(--paper-blue-grey-700);
+          
           @apply --layout-horizontal;
           @apply --layout-center;
         }
@@ -50,7 +51,6 @@ class WidgetsPage extends PolymerElement {
           font-size: 2em;
           font-weight: 500;
           text-align: center;
-          color: var(--paper-blue-grey-700);
           height: 100%;
           @apply --layout-vertical;
           @apply --layout-center-center;
@@ -58,7 +58,6 @@ class WidgetsPage extends PolymerElement {
 
         .details {
           font-size: 0.8em;
-          color: var(--paper-blue-grey-700);
           width: 100%;
           @apply --layout-horizontal;
           @apply --layout-center;
@@ -105,8 +104,7 @@ class WidgetsPage extends PolymerElement {
               last-humidity="{{__ESP-2391099_humidity}}" 
               last-pressure="{{__ESP-2391099_pressure}}" 
               last-altitude="{{__ESP-2391099_altitude}}"
-              last-update="{{__ESP-2391099_last_update}}"
-              ticks="{{ticks}}">
+              last-update="{{__ESP-2391099_last_update}}">
             </bme280-widget>
 
             <div slot="footer" class="footer">
@@ -139,8 +137,7 @@ class WidgetsPage extends PolymerElement {
               last-humidity="{{__ESP-2355357_humidity}}" 
               last-pressure="{{__ESP-2355357_pressure}}" 
               last-altitude="{{__ESP-2355357_altitude}}"
-              last-update="{{__ESP-2355357_last_update}}"
-              ticks="{{ticks}}">
+              last-update="{{__ESP-2355357_last_update}}">
             </bme280-widget>
 
             <div slot="footer" class="footer">
@@ -155,10 +152,6 @@ class WidgetsPage extends PolymerElement {
 
   static get properties() {
     return {
-      ticks: {
-        type: Number,
-        notify: true
-      },
       collapsed: {
         type: Boolean,
         notify: true
