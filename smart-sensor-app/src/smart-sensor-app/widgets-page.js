@@ -91,10 +91,10 @@ class WidgetsPage extends PolymerElement {
                 <div>Humidity</div>
               </div>
               <div class="column">
-                <div>[[__ESP-2391099_temperature]] °</div>
-                <div>[[__ESP-2391099_humidity]] %</div>
-                <div>[[__ESP-2391099_temperature]] °</div>
-                <div>[[__ESP-2391099_humidity]] %</div>
+                <div>[[__ESP-2391099_temperature]]</div>
+                <div>[[__ESP-2391099_humidity]]</div>
+                <div>[[__ESP-2391099_temperature]]</div>
+                <div>[[__ESP-2391099_humidity]]</div>
               </div>
             </div>
 
@@ -124,10 +124,10 @@ class WidgetsPage extends PolymerElement {
                 <div>Humidity</div>
               </div>
               <div class="column">
-                <div>[[__ESP-2355357_temperature]] °</div>
-                <div>[[__ESP-2355357_humidity]] %</div>
-                <div>[[__ESP-2355357_temperature]] °</div>
-                <div>[[__ESP-2355357_humidity]] %</div>
+                <div>[[__ESP-2355357_temperature]]</div>
+                <div>[[__ESP-2355357_humidity]]</div>
+                <div>[[__ESP-2355357_temperature]]</div>
+                <div>[[__ESP-2355357_humidity]]</div>
               </div>
             </div>
 
