@@ -1,6 +1,9 @@
 import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 import { afterNextRender } from '@polymer/polymer/lib/utils/render-status.js';
 
+import '@polymer/iron-icons/iron-icons.js';
+import '@polymer/iron-icons/hardware-icons.js';
+
 import '@polymer/paper-styles/paper-styles.js';
 
 import './bmp280-widget.js';
@@ -37,124 +40,88 @@ class WidgetsPage extends PolymerElement {
           background-color: white;
         }
 
-        .widget-label {
-          margin: 0px 2px 0px 2px;
-          padding: 5px 15px 5px 15px;
-          border-radius: 20px;
-          background-color: var(--paper-red-500);
-          color: white;
-          font-size: 0.8em;
-          font-weight: 500;
-          line-height: 1.5em;
-          white-space: nowrap;
+        .header {
+          color: var(--paper-blue-grey-700);
           @apply --layout-horizontal;
           @apply --layout-center;
         }
 
-        .spacer {
-          @apply --layout-flex;
+        .title {
+          font-size: 2em;
+          font-weight: 500;
           width: 100%;
+          text-align: center;
+        }
+
+        table {
+          font-size: 0.8em;
+          width: 100%;
+        }
+
+        .footer {
+          color: var(--paper-blue-grey-200);
+          font-size: 0.8em;
+          width: 100%;
+          text-align: center;
         }
       </style>
 
       <div class="content-area">
         <div id="_grid" class="app-grid">
 
-          <widget-layout key="__kitchen">
-            <div slot="title">
-              <div>Temperature [[__kitchen_temperature]]°</div>
-              <div>Humidity [[__kitchen_humidity]] %</div>
-              <div>Pressure [[__kitchen_pressure]] Pa</div>
-              <div>Altitude [[__kitchen_altitude]] m</div>
+          <widget-layout key="ESP-2391099">
+
+            <div slot="header" class="header">
+              <div class="title">Kitchen</div>
+              <table>
+                <tr><td>Temperature</td><td>[[__ESP-2391099_temperature]] °</td><tr>
+                <tr><td>Humidity</td><td>[[__ESP-2391099_humidity]] %</td><tr>
+                <tr><td>Pressure</td><td>[[__ESP-2391099_pressure]] Pa</td><tr>
+                <tr><td>Altitude</td><td>[[__ESP-2391099_altitude]] m</td><tr>
+              </table>
             </div>
-            <div class="widget-label" slot="label">
-              <div>Kitchen</div>
-            </div>
+
             <bme280-widget 
               device="ESP-2391099"
-              last-temperature="{{__kitchen_temperature}}" 
-              last-humidity="{{__kitchen_humidity}}" 
-              last-pressure="{{__kitchen_pressure}}" 
-              last-altitude="{{__kitchen_altitude}}"
+              last-temperature="{{__ESP-2391099_temperature}}" 
+              last-humidity="{{__ESP-2391099_humidity}}" 
+              last-pressure="{{__ESP-2391099_pressure}}" 
+              last-altitude="{{__ESP-2391099_altitude}}"
+              last-update="{{__ESP-2391099_last_update}}"
               ticks="{{ticks}}">
             </bme280-widget>
+
+            <div slot="footer" class="footer">
+              Last update: [[__ESP-2391099_last_update]]
+            </div>
           </widget-layout>
 
-          <widget-layout key="__bedroom">
-            <div slot="title">
-              <div>Temperature [[__bedroom_temperature]]°</div>
-              <div>Humidity [[__bedroom_humidity]] %</div>
-              <div>Pressure [[__bedroom_pressure]] Pa</div>
-              <div>Altitude [[__bedroom_altitude]] m</div>
+          <widget-layout key="ESP-2355357">
+
+            <div slot="header" class="header">
+              <div class="title">Bedroom</div>
+              <table>
+                <tr><td>Temperature</td><td>[[__ESP-2355357_temperature]] °</td><tr>
+                <tr><td>Humidity</td><td>[[__ESP-2355357_humidity]] %</td><tr>
+                <tr><td>Pressure</td><td>[[__ESP-2355357_pressure]] Pa</td><tr>
+                <tr><td>Altitude</td><td>[[__ESP-2355357_altitude]] m</td><tr>
+              </table>
             </div>
-            <div class="widget-label" slot="label">
-              <div>Bedroom</div>
-            </div>
+
             <bme280-widget 
               device="ESP-2355357"
-              last-temperature="{{__bedroom_temperature}}" 
-              last-humidity="{{__bedroom_humidity}}" 
-              last-pressure="{{__bedroom_pressure}}" 
-              last-altitude="{{__bedroom_altitude}}"
+              last-temperature="{{__ESP-2355357_temperature}}" 
+              last-humidity="{{__ESP-2355357_humidity}}" 
+              last-pressure="{{__ESP-2355357_pressure}}" 
+              last-altitude="{{__ESP-2355357_altitude}}"
+              last-update="{{__ESP-2355357_last_update}}"
               ticks="{{ticks}}">
             </bme280-widget>
-          </widget-layout>
 
-          <!--
-          
-          Inactive widgets ...
-          
-          <widget-layout key="__hardware">
-            <div slot="title">
-              <div>Hardware diagnostics</div>
+            <div slot="footer" class="footer">
+              Last update: [[__ESP-2355357_last_update]]
             </div>
-            <div class="widget-label" slot="label">
-              <div>ESP8266</div>
-            </div>
-            <hardware-widget></hardware-widget>
           </widget-layout>
-
-          <widget-layout key="__bmp280">
-            <div slot="title">
-              <div>Temperature [[__bmp280_temperature]]°</div>
-              <div>Pressure [[__bmp280_pressure]] Pa</div>
-              <div>Altitude [[__bmp280_altitude]] m</div>
-            </div>
-            <div class="widget-label" slot="label">
-              <div>BMP280</div>
-            </div>
-            <bmp280-widget 
-              device="ESP8266-0001"
-              last-temperature="{{__bmp280_temperature}}" 
-              last-pressure="{{__bmp280_pressure}}" 
-              last-altitude="{{__bmp280_altitude}}"
-              ticks="{{ticks}}">
-            </bmp280-widget>
-          </widget-layout>
-
-          <widget-layout key="__bmp6280">
-            <div slot="title">
-              <div>Temperature [[__bme680_temperature]]°</div>
-              <div>Humidity [[__bme680_humidity]] %</div>
-              <div>Pressure [[__bme680_pressure]] Pa</div>
-              <div>Gas resistance [[__bme680_gas]] Ω</div>
-              <div>Altitude approx. [[__bme680_altitude]] m</div>
-            </div>
-            <div class="widget-label" slot="label">
-              <div>BME680</div>
-            </div>
-            <bme680-widget 
-              device="ESP8266-0001"
-              last-temperature="{{__bme680_temperature}}" 
-              last-humidity="{{__bme680_humidity}}" 
-              last-pressure="{{__bme680_pressure}}" 
-              last-gas="{{__bme680_gas}}" 
-              last-altitude="{{__bme680_altitude}}"
-              ticks="{{ticks}}">
-            </bme680-widget>
-          </widget-layout>
-
-          -->
 
         </div>
       </div>
