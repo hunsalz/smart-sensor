@@ -77,6 +77,10 @@ class WidgetLayout extends GestureEventListeners(PolymerElement) {
     };
   }
 
+  /**
+   * compute local storage key for widget collapse state
+   * @param {*} key 
+   */
   __computeKey(key) {
     return key + '/opened';
   }
