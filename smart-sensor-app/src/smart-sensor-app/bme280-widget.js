@@ -39,7 +39,7 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
       <app-localstorage-document key="[[__computeKey(device)]]" data="{{selected}}"></app-localstorage-document>
 
       <paper-tabs selected="{{selected}}">
-        <paper-tab>4h ago</paper-tab>
+        <paper-tab>Last 4h</paper-tab>
         <paper-tab>Today</paper-tab>
         <paper-tab>Week</paper-tab>
         <paper-tab>Last 10</paper-tab>
@@ -118,6 +118,10 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
         type: Object,
         notify: true,
         computed: '__computeQuery(ticks)'
+      },
+      selected: {
+        type: Number,
+        value: 0
       },
       initialized: {
         type: Boolean,
@@ -325,7 +329,7 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
             this.pressures.update();
             this.altitudes.update();
             // update last update date
-            this.lastUpdate = this.__getShortDate(results[0].get('createdAt'));
+            this.lastUpdate = this.__formatDateTime(results[0].get('createdAt'));
             // update last temperature value
             this.lastTemperature = results[0].get('temperature');
             // update last humidity value
@@ -381,7 +385,7 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
           self.pressures.update();
           self.altitudes.update();
           // update last update date
-          self.lastUpdate = self.__getShortDate(bme280.get('createdAt'));
+          self.lastUpdate = self.__formatDateTime(bme280.get('createdAt'));
           // update last temperature value
           self.lastTemperature = bme280.get('temperature');
           // update last humidity value
@@ -405,8 +409,8 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
     }
   }
 
-  __getShortDate(date) {
-    return date.toDateString().substring(0, 15);
+  __formatDateTime(date) {
+    return date.toDateString().substring(0, 15) + ' at ' + this.__getShortTime(date);
   }
 
   __getShortTime(date) {
