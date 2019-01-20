@@ -1,14 +1,17 @@
 import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class.js';
 import { IronResizableBehavior } from '@polymer/iron-resizable-behavior/iron-resizable-behavior.js';
-import { afterNextRender } from '@polymer/polymer/lib/utils/render-status.js';
+import { afterNextRender, flush } from '@polymer/polymer/lib/utils/render-status.js';
+
+import '@polymer/app-storage/app-localstorage/app-localstorage-document.js';
 
 import '@polymer/paper-styles/paper-styles.js';
+import '@polymer/paper-tabs/paper-tabs.js';
 
 import 'parse/dist/parse.min.js';
 import 'chart.js/dist/Chart.bundle.min.js';
 
-class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElement) {
+class Bmp280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElement) {
   static get template() {
     return html`
       <style> 
@@ -17,10 +20,14 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
         }
 
         .container {
-          margin-bottom: 4vh;
+          margin-top: 4vh;
         }
 
-        .subtitle {
+        paper-tabs {
+          --paper-tabs-selection-bar-color: var(--paper-blue-500);
+        }
+
+        .title {
           text-align: center;
           color: var(--paper-blue-grey-700);
           font-size: 0.8em;
@@ -29,32 +36,29 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
         }
       </style>
 
+      <app-localstorage-document key="[[__computeKey(device)]]" data="{{selected}}"></app-localstorage-document>
+
+      <paper-tabs selected="{{selected}}" fallback-selection="0">
+        <paper-tab>Last 4h</paper-tab>
+        <paper-tab>Last 24h</paper-tab>
+        <paper-tab>Last 7days</paper-tab>
+        <paper-tab>Last 10 values</paper-tab>
+      </paper-tabs>
+
       <div class="container">
-        <div class="subtitle">Last temperature measured on
-          <b>[[lastUpdate]]</b> is
-          <b>[[lastTemperature]]°</b>
-        </div>
+        <div class="title">Temperature</div>
         <canvas id="chart1" aria-label="Temperature chart" role="chart"></canvas>
       </div>
       <div class="container">
-        <div class="subtitle">Last humidity measured on
-          <b>[[lastUpdate]]</b> is
-          <b>[[lastHumidity]] %</b>
-        </div>
+        <div class="title">Humidity</div>
         <canvas id="chart2" aria-label="Humidity chart" role="chart"></canvas>
       </div>
       <div class="container">
-        <div class="subtitle">Last pressure measured on
-          <b>[[lastUpdate]]</b> is
-          <b>[[lastPressure]] P</b>
-        </div>
+        <div class="title">Pressure</div>
         <canvas id="chart3" aria-label="Pressure chart" role="chart"></canvas>
       </div>
       <div class="container">
-        <div class="subtitle">Last altitude measured on
-          <b>[[lastUpdate]]</b> is
-          <b>[[lastAltitude]] m</b>
-        </div>
+        <div class="title">Altitude</div>
         <canvas id="chart4" aria-label="Altitude chart" role="chart"></canvas>
       </div>
     `;
@@ -66,54 +70,55 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
         type: String
       },
       temperatures: {
-        type: Object,
-        notify: true
+        type: Object
       },
       lastTemperature: {
         type: String,
-        value: 'n.a.',
+        value: 'N/A',
         notify: true
       },
       humidities: {
-        type: Array,
-        notify: true
+        type: Array
       },
       lastHumidity: {
         type: String,
-        value: 'n.a.',
+        value: 'N/A',
         notify: true
       },
       pressures: {
-        type: Array,
-        notify: true
+        type: Array
       },
       lastPressure: {
         type: String,
-        value: 'n.a.',
+        value: 'N/A',
         notify: true
       },
       altitudes: {
-        type: Array,
-        notify: true
+        type: Array
       },
       lastAltitude: {
         type: String,
-        value: 'n.a.',
+        value: 'N/A',
         notify: true
       },
       lastUpdate: {
         type: String,
+        value: 'N/A',
         notify: true
       },
-      ticks: {
-        type: Number,
-        notify: true,
-        observer: '__handleTicksChanged'
-      },
       query: {
-        type: Object,
-        notify: true,
-        computed: '__computeQuery(ticks)'
+        type: Object
+      },
+      from: {
+        type: Date
+      },
+      limit: {
+        type: Number
+      },
+      selected: {
+        type: Number,
+        value: 0,
+        observer: '__handleSelectedChanged'
       },
       initialized: {
         type: Boolean,
@@ -245,53 +250,95 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
     window.removeEventListener('user-authenticated', this._authListener);
   }
 
+  __computeKey(device) {
+    return device + '/selected';
+  }
+
   __initData() {
 
     if (!this.initialized) {
+
+      this.query = this.__computeQuery();
       this.__queryData();
       this.__subscribeData();
       this._setInitialized(true);
     }
   }
 
-  __handleTicksChanged() {
-
-    // only call if first initialization is done
+  __handleSelectedChanged() {
+    
+    // only call if first initialization is already done
     if (this.initialized) {
+      // compute query
+      this.query = this.__computeQuery();
+      // query data
       this.__queryData();
     }
   }
 
-  __computeQuery(ticks) {
+  __computeQueryParams() {
 
+    let date = new Date();
+    let limit = 1000;
+    switch (this.selected) {
+      case 0:
+        date.setHours(date.getHours() - 4); // 4 hours
+        break;
+      case 1:
+        date.setHours(date.getHours() - 24); // 24 hours
+        break;
+      case 2:
+        date.setHours(date.getHours() - 24*7); // week
+        break;
+      default:
+        limit = 10;
+        date = new Date('January 1, 1970 00:00:00'); // since 'The Epoch'
+        break;
+    }
+    this.from = date;
+    this.limit = limit;
+  }
+
+  __computeQuery() {
+
+    // compute query params
+    this.__computeQueryParams();
     // query BMP280 entries
     const BMP280 = Parse.Object.extend('BMP280');
     const query = new Parse.Query(BMP280);
-    // narrow by device if given
+    // narrow by device
     if (this.device) {
       query.equalTo("device", this.device);
-    }
+    }  
+    query.greaterThan("createdAt", this.from);
     query.descending("createdAt");
-    query.limit(ticks);
+    query.limit(this.limit);
 
     return query;
   }
 
   __queryData() {
 
+    console.log(this.device, this.query);
+
     // only proceed if user is known
     if (Parse.User.current()) {
       // be sure that element is ready
       afterNextRender(this, function () {
-        // reset chart entry points in case query is called again
+        // reset any existing data sets
         this.temperatures.data.labels = [];
         this.temperatures.data.datasets[0].data = [];
+        let lastTemperature = 'N/A';
         this.humidities.data.labels = [];
         this.humidities.data.datasets[0].data = [];
+        let lastHumidity = 'N/A';
         this.pressures.data.labels = [];
         this.pressures.data.datasets[0].data = [];
+        let lastPressure = 'N/A';
         this.altitudes.data.labels = [];
         this.altitudes.data.datasets[0].data = [];
+        let lastAltitude = 'N/A';
+        let lastUpdate = 'N/A';
         // query entries and fill charts
         this.query.find().then((results) => {
           if (results.length > 0) {
@@ -311,27 +358,30 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
               this.altitudes.data.labels.push(label);
               this.altitudes.data.datasets[0].data.push(e.get('altitude'));
             });
-            // update charts
-            this.temperatures.update();
-            this.humidities.update();
-            this.pressures.update();
-            this.altitudes.update();
-            // update last update date
-            this.lastUpdate = this.__getShortDate(results[0].get('createdAt'));
-            // update last temperature value
-            this.lastTemperature = results[0].get('temperature');
-            // update last humidity value
-            this.lastHumidity = results[0].get('humidity');
-            // update last pressure value
-            this.lastPressure = results[0].get('pressure');
-            // update last altitude value
-            this.lastAltitude = results[0].get('altitude');
+            // save latest values
+            lastTemperature = results[0].get('temperature') + ' °';
+            lastHumidity = results[0].get('humidity') + ' %';
+            lastPressure = results[0].get('pressure') + ' Pa';
+            lastAltitude = results[0].get('altitude') + ' m';
+            lastUpdate = this.__formatDateTime(results[0].get('createdAt'));
           }
+          // update latest values
+          this.lastTemperature = lastTemperature;
+          this.lastHumidity = lastHumidity;
+          this.lastPressure = lastPressure;
+          this.lastAltitude = lastAltitude;
+          this.lastUpdate = lastUpdate;
+          // update charts
+          this.temperatures.update();
+          this.humidities.update();
+          this.pressures.update();
+          this.altitudes.update();
         }, (error) => {
           console.error("Query BMP280 entries failed.", error);
           this.__handleParseError(error);
         });
       });
+      flush(); // flush render-status of all '__queryData' calls
     }
   }
 
@@ -367,21 +417,17 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
           self.altitudes.data.labels.pop();
           self.altitudes.data.datasets[0].data.unshift(bmp280.get('pressure'));
           self.altitudes.data.datasets[0].data.pop();
+          // update latest values
+          self.lastTemperature = bmp280.get('temperature');
+          self.lastHumidity = bmp280.get('humidity');
+          self.lastPressure = bmp280.get('pressure');
+          self.lastAltitude = bmp280.get('altitude');
+          self.lastUpdate = self.__formatDateTime(bmp280.get('createdAt'));
           // update charts
           self.temperatures.update();
           self.humidities.update();
           self.pressures.update();
           self.altitudes.update();
-          // update last update date
-          self.lastUpdate = self.__getShortDate(bmp280.get('createdAt'));
-          // update last temperature value
-          self.lastTemperature = bmp280.get('temperature');
-          // update last humidity value
-          self.lastHumidity = bmp280.get('humidity');
-          // update last pressure value
-          self.lastPressure = bmp280.get('pressure');
-          // update last altitude value
-          self.lastAltitude = bmp280.get('altitude');
         });
       });
     }
@@ -397,8 +443,8 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
     }
   }
 
-  __getShortDate(date) {
-    return date.toDateString().substring(0, 15);
+  __formatDateTime(date) {
+    return date.toDateString().substring(0, 15) + ' at ' + this.__getShortTime(date);
   }
 
   __getShortTime(date) {
@@ -406,4 +452,4 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
   }
 }
 
-window.customElements.define('bmp280-widget', Bme280Widget);
+window.customElements.define('bmp280-widget', Bmp280Widget);
