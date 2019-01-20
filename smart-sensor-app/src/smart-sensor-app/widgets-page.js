@@ -49,19 +49,30 @@ class WidgetsPage extends PolymerElement {
         .title {
           font-size: 2em;
           font-weight: 500;
-          width: 100%;
           text-align: center;
+          color: var(--paper-blue-grey-700);
+          height: 100%;
+          @apply --layout-vertical;
+          @apply --layout-center-center;
         }
 
-        table {
+        .details {
           font-size: 0.8em;
+          color: var(--paper-blue-grey-700);
           width: 100%;
+          @apply --layout-horizontal;
+          @apply --layout-center;
+        }
+
+        .column {
+          padding-left: 5px;
+          padding-right: 5px;
+          @apply --layout-vertical;
         }
 
         .footer {
           color: var(--paper-blue-grey-200);
           font-size: 0.8em;
-          width: 100%;
           text-align: center;
         }
       </style>
@@ -71,14 +82,21 @@ class WidgetsPage extends PolymerElement {
 
           <widget-layout key="ESP-2391099">
 
-            <div slot="header" class="header">
-              <div class="title">Kitchen</div>
-              <table>
-                <tr><td>Temperature</td><td>[[__ESP-2391099_temperature]] °</td><tr>
-                <tr><td>Humidity</td><td>[[__ESP-2391099_humidity]] %</td><tr>
-                <tr><td>Pressure</td><td>[[__ESP-2391099_pressure]] Pa</td><tr>
-                <tr><td>Altitude</td><td>[[__ESP-2391099_altitude]] m</td><tr>
-              </table>
+            <div slot="title" class="title">Kitchen</div>
+            
+            <div slot="details" class="details">
+              <div class="column">
+                <div>Temperature</div>
+                <div>Humidity</div>
+                <div>Temperature</div>
+                <div>Humidity</div>
+              </div>
+              <div class="column">
+                <div>[[__ESP-2391099_temperature]] °</div>
+                <div>[[__ESP-2391099_humidity]] %</div>
+                <div>[[__ESP-2391099_temperature]] °</div>
+                <div>[[__ESP-2391099_humidity]] %</div>
+              </div>
             </div>
 
             <bme280-widget 
@@ -98,14 +116,21 @@ class WidgetsPage extends PolymerElement {
 
           <widget-layout key="ESP-2355357">
 
-            <div slot="header" class="header">
-              <div class="title">Bedroom</div>
-              <table>
-                <tr><td>Temperature</td><td>[[__ESP-2355357_temperature]] °</td><tr>
-                <tr><td>Humidity</td><td>[[__ESP-2355357_humidity]] %</td><tr>
-                <tr><td>Pressure</td><td>[[__ESP-2355357_pressure]] Pa</td><tr>
-                <tr><td>Altitude</td><td>[[__ESP-2355357_altitude]] m</td><tr>
-              </table>
+            <div slot="title" class="title">Bedroom</div>
+            
+            <div slot="details" class="details">
+              <div class="column">
+                <div>Temperature</div>
+                <div>Humidity</div>
+                <div>Temperature</div>
+                <div>Humidity</div>
+              </div>
+              <div class="column">
+                <div>[[__ESP-2355357_temperature]] °</div>
+                <div>[[__ESP-2355357_humidity]] %</div>
+                <div>[[__ESP-2355357_temperature]] °</div>
+                <div>[[__ESP-2355357_humidity]] %</div>
+              </div>
             </div>
 
             <bme280-widget 
