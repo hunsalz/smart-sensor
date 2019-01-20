@@ -14,71 +14,65 @@ class WidgetLayout extends GestureEventListeners(PolymerElement) {
       <style>
         :host {
           display: inline-block;
+          background-color: white;
+          border-radius: 5px;
+          @apply --shadow-elevation-2dp;
+        }
+
+        *:focus {
+          outline: none;
         }
 
         .widget-header {
-          background-color: white;
-          border: 1px solid var(--paper-grey-100);
           border-top-left-radius: 5px;
           border-top-right-radius: 5px;
-          font-size: 1em;
-          color: var(--paper-blue-grey-700);
-          font-weight: normal;
-          cursor: pointer;
           width: 100%;
         }
 
-        .header {
+        .boxing {
           padding: 10px;
-          @apply --layout-horizontal;
-          @apply --layout-center;
         }
 
         iron-collapse {
           padding: 10px;
-          border: 1px solid var(--paper-grey-100);
-          border-top: none;
-          border-bottom-left-radius: 5px;
-          border-bottom-right-radius: 5px;
-          @apply --shadow-elevation-2dp;
           height: 100%;
         }
 
-        .spacer {
-          @apply --layout-flex;
+        .widget-footer {
+          border-bottom-left-radius: 5px;
+          border-bottom-right-radius: 5px;
           width: 100%;
         }
       </style>
 
-      <app-localstorage-document key="[[key]]" data="{{opened}}" log$={{verbose}}></app-localstorage-document>
+      <app-localstorage-document key="[[__computeKey(key)]]" data="{{opened}}"></app-localstorage-document>
 
       <div class="widget-header" on-tap="toggle">
-        <div class="header">
-          <slot name="title"></slot>
-          <span>[[title]]</span>
-          <span class="spacer"></span>
-          <slot name="label"></slot>
+        <div class="boxing">
+          <slot name="header"></slot>
         </div>
       </div>
       <iron-collapse id="collapse" opened="{{opened}}" tabindex="0">
         <slot></slot>
       </iron-collapse>
+      <div class="widget-footer">
+        <div class="boxing">
+          <slot name="footer"></slot>
+        </div>
+      </div>
     `;
   }
 
   static get properties() {
     return {
-      title: {
-        type: String
-      },
       key: {
         type: String
-      },
-      verbose: {
-        type: Boolean,
-        value: false
       }
     };
+  }
+
+  __computeKey(key) {
+    return key + '/opened';
   }
 
   /**
