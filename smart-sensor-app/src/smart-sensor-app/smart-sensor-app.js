@@ -100,8 +100,8 @@ class SmartSensorApp extends GestureEventListeners(PolymerElement) {
 
         <div class="content-area">
           <iron-pages attr-for-selected="id" selected="{{routeData.page}}" fallback-selection="dashboard">
-            <widgets-page id="dashboard" collapsed="{{collapsed}}" ticks={{ticks}}></widgets-page>
-            <settings-page id="settings" ticks={{ticks}}></settings-page>
+            <widgets-page id="dashboard" collapsed="{{collapsed}}"></widgets-page>
+            <settings-page id="settings"></settings-page>
           </iron-pages>
         </div>
 
