@@ -23,42 +23,48 @@ class WidgetLayout extends GestureEventListeners(PolymerElement) {
           outline: none;
         }
 
-        .widget-header {
-          border-top-left-radius: 5px;
-          border-top-right-radius: 5px;
+        div {
           width: 100%;
         }
 
-        .boxing {
-          padding: 10px;
+        .widget-header {
+          padding-top: 5px;
+          padding-bottom: 5px;
+          border-top-left-radius: 5px;
+          border-top-right-radius: 5px;
+          @apply --layout-flex;
+          @apply --layout-horizontal;
         }
 
         iron-collapse {
-          padding: 10px;
+          padding-left: 5px;
+          padding-right: 5px;
           height: 100%;
         }
 
         .widget-footer {
+          padding-top: 5px;
+          padding-bottom: 5px;
           border-bottom-left-radius: 5px;
           border-bottom-right-radius: 5px;
-          width: 100%;
         }
       </style>
 
       <app-localstorage-document key="[[__computeKey(key)]]" data="{{opened}}"></app-localstorage-document>
 
       <div class="widget-header" on-tap="toggle">
-        <div class="boxing">
-          <slot name="header"></slot>
+        <div>
+          <slot name="title"></slot>
+        </div>  
+        <div>
+          <slot name="details"></slot>
         </div>
       </div>
       <iron-collapse id="collapse" opened="{{opened}}" tabindex="0">
         <slot></slot>
       </iron-collapse>
       <div class="widget-footer">
-        <div class="boxing">
-          <slot name="footer"></slot>
-        </div>
+        <slot name="footer"></slot>
       </div>
     `;
   }
