@@ -38,7 +38,7 @@ npm install -g polymer-cli
 
 2. Build PWA
 
-*Note:* Change Parse config in `./smart-sensor-app/src/smart-sensor-app/main-app.js` accordingly!
+*Note:* Change Parse settings in [./smart-sensor-app/src/smart-sensor-app/main-app.js](./smart-sensor-app/src/smart-sensor-app/main-app.js) accordingly.
 
 ```
 cd Smart-Sensor/smart-sensor-app/
@@ -64,7 +64,7 @@ polymer build
 
 *Precondition:* [Arduino IDE](https://github.com/arduino/Arduino) is installed.
 
-1. Move `./config/config.h.template` to `config.h` and fill out the blanks with your data.
+1. Move [./config/config.h.template](./config/config.h.template) to `config.h` and fill out the blanks with your data.
 
 2. Verify, compile and upload sketch to your ESP8266.
 
