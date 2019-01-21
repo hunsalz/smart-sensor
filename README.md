@@ -9,7 +9,7 @@ Smart-Sensor consists of various sensor input sources and a central [Progressive
 
 ## Impressions of Smart-Sensor-App
 
-![Mobile view](/images/smart-sensor-mobile-view.png)
+![Mobile view](./images/smart-sensor-mobile-view.png)
 
 ## Features
 
@@ -38,19 +38,14 @@ npm install -g polymer-cli
 
 2. Build PWA
 
-```
-cd Smart-Sensor/smart-sensor-app/
-polymer install
-```
-
-3. Build PWA
+*Note:* Change Parse config in `./smart-sensor-app/src/smart-sensor-app/main-app.js` accordingly!
 
 ```
 cd Smart-Sensor/smart-sensor-app/
 polymer install
 ```
 
-4. Run PWA locally
+3. Run PWA locally
 
 ```
 polymer serve
@@ -58,16 +53,21 @@ polymer serve
 
 Go to http://127.0.0.1:8081/components/smart-sensor-app/
 
-x. Create Parse project
+
+4. Build for deployment
+
+```
+polymer build
+```
+
+## Setup ESP8266
+
+*Precondition:* [Arduino IDE](https://github.com/arduino/Arduino) is installed.
+
+1. Move `./config/config.h.template` to `config.h` and fill out the blanks with your data.
+
+2. Verify, compile and upload sketch to your ESP8266.
+
+## Setup Parse Server
 
 TODO
-
-*Note:* Change entries in `./smart-sensor-app/src/smart-sensor-app/smart-sensor-app.html` accordingly!
-
-x. Deploy project
-
-TODO
-
-x. Upload sketch to ESP8266
-
-Rename `config.h.template` to `config.h` and insert `APPLICATION_ID` and `CLIENT_KEY` accordingly.
