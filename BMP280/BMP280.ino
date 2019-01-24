@@ -3,11 +3,11 @@
 #include <StreamString.h>       // https://github.com/esp8266/Arduino/blob/master/cores/esp8266/StreamString.h
 #include <WiFiClientSecure.h>   // https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WiFi/src/WiFiClientSecure.h
 
-#include <Esp8266Utils.h>       // https://github.com/hunsalz/esp8266utils
+#include <ESPUtils.h>           // https://github.com/hunsalz/ESPUtils
 
 #include "config.h"
 
-using namespace esp8266utils;
+using namespace ESPUtils;
 
 void setup() {
   
