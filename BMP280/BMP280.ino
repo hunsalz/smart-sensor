@@ -1,13 +1,26 @@
-#include <ESP8266HTTPClient.h>  // https://github.com/esp8266/Arduino
-#include <ESP8266WiFiMulti.h>   // https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/src/ESP8266WiFiMulti.h
-#include <StreamString.h>       // https://github.com/esp8266/Arduino/blob/master/cores/esp8266/StreamString.h
-#include <WiFiClientSecure.h>   // https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WiFi/src/WiFiClientSecure.h
+#ifdef ESP32
+  #include <HTTPClient.h>         // https://github.com/espressif/arduino-esp32/blob/master/libraries/HTTPClient/src/HTTPClient.h
+  #include <WiFiMulti.h>          // https://github.com/espressif/arduino-esp32/blob/master/libraries/WiFi/src/WiFiMulti.h
+#else
+  #include <ESP8266HTTPClient.h>  // https://github.com/esp8266/Arduino
+  #include <ESP8266WiFiMulti.h>   // https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/src/ESP8266WiFiMulti.h
+#endif
 
-#include <ESPUtils.h>           // https://github.com/hunsalz/ESPUtils
+#include <WiFiClientSecure.h>     // https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WiFi/src/WiFiClientSecure.h
+#include <StreamString.h>         // https://github.com/espressif/arduino-esp32/blob/master/cores/esp32/StreamString.h
+                                  // https://github.com/esp8266/Arduino/blob/master/cores/esp8266/StreamString.h
+
+#include <EspUtils.h>             // https://github.com/hunsalz/EspUtils
 
 #include "config.h"
 
-using namespace ESPUtils;
+using namespace espUtils;
+
+#ifdef ESP32
+  WiFiMulti wifiMulti;
+#else
+  ESP8266WiFiMulti wifiMulti;
+#endif
 
 void setup() {
   
@@ -16,7 +29,6 @@ void setup() {
   VERBOSE_FP(F("Serial baud rate is %lu"), Serial.baudRate());
 
   // WiFi setup
-  ESP8266WiFiMulti wifiMulti;
   wifiMulti.addAP(WIFI_SSID_1, WIFI_PSK_1);
   wifiMulti.addAP(WIFI_SSID_2, WIFI_PSK_2);
   setupWiFiSta(wifiMulti);
