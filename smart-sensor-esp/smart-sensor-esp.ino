@@ -1,15 +1,31 @@
-#include <ESP8266mDNS.h>        // https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266mDNS/src/ESP8266mDNS.h
-#include <ESP8266WebServer.h>   // https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WebServer/src/ESP8266WebServer.h
-#include <ESP8266WiFiMulti.h>   // https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/src/ESP8266WiFiMulti.h
-#include <StreamString.h>       // https://github.com/esp8266/Arduino/blob/master/cores/esp8266/StreamString.h
+#ifdef ESP32
+  #include <ESPmDNS.h>            // https://github.com/espressif/arduino-esp32/blob/master/libraries/ESPmDNS/src/ESPmDNS.h
+  #include <WebServer.h>          // https://github.com/espressif/arduino-esp32/blob/master/libraries/WebServer/src/WebServer.h
+  #include <WiFiMulti.h>          // https://github.com/espressif/arduino-esp32/blob/master/libraries/WiFi/src/WiFiMulti.h
+#else
+  #include <ESP8266mDNS.h>        // https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266mDNS/src/ESP8266mDNS.h
+  #include <ESP8266WebServer.h>   // https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WebServer/src/ESP8266WebServer.h
+  #include <ESP8266WiFiMulti.h>   // https://github.com/esp8266/Arduino/tree/master/libraries/ESP8266WiFi/src/ESP8266WiFiMulti.h
+#endif
 
-#include <EspUtils.h>           // https://github.com/hunsalz/EspUtils
+#include <StreamString.h>         // https://github.com/espressif/arduino-esp32/blob/master/cores/esp32/StreamString.h
+                                  // https://github.com/esp8266/Arduino/blob/master/cores/esp8266/StreamString.h
+
+#include <EspUtils.h>             // https://github.com/hunsalz/EspUtils
 
 #include "config.h"
 
 using namespace espUtils;
 
-ESP8266WebServer server(80);
+#ifdef ESP32
+  WiFiMulti wifiMulti;
+  WebServer server(80);
+#else
+  ESP8266WiFiMulti wifiMulti;
+  ESP8266WebServer server(80);
+  ESP8266FS fs;
+#endif
+
 BME280Sensor bme280;
 
 unsigned long nextLoopInterval = 0;
@@ -20,14 +36,13 @@ void setup() {
   Logging::init(115200);
   VERBOSE_FP(F("Serial baud rate is [%lu]"), Serial.baudRate());
 
+  // WiFi AP setup
+  setupWiFiAp(WIFI_AP_SSID, WIFI_AP_PSK, WIFI_MODE_APSTA);
+
   // WiFi setup
-  ESP8266WiFiMulti wifiMulti;
   wifiMulti.addAP(WIFI_SSID_1, WIFI_PSK_1);
   wifiMulti.addAP(WIFI_SSID_2, WIFI_PSK_2);
-  setupWiFiSta(wifiMulti);
-
-  // WiFi AP setup
-  setupWiFiAp(WIFI_AP_SSID, WIFI_AP_PSK);
+  setupWiFiSta(wifiMulti, WIFI_MODE_APSTA);
 
   // MDNS setup
   const char* hostname = "esp8266";
@@ -49,26 +64,34 @@ void setup() {
   }
 
   // file system setup to enable static web server content
-  FileSystem fs; 
-  fs.begin();
+  #ifdef ESP8266
+    fs.begin();
 
-  // add dynamic http resources
-  server.on("/fs", HTTP_GET, [&fs]() {
+    // add dynamic http resources
+    server.on("/fs", HTTP_GET, [&fs]() {
   
-    StreamString* payload = new StreamString();
-    size_t size = fs.serializeInfo(*payload);
-    server.send(200, APPLICATION_JSON, *payload); 
-  });
-  server.on("/files", HTTP_GET, [&fs]() {
+      StreamString* payload = new StreamString();
+      size_t size = fs.serializeInfo(*payload);
+      server.send(200, APPLICATION_JSON, *payload); 
+    });
+    server.on("/files", HTTP_GET, [&fs]() {
   
-    StreamString* payload = new StreamString();
-    size_t size = fs.serializeListing(*payload);
-    server.send(200, APPLICATION_JSON, *payload); 
-  });
+      StreamString* payload = new StreamString();
+      size_t size = fs.serializeListing(*payload);
+      server.send(200, APPLICATION_JSON, *payload); 
+    });
+  #endif
+
   server.on("/ap", HTTP_GET, []() {
   
     StreamString* payload = new StreamString();
     size_t size = serializeWiFiAp(*payload);
+    server.send(200, APPLICATION_JSON, *payload); 
+  });
+  server.on("/sta", HTTP_GET, []() {
+  
+    StreamString* payload = new StreamString();
+    size_t size = serializeWiFiSta(*payload);
     server.send(200, APPLICATION_JSON, *payload); 
   });
   server.on("/esp", HTTP_GET, []() {
@@ -99,7 +122,9 @@ void loop() {
   if (millis() > nextLoopInterval) {  
     nextLoopInterval = millis() + LOOP_INTERVAL;
     
-    MDNS.update();
+    #ifdef ESP8266
+      MDNS.update();
+    #endif
 
     // read sensor values
     bme280.update(USE_MOCK_DATA);
