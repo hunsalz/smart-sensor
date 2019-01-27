@@ -1,21 +1,33 @@
-// test for Alexa Skill or Dialogflow
+// Dialogflow fulfillment
 Parse.Cloud.define("temperature", async (request) => {
 
-  console.log(request);
+  var place = request.params.place;
+  // TODO match place => device - how to proceed if no place match / is provided ?
+  var device = "ESP-2355357";
 
-  let message = Object();
-  message.text = "Die Temperatur ist 22 Grad."
-  message.type = 0;
+  console.log("req => ", request);
 
-  return message;
-});
+  var response = Object();
+  var BME280 = Parse.Object.extend("BME280");
+  var query = new Parse.Query(BME280);
+  query.equalTo("device", device);
+  query.descending("createdAt");
+  
+  const result = await query.first();
+  if (result) {
+    // TODO wrong place for fulfillment
+    response.fulfillmentText = 'Die Temperatur beträgt ' + result.get('temperature') + '°';
+    response.fulfillmentMessages = [];
 
-Parse.Cloud.define('test', async (request, response) => {
+    response.temperature = result.get('temperature');
+    response.humidity = result.get('humidity');
+    response.createdAt = result.get('createdAt');
+    /// ... more
+    response.place = place;
+    response.device = device;
+  };
 
-  response.text = "text";
-  console.log(response);
-
-  return JSON.stringify({ x: 5, y: 6 });
+  return response;
 });
 
 // after save triggers for cleaning up sensor history
@@ -26,7 +38,7 @@ Parse.Cloud.afterSave("BMP280", (request) => {
   var BMP280 = Parse.Object.extend("BMP280");
   var query = new Parse.Query(BMP280);
   query.equalTo("device", request.object.get("device"));
-  query.skip(100); // keep only the last 100 entries
+  query.skip(1000); // keep only the last 1K entries
   query.descending("createdAt");
   query.limit(1000);
 
@@ -48,7 +60,7 @@ Parse.Cloud.afterSave("BME280", (request) => {
   var BME280 = Parse.Object.extend("BME280");
   var query = new Parse.Query(BME280);
   query.equalTo("device", request.object.get("device"));
-  query.skip(100); // keep only the last 100 entries
+  query.skip(1000); // keep only the last 1K entries
   query.descending("createdAt");
   query.limit(1000);
 
@@ -70,7 +82,7 @@ Parse.Cloud.afterSave("BME680", (request) => {
   var BME680 = Parse.Object.extend("BME680");
   var query = new Parse.Query(BME680);
   query.equalTo("device", request.object.get("device"));
-  query.skip(100); // keep only the last 100 entries
+  query.skip(1000); // keep only the last 1K entries
   query.descending("createdAt");
   query.limit(1000);
 
