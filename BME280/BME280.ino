@@ -31,61 +31,83 @@ void setup() {
   // WiFi setup
   wifiMulti.addAP(WIFI_SSID_1, WIFI_PSK_1);
   wifiMulti.addAP(WIFI_SSID_2, WIFI_PSK_2);
-  setupWiFiSta(wifiMulti);
-
-  // try to read sensor data
-  BME280Sensor bme280;
-  if (bme280.begin(0x76)) {
-    VERBOSE_FP(F("BME280 is ready"));
-    
-    // read sensor data
-    bme280.update(USE_MOCK_DATA);
-    
-    // serialize sensor data
-    StreamString* payload = new StreamString();
-    size_t size = bme280.serialize(*payload);
-    VERBOSE(*payload);  
-    
-    // setup appropriate client
-    #if defined(INSECURE)
-      WARNING_P(F("SSL validation is incative! Use with care."));
-      uint16_t port = 80;
-      bool https = false;
-      WiFiClient client;
-    #else 
-      VERBOSE_P(F("SSL validation is active"));
-      uint16_t port = 443;
-      bool https = true;
-      #ifdef ESP32
-        WiFiClientSecure client;
-        client.setCertificate(PARSE_PROVIDER_PUB_KEY);
-      #else 
-        BearSSL::WiFiClientSecure client;
-        BearSSL::PublicKey key(PARSE_PROVIDER_PUB_KEY);
-        client.setKnownKey(&key);
-      #endif    
-    #endif
-    
-    // use appropriate http timeout
-    client.setTimeout(HTTP_TIMEOUT);
-    
-    // push sensor data
-    HTTPClient http;
-    if (http.begin(client, PARSE_HOST, port, PARSE_URI, https)) {
-      http.addHeader("X-Parse-Application-Id", PARSE_APPLICATION_ID);
-      http.addHeader("X-Parse-REST-API-Key", PARSE_REST_API_KEY);
-      http.addHeader("X-Parse-Session-Token", PARSE_SESSION_TOKEN);
-      http.addHeader("Content-Type", APPLICATION_JSON);
-      http.sendRequest("POST", payload, size);
-      http.end();
-    }
-    // clean up
-    client.stop();
-  } else {
-    ERROR_FP(F("Setup BME280 failed!"));
+  if (!setupWiFiSta(wifiMulti)) {
+    // exit with deep sleep mode
+    exitWithDeepSleep();
   }
 
-  // go into deep sleep mode
+  // try to read sensor data
+  BME280Sensor sensor;
+  if (!sensor.begin(0x76)) {
+    ERROR_FP(F("Setup BME280 failed!"));
+    // exit with deep sleep mode
+    exitWithDeepSleep();
+  }
+  VERBOSE_FP(F("BME280 is ready"));
+  if (!sensor.update(USE_MOCK_DATA)) {
+    ERROR_FP(F("Reading BME280 data failed!"));
+    // exit with deep sleep mode
+    exitWithDeepSleep();
+  }
+
+  // serialize sensor data
+  StreamString* payload = new StreamString();
+  size_t size = sensor.serialize(*payload);
+  VERBOSE(*payload);  
+      
+  // setup appropriate client
+  #if defined(INSECURE)
+    WARNING_P(F("SSL validation is incative! Use with care."));
+    uint16_t port = 80;
+    bool https = false;
+    WiFiClient client;
+  #else 
+    VERBOSE_P(F("SSL validation is active"));
+    uint16_t port = 443;
+    bool https = true;
+    #ifdef ESP32
+      WiFiClientSecure client;
+      client.setCACert(PARSE_PROVIDER_CA_CERT);
+    #else 
+      BearSSL::WiFiClientSecure client;
+      BearSSL::PublicKey key(PARSE_PROVIDER_PUB_KEY);
+      client.setKnownKey(&key);
+    #endif
+  #endif
+      
+  // use appropriate http timeout
+  client.setTimeout(HTTP_TIMEOUT);
+      
+  // push sensor data
+  HTTPClient http;
+  if (http.begin(client, PARSE_HOST, port, PARSE_URI, https)) {
+    http.addHeader("X-Parse-Application-Id", PARSE_APPLICATION_ID);
+    http.addHeader("X-Parse-REST-API-Key", PARSE_REST_API_KEY);
+    http.addHeader("X-Parse-Session-Token", PARSE_SESSION_TOKEN);
+    http.addHeader("Content-Type", APPLICATION_JSON);
+    int httpCode = http.sendRequest("POST", payload, size);
+    if (https) {
+      VERBOSE_FP(F("[POST] to https://%s%s returned %d"), PARSE_HOST, PARSE_URI, httpCode);
+    } else {
+      VERBOSE_FP(F("[POST] to http://%s%s returned %d"), PARSE_HOST, PARSE_URI, httpCode);
+    }
+    http.end();
+  } else {
+    if (https) {
+      ERROR_FP(F("Connceting to https://%s%s failed"), PARSE_HOST, PARSE_URI);
+    } else {
+      ERROR_FP(F("Connceting to http://%s%s failed"), PARSE_HOST, PARSE_URI);
+    }
+  }
+  // clean up
+  client.stop();
+
+  // exit with deep sleep mode
+  exitWithDeepSleep();
+}
+
+void exitWithDeepSleep() {
+
   VERBOSE_FP(F("Going into deep sleep for the next %lu seconds."), (unsigned long)(DEEP_SLEEP_INTERVAL / 1e6));
   ESP.deepSleep(DEEP_SLEEP_INTERVAL);
 }
