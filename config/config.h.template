@@ -17,13 +17,13 @@ static const char* PARSE_APPLICATION_ID = "YOUR PARSE APPLICATION ID";
 static const char* PARSE_REST_API_KEY = "YOUR PARSE REST API KEY";
 static const char* PARSE_SESSION_TOKEN = "A RESTRICTED SESSION TOKEN";
 
-// X.509 settings
+// X.509 settings - used by ESP8266
 static const char PARSE_PROVIDER_PUB_KEY[] PROGMEM = R"KEY(
 -----BEGIN PUBLIC KEY-----
 
 ENTER PUBLIC KEY OF YOUR PARSE PROVIDER
 
-$openssl s_client -showcerts -connect smart-sensor.back4app.io:443
+$openssl s_client -showcerts -connect <PARSE SERVER DOMAIN>:443
 
 Copy appropriate certificate and save as cert.pem
 
@@ -32,6 +32,17 @@ $openssl x509 -pubkey -noout -in cert.pem
 Copy output and paste it here.
 
 -----END PUBLIC KEY-----
+)KEY";
+
+// X.509 settings - used by ESP32
+static const char PARSE_PROVIDER_CA[] PROGMEM = R"KEY(
+-----BEGIN CERTIFICATE-----
+
+$openssl s_client -showcerts -connect <PARSE SERVER DOMAIN>:443
+
+Copy appropriate certificate and paste it here.
+
+-----END CERTIFICATE-----
 )KEY";
 
 //#define INSECURE // bypass X.509 - use with care
