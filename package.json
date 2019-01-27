@@ -25,7 +25,8 @@
     "@polymer/paper-toast": "^3.0.1",
     "@polymer/polymer": "^3.1.0",
     "chart.js": "^2.7.3",
-    "parse": "^2.1.0"
+    "parse": "^2.1.0",
+    "request": "^2.88.0"
   },
   "devDependencies": {
     "@webcomponents/webcomponentsjs": "^2.2.4",
