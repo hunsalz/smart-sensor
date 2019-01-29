@@ -9,6 +9,7 @@
 #include <WiFiClientSecure.h>     // https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WiFi/src/WiFiClientSecure.h
 #include <StreamString.h>         // https://github.com/espressif/arduino-esp32/blob/master/cores/esp32/StreamString.h
                                   // https://github.com/esp8266/Arduino/blob/master/cores/esp8266/StreamString.h
+#include <ArduinoJson.h>          // https://github.com/bblanchon/ArduinoJson
 
 #include <EspUtils.h>             // https://github.com/hunsalz/EspUtils
 
@@ -39,22 +40,39 @@ void setup() {
   // try to read sensor data
   BMP085Sensor sensor;
   if (!sensor.begin(0x76)) {
-    ERROR_FP(F("Setup BMP085 failed!"));
+    // output and post error to server
+    String error = "Setup BMP085 failed!";
+    ERROR(error);
+    StreamString* payload = new StreamString();
+    size_t size = serialize(*payload, error);
+    post(PARSE_ERROR_URI, (Stream*)payload, size);
     // exit with deep sleep mode
     exitWithDeepSleep();
   }
   VERBOSE_FP(F("BMP085 is ready"));
   if (!sensor.update(USE_MOCK_DATA)) {
-    ERROR_FP(F("Reading BMP085 data failed!"));
+    // output and post error to server
+    String error = "Reading BMP085 data failed!";
+    ERROR(error);
+    StreamString* payload = new StreamString();
+    size_t size = serialize(*payload, error);
+    post(PARSE_ERROR_URI, (Stream*)payload, size);
     // exit with deep sleep mode
     exitWithDeepSleep();
   }
 
-  // serialize sensor data
+  // output & post sensor data to server
   StreamString* payload = new StreamString();
   size_t size = sensor.serialize(*payload);
-  VERBOSE(*payload);  
-      
+  VERBOSE(*payload);
+  post(PARSE_BMP085_URI, (Stream*)payload, size);
+
+  // exit with deep sleep mode
+  exitWithDeepSleep();
+}
+
+void post(const char* uri, Stream* payload, size_t size) {
+
   // setup appropriate client
   #if defined(INSECURE)
     WARNING_P(F("SSL validation is incative! Use with care."));
@@ -80,30 +98,40 @@ void setup() {
       
   // push sensor data
   HTTPClient http;
-  if (http.begin(client, PARSE_HOST, port, PARSE_URI, https)) {
+  if (http.begin(client, PARSE_HOST, port, uri, https)) {
     http.addHeader("X-Parse-Application-Id", PARSE_APPLICATION_ID);
     http.addHeader("X-Parse-REST-API-Key", PARSE_REST_API_KEY);
     http.addHeader("X-Parse-Session-Token", PARSE_SESSION_TOKEN);
     http.addHeader("Content-Type", APPLICATION_JSON);
     int httpCode = http.sendRequest("POST", payload, size);
     if (https) {
-      VERBOSE_FP(F("[POST] to https://%s%s returned %d"), PARSE_HOST, PARSE_URI, httpCode);
+      VERBOSE_FP(F("[POST] to https://%s%s returned %d"), PARSE_HOST, uri, httpCode);
     } else {
-      VERBOSE_FP(F("[POST] to http://%s%s returned %d"), PARSE_HOST, PARSE_URI, httpCode);
+      VERBOSE_FP(F("[POST] to http://%s%s returned %d"), PARSE_HOST, uri, httpCode);
     }
     http.end();
   } else {
     if (https) {
-      ERROR_FP(F("Connceting to https://%s%s failed"), PARSE_HOST, PARSE_URI);
+      ERROR_FP(F("Connceting to https://%s%s failed"), PARSE_HOST, uri);
     } else {
-      ERROR_FP(F("Connceting to http://%s%s failed"), PARSE_HOST, PARSE_URI);
+      ERROR_FP(F("Connceting to http://%s%s failed"), PARSE_HOST, uri);
     }
   }
   // clean up
   client.stop();
+}
 
-  // exit with deep sleep mode
-  exitWithDeepSleep();
+size_t serialize(String& output, String& error) {
+
+  char device[15];
+  int size = Sensor::getDevice(device);
+
+  DynamicJsonDocument doc;
+  JsonObject object = doc.to<JsonObject>();
+  object["error"] = error;
+  object["device"] = device;
+  serializeJson(object, output);
+  return measureJson(object);
 }
 
 void exitWithDeepSleep() {
