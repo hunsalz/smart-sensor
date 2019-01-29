@@ -30,41 +30,37 @@ Parse.Cloud.define("temperature", async (request) => {
   return response;
 });
 
-// after save triggers for cleaning up sensor history
+// TODO split afterSave() in sub-functions and add implementations for other sensor classes
 
-Parse.Cloud.afterSave("BMP280", (request) => {
+Parse.Cloud.afterSave("BME280", async (request) => {
 
-  // query overdue entities
-  var BMP280 = Parse.Object.extend("BMP280");
-  var query = new Parse.Query(BMP280);
-  query.equalTo("device", request.object.get("device"));
-  query.skip(1000); // keep only the last 1K entries
-  query.descending("createdAt");
-  query.limit(1000);
-
-  // find entities overdue
-  query.find({ sessionToken: request.user.getSessionToken() })
-    .then((results) => {
-      // delete entities
-      results.forEach(e => {
-        e.destroy({ sessionToken: request.user.getSessionToken() });
+  // create device if not already exists
+  var name = request.object.get("device");
+  const Device = Parse.Object.extend("Device");
+  var query = new Parse.Query(Device);
+  query.equalTo("name", name);
+  const result = await query.first();
+  if (!result) {
+    // be aware that only the underlying db schema can give concurrency safety
+    const device = new Device();
+    device.set("name", name);
+    device.save()
+      .then((device) => {
+        console.log("Save device successful.", device);
+      }, (error) => {
+        console.error("Save device failed.", device, error);
       });
-    }, (error) => {
-      console.error("Query BMP280 entries failed.", error);
-    });
-});
+  }
 
-Parse.Cloud.afterSave("BME280", (request) => {
-
-  // query overdue entities
+  // build query that fetch all overdue entities
   var BME280 = Parse.Object.extend("BME280");
   var query = new Parse.Query(BME280);
-  query.equalTo("device", request.object.get("device"));
+  query.equalTo("device", name);
   query.skip(1000); // keep only the last 1K entries
   query.descending("createdAt");
   query.limit(1000);
 
-  // find entities overdue
+  // find & process all overdue entities 
   query.find({ sessionToken: request.user.getSessionToken() })
     .then((results) => {
       // delete entities
@@ -73,27 +69,5 @@ Parse.Cloud.afterSave("BME280", (request) => {
       });
     }, (error) => {
       console.error("Query BME280 entries failed.", error);
-    });
-});
-
-Parse.Cloud.afterSave("BME680", (request) => {
-
-  // query overdue entities
-  var BME680 = Parse.Object.extend("BME680");
-  var query = new Parse.Query(BME680);
-  query.equalTo("device", request.object.get("device"));
-  query.skip(1000); // keep only the last 1K entries
-  query.descending("createdAt");
-  query.limit(1000);
-
-  // find entities overdue
-  query.find({ sessionToken: request.user.getSessionToken() })
-    .then((results) => {
-      // delete entities
-      results.forEach(e => {
-        e.destroy({ sessionToken: request.user.getSessionToken() });
-      });
-    }, (error) => {
-      console.error("Query BME680 entries failed.", error);
     });
 });
