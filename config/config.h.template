@@ -20,7 +20,7 @@ static const char* PARSE_BME280_URI = "/classes/BME280";
 static const char* PARSE_BME680_URI = "/classes/BME680";
 static const char* PARSE_BMP085_URI = "/classes/BMP085";
 static const char* PARSE_BMP280_URI = "/classes/BMP280";
-static const char* PARSE_ERROR_URI = "/classes/error";
+static const char* PARSE_ERROR_URI = "/classes/Error";
 
 // X.509 settings - used by ESP8266
 static const char PARSE_PROVIDER_PUB_KEY[] PROGMEM = R"KEY(
