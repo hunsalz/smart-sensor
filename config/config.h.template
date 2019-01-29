@@ -12,10 +12,15 @@ const char* WIFI_AP_PSK = "password";
 
 // provide Parse Server settings
 const char *PARSE_HOST = "YOUR PARSE SERVER";
-static const char* PARSE_URI = "YOUR URI PATH";
 static const char* PARSE_APPLICATION_ID = "YOUR PARSE APPLICATION ID";
 static const char* PARSE_REST_API_KEY = "YOUR PARSE REST API KEY";
 static const char* PARSE_SESSION_TOKEN = "A RESTRICTED SESSION TOKEN";
+// URIs to Parse resources (change accordingly)
+static const char* PARSE_BME280_URI = "/classes/BME280";
+static const char* PARSE_BME680_URI = "/classes/BME680";
+static const char* PARSE_BMP085_URI = "/classes/BMP085";
+static const char* PARSE_BMP280_URI = "/classes/BMP280";
+static const char* PARSE_ERROR_URI = "/classes/error";
 
 // X.509 settings - used by ESP8266
 static const char PARSE_PROVIDER_PUB_KEY[] PROGMEM = R"KEY(
