@@ -119,11 +119,6 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
         type: Number,
         value: 0,
         observer: '__handleSelectedChanged'
-      },
-      initialized: {
-        type: Boolean,
-        value: false,
-        readOnly: true
       }
     };
   }
@@ -237,6 +232,12 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
         this.pressures.resize();
         this.altitudes.resize();
       });
+
+      // compute query
+      this.query = this.__computeQuery();
+      // fetch data
+      // this.__fetchData();
+      this.__subscribeData();
     });
   }
 
@@ -256,47 +257,17 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
 
   __initData() {
 
-    if (!this.initialized) {
-
-      this.query = this.__computeQuery();
-      this.__queryData();
-      this.__subscribeData();
-      this._setInitialized(true);
-    }
+    console.log("__initData called");
   }
 
   __handleSelectedChanged() {
     
-    // only call if first initialization is already done
-    if (this.initialized) {
-      // compute query
-      this.query = this.__computeQuery();
-      // query data
-      this.__queryData();
-    }
-  }
+    // TODO called twice when initialized
 
-  __computeQueryParams() {
-
-    let date = new Date();
-    let limit = 1000;
-    switch (this.selected) {
-      case 0:
-        date.setHours(date.getHours() - 4); // 4 hours
-        break;
-      case 1:
-        date.setHours(date.getHours() - 24); // 24 hours
-        break;
-      case 2:
-        date.setHours(date.getHours() - 24*7); // week
-        break;
-      default:
-        limit = 10;
-        date = new Date('January 1, 1970 00:00:00'); // since 'The Epoch'
-        break;
-    }
-    this.from = date;
-    this.limit = limit;
+    // compute query
+    this.query = this.__computeQuery();
+    // fetch data
+    this.__fetchData();
   }
 
   __computeQuery() {
@@ -317,7 +288,30 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
     return query;
   }
 
-  __queryData() {
+  __computeQueryParams() {
+
+    let date = new Date();
+    let limit = 1000; // 1K as hard limit
+    switch (this.selected) {
+      case 0:
+        date.setHours(date.getHours() - 4); // 4 hours
+        break;
+      case 1:
+        date.setHours(date.getHours() - 24); // 24 hours
+        break;
+      case 2:
+        date.setHours(date.getHours() - 24*7); // week
+        break;
+      default:
+        limit = 10;
+        date = new Date('January 1, 1970 00:00:00'); // since 'The Epoch'
+        break;
+    }
+    this.from = date;
+    this.limit = limit;
+  }
+
+  __fetchData() {
 
     console.log(this.device, this.query);
 
@@ -381,7 +375,7 @@ class Bme280Widget extends mixinBehaviors([IronResizableBehavior], PolymerElemen
           this.__handleParseError(error);
         });
       });
-      flush(); // flush render-status of all '__queryData' calls
+      flush(); // flush render-status of all '__fetchData' calls
     }
   }
 
