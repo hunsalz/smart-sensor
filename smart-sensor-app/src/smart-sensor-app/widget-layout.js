@@ -32,8 +32,6 @@ class WidgetLayout extends GestureEventListeners(PolymerElement) {
           padding-bottom: 5px;
           border-top-left-radius: 5px;
           border-top-right-radius: 5px;
-          @apply --layout-flex;
-          @apply --layout-horizontal;
         }
 
         iron-collapse {
@@ -53,12 +51,7 @@ class WidgetLayout extends GestureEventListeners(PolymerElement) {
       <app-localstorage-document key="[[__computeKey(key)]]" data="{{opened}}"></app-localstorage-document>
 
       <div class="widget-header" on-tap="toggle">
-        <div>
-          <slot name="title"></slot>
-        </div>  
-        <div>
-          <slot name="details"></slot>
-        </div>
+        <slot name="header"></slot>
       </div>
       <iron-collapse id="collapse" opened="{{opened}}" tabindex="0">
         <slot></slot>
