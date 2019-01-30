@@ -3164,107 +3164,7 @@ and this string can then be deleted`;function elementIsScrollLocked(element){var
         <div class="title">Altitude</div>
         <canvas id="chart4" aria-label="Altitude chart" role="chart"></canvas>
       </div>
-    `}static get properties(){return{device:{type:String},temperatures:{type:Object},lastTemperature:{type:String,value:"N/A",notify:!0},humidities:{type:Array},lastHumidity:{type:String,value:"N/A",notify:!0},pressures:{type:Array},lastPressure:{type:String,value:"N/A",notify:!0},altitudes:{type:Array},lastAltitude:{type:String,value:"N/A",notify:!0},lastUpdate:{type:String,value:"N/A",notify:!0},query:{type:Object},from:{type:Date},limit:{type:Number},selected:{type:Number,value:0,observer:"__handleSelectedChanged"},initialized:{type:Boolean,value:!1,readOnly:!0}}}constructor(){super();this._authListener=this.__initData.bind(this);Chart.defaults.global.legend.display=!1;afterNextRender(this,function(){var ctx=this.$.chart1.getContext("2d");this.temperatures=new Chart(ctx,{type:"line",data:{labels:[],datasets:[{label:"Temperature",borderColor:"#e57373",borderWidth:1,backgroundColor:"rgba(229, 115, 115, 0.2)",data:[]}]},options:{scales:{yAxes:[{ticks:{beginAtZero:!0}}]}}});var ctx=this.$.chart2.getContext("2d");this.humidities=new Chart(ctx,{type:"line",data:{labels:[],datasets:[{label:"Humidity",borderColor:"#4fc3f7",borderWidth:1,backgroundColor:"rgba(79, 195, 247, 0.2)",data:[]}]},options:{scales:{yAxes:[{ticks:{beginAtZero:!0}}]}}});var ctx=this.$.chart3.getContext("2d");this.pressures=new Chart(ctx,{type:"line",data:{labels:[],datasets:[{label:"Pressure",borderColor:"#7986cb",borderWidth:1,backgroundColor:"rgba(121, 134, 203, 0.2)",data:[]}]},options:{scales:{yAxes:[{ticks:{beginAtZero:!0}}]}}});var ctx=this.$.chart4.getContext("2d");this.altitudes=new Chart(ctx,{type:"line",data:{labels:[],datasets:[{label:"Altitude",borderColor:"#ffb74d",borderWidth:1,backgroundColor:"rgba(255, 183, 77, 0.2)",data:[]}]},options:{scales:{yAxes:[{ticks:{beginAtZero:!0}}]}}});this.addEventListener("iron-resize",()=>{this.temperatures.resize();this.humidities.resize();this.pressures.resize();this.altitudes.resize()})})}connectedCallback(){super.connectedCallback();window.addEventListener("user-authenticated",this._authListener)}disconnectedCallback(){super.disconnectedCallback();window.removeEventListener("user-authenticated",this._authListener)}__computeKey(device){return device+"/selected"}__initData(){if(!this.initialized){this.query=this.__computeQuery();this.__queryData();this.__subscribeData();this._setInitialized(!0)}}__handleSelectedChanged(){if(this.initialized){this.query=this.__computeQuery();this.__queryData()}}__computeQueryParams(){let date=new Date,limit=1e3;switch(this.selected){case 0:date.setHours(date.getHours()-4);break;case 1:date.setHours(date.getHours()-24);break;case 2:date.setHours(date.getHours()-7*24);break;default:limit=10;date=new Date("January 1, 1970 00:00:00");break;}this.from=date;this.limit=limit}__computeQuery(){this.__computeQueryParams();const BME280=Parse.Object.extend("BME280"),query=new Parse.Query(BME280);if(this.device){query.equalTo("device",this.device)}query.greaterThan("createdAt",this.from);query.descending("createdAt");query.limit(this.limit);return query}__queryData(){console.log(this.device,this.query);if(Parse.User.current()){afterNextRender(this,function(){this.temperatures.data.labels=[];this.temperatures.data.datasets[0].data=[];let lastTemperature="N/A";this.humidities.data.labels=[];this.humidities.data.datasets[0].data=[];let lastHumidity="N/A";this.pressures.data.labels=[];this.pressures.data.datasets[0].data=[];let lastPressure="N/A";this.altitudes.data.labels=[];this.altitudes.data.datasets[0].data=[];let lastAltitude="N/A",lastUpdate="N/A";this.query.find().then(results=>{if(0<results.length){results.forEach(e=>{let label=this.__getShortTime(e.get("createdAt"));this.temperatures.data.labels.push(label);this.temperatures.data.datasets[0].data.push(e.get("temperature"));this.humidities.data.labels.push(label);this.humidities.data.datasets[0].data.push(e.get("humidity"));this.pressures.data.labels.push(label);this.pressures.data.datasets[0].data.push(e.get("pressure"));this.altitudes.data.labels.push(label);this.altitudes.data.datasets[0].data.push(e.get("altitude"))});lastTemperature=results[0].get("temperature")+" \xB0";lastHumidity=results[0].get("humidity")+" %";lastPressure=results[0].get("pressure")+" Pa";lastAltitude=results[0].get("altitude")+" m";lastUpdate=this.__formatDateTime(results[0].get("createdAt"))}this.lastTemperature=lastTemperature;this.lastHumidity=lastHumidity;this.lastPressure=lastPressure;this.lastAltitude=lastAltitude;this.lastUpdate=lastUpdate;this.temperatures.update();this.humidities.update();this.pressures.update();this.altitudes.update()},error=>{console.error("Query BME280 entries failed.",error);this.__handleParseError(error)})});flush()}}__subscribeData(){if(Parse.User.current()){var subscription=this.query.subscribe(),self=this;subscription.on("create",function(bme280){afterNextRender(this,function(){let label=self.__getShortTime(bme280.get("createdAt"));self.temperatures.data.labels.unshift(label);self.temperatures.data.labels.pop();self.temperatures.data.datasets[0].data.unshift(bme280.get("temperature"));self.temperatures.data.datasets[0].data.pop();self.humidities.data.labels.unshift(label);self.humidities.data.labels.pop();self.humidities.data.datasets[0].data.unshift(bme280.get("humidity"));self.humidities.data.datasets[0].data.pop();self.pressures.data.labels.unshift(label);self.pressures.data.labels.pop();self.pressures.data.datasets[0].data.unshift(bme280.get("pressure"));self.pressures.data.datasets[0].data.pop();self.altitudes.data.labels.unshift(label);self.altitudes.data.labels.pop();self.altitudes.data.datasets[0].data.unshift(bme280.get("pressure"));self.altitudes.data.datasets[0].data.pop();self.lastTemperature=bme280.get("temperature");self.lastHumidity=bme280.get("humidity");self.lastPressure=bme280.get("pressure");self.lastAltitude=bme280.get("altitude");self.lastUpdate=self.__formatDateTime(bme280.get("createdAt"));self.temperatures.update();self.humidities.update();self.pressures.update();self.altitudes.update()})})}}__handleParseError(error){switch(error.code){case Parse.Error.INVALID_SESSION_TOKEN:self.dispatchEvent(new CustomEvent("logout-event",{bubbles:!0,composed:!0}));break;}}__formatDateTime(date){return date.toDateString().substring(0,15)+" at "+this.__getShortTime(date)}__getShortTime(date){return date.toTimeString().substring(0,8)}}window.customElements.define("bme280-widget",Bme280Widget);class Bme680Widget extends mixinBehaviors([IronResizableBehavior],PolymerElement){static get template(){return html`
-      <style> 
-        :host {
-          display: block;
-        }
-
-        .container {
-          margin-top: 4vh;
-        }
-
-        paper-tabs {
-          --paper-tabs-selection-bar-color: var(--paper-blue-500);
-        }
-
-        .title {
-          text-align: center;
-          color: var(--paper-blue-grey-700);
-          font-size: 0.8em;
-          @apply --layout-flex;
-          width: 100%;
-        }
-      </style>
-
-      <app-localstorage-document key="[[__computeKey(device)]]" data="{{selected}}"></app-localstorage-document>
-
-      <paper-tabs selected="{{selected}}" fallback-selection="0">
-        <paper-tab>Last 4h</paper-tab>
-        <paper-tab>Last 24h</paper-tab>
-        <paper-tab>Last 7days</paper-tab>
-        <paper-tab>Last 10 values</paper-tab>
-      </paper-tabs>
-
-      <div class="container">
-        <div class="title">Temperature</div>
-        <canvas id="chart1" aria-label="Temperature chart" role="chart"></canvas>
-      </div>
-      <div class="container">
-        <div class="title">Humidity</div>
-        <canvas id="chart2" aria-label="Humidity chart" role="chart"></canvas>
-      </div>
-      <div class="container">
-        <div class="title">Pressure</div>
-        <canvas id="chart3" aria-label="Pressure chart" role="chart"></canvas>
-      </div>
-      <div class="container">
-        <div class="title">Gas</div>
-        <canvas id="chart4" aria-label="Gas chart" role="chart"></canvas>
-      </div>
-      <div class="container">
-        <div class="title">Altitude</div>
-        <canvas id="chart5" aria-label="Altitude chart" role="chart"></canvas>
-      </div>
-    `}static get properties(){return{device:{type:String},temperatures:{type:Object},lastTemperature:{type:String,value:"N/A",notify:!0},humidities:{type:Array},lastHumidity:{type:String,value:"N/A",notify:!0},pressures:{type:Array},lastPressure:{type:String,value:"N/A",notify:!0},gases:{type:Array},lastGas:{type:String,value:"N/A",notify:!0},altitudes:{type:Array},lastAltitude:{type:String,value:"N/A",notify:!0},lastUpdate:{type:String,value:"N/A",notify:!0},query:{type:Object},from:{type:Date},limit:{type:Number},selected:{type:Number,value:0,observer:"__handleSelectedChanged"},initialized:{type:Boolean,value:!1,readOnly:!0}}}constructor(){super();this._authListener=this.__initData.bind(this);Chart.defaults.global.legend.display=!1;afterNextRender(this,function(){var ctx=this.$.chart1.getContext("2d");this.temperatures=new Chart(ctx,{type:"line",data:{labels:[],datasets:[{label:"Temperature",borderColor:"#e57373",borderWidth:1,backgroundColor:"rgba(229, 115, 115, 0.2)",data:[]}]},options:{scales:{yAxes:[{ticks:{beginAtZero:!0}}]}}});var ctx=this.$.chart2.getContext("2d");this.humidities=new Chart(ctx,{type:"line",data:{labels:[],datasets:[{label:"Humidity",borderColor:"#4fc3f7",borderWidth:1,backgroundColor:"rgba(79, 195, 247, 0.2)",data:[]}]},options:{scales:{yAxes:[{ticks:{beginAtZero:!0}}]}}});var ctx=this.$.chart3.getContext("2d");this.pressures=new Chart(ctx,{type:"line",data:{labels:[],datasets:[{label:"Pressure",borderColor:"#7986cb",borderWidth:1,backgroundColor:"rgba(121, 134, 203, 0.2)",data:[]}]},options:{scales:{yAxes:[{ticks:{beginAtZero:!0}}]}}});var ctx=this.$.chart4.getContext("2d");this.gases=new Chart(ctx,{type:"line",data:{labels:[],datasets:[{label:"Gas",borderColor:"#7986cb",borderWidth:1,backgroundColor:"rgba(121, 134, 203, 0.2)",data:[]}]},options:{scales:{yAxes:[{ticks:{beginAtZero:!0}}]}}});var ctx=this.$.chart5.getContext("2d");this.altitudes=new Chart(ctx,{type:"line",data:{labels:[],datasets:[{label:"Altitude",borderColor:"#ffb74d",borderWidth:1,backgroundColor:"rgba(255, 183, 77, 0.2)",data:[]}]},options:{scales:{yAxes:[{ticks:{beginAtZero:!0}}]}}});this.addEventListener("iron-resize",()=>{this.temperatures.resize();this.humidities.resize();this.gases.resize();this.pressures.resize();this.altitudes.resize()})})}connectedCallback(){super.connectedCallback();window.addEventListener("user-authenticated",this._authListener)}disconnectedCallback(){super.disconnectedCallback();window.removeEventListener("user-authenticated",this._authListener)}__computeKey(device){return device+"/selected"}__initData(){if(!this.initialized){this.query=this.__computeQuery();this.__queryData();this.__subscribeData();this._setInitialized(!0)}}__handleSelectedChanged(){if(this.initialized){this.query=this.__computeQuery();this.__queryData()}}__computeQueryParams(){let date=new Date,limit=1e3;switch(this.selected){case 0:date.setHours(date.getHours()-4);break;case 1:date.setHours(date.getHours()-24);break;case 2:date.setHours(date.getHours()-7*24);break;default:limit=10;date=new Date("January 1, 1970 00:00:00");break;}this.from=date;this.limit=limit}__computeQuery(){this.__computeQueryParams();const BME680=Parse.Object.extend("BME680"),query=new Parse.Query(BME680);if(this.device){query.equalTo("device",this.device)}query.greaterThan("createdAt",this.from);query.descending("createdAt");query.limit(this.limit);return query}__queryData(){console.log(this.device,this.query);if(Parse.User.current()){afterNextRender(this,function(){this.temperatures.data.labels=[];this.temperatures.data.datasets[0].data=[];let lastTemperature="N/A";this.humidities.data.labels=[];this.humidities.data.datasets[0].data=[];let lastHumidity="N/A";this.pressures.data.labels=[];this.pressures.data.datasets[0].data=[];let lastPressure="N/A";this.gases.data.labels=[];this.gases.data.datasets[0].data=[];let lastGas="N/A";this.altitudes.data.labels=[];this.altitudes.data.datasets[0].data=[];let lastAltitude="N/A",lastUpdate="N/A";this.query.find().then(results=>{if(0<results.length){results.forEach(e=>{let label=this.__getShortTime(e.get("createdAt"));this.temperatures.data.labels.push(label);this.temperatures.data.datasets[0].data.push(e.get("temperature"));this.humidities.data.labels.push(label);this.humidities.data.datasets[0].data.push(e.get("humidity"));this.pressures.data.labels.push(label);this.pressures.data.datasets[0].data.push(e.get("pressure"));this.gases.data.labels.push(label);this.gases.data.datasets[0].data.push(e.get("gas"));this.altitudes.data.labels.push(label);this.altitudes.data.datasets[0].data.push(e.get("altitude"))});lastTemperature=results[0].get("temperature")+" \xB0";lastHumidity=results[0].get("humidity")+" %";lastPressure=results[0].get("pressure")+" Pa";lastGas=results[0].get("gas")+" \u03A9";lastAltitude=results[0].get("altitude")+" m";lastUpdate=this.__formatDateTime(results[0].get("createdAt"))}this.lastTemperature=lastTemperature;this.lastHumidity=lastHumidity;this.lastPressure=lastPressure;this.lastGas=lastGas;this.lastAltitude=lastAltitude;this.lastUpdate=lastUpdate;this.temperatures.update();this.humidities.update();this.pressures.update();this.gases.update();this.altitudes.update()},error=>{console.error("Query BME680 entries failed.",error);this.__handleParseError(error)})});flush()}}__subscribeData(){if(Parse.User.current()){var subscription=this.query.subscribe(),self=this;subscription.on("create",function(bme680){afterNextRender(this,function(){let label=self.__getShortTime(bme680.get("createdAt"));self.temperatures.data.labels.unshift(label);self.temperatures.data.labels.pop();self.temperatures.data.datasets[0].data.unshift(bme680.get("temperature"));self.temperatures.data.datasets[0].data.pop();self.humidities.data.labels.unshift(label);self.humidities.data.labels.pop();self.humidities.data.datasets[0].data.unshift(bme680.get("humidity"));self.humidities.data.datasets[0].data.pop();self.pressures.data.labels.unshift(label);self.pressures.data.labels.pop();self.pressures.data.datasets[0].data.unshift(bme680.get("pressure"));self.pressures.data.datasets[0].data.pop();self.gases.data.labels.unshift(label);self.gases.data.labels.pop();self.gases.data.datasets[0].data.unshift(bme680.get("gas"));self.gases.data.datasets[0].data.pop();self.altitudes.data.labels.unshift(label);self.altitudes.data.labels.pop();self.altitudes.data.datasets[0].data.unshift(bme680.get("pressure"));self.altitudes.data.datasets[0].data.pop();self.lastTemperature=bme680.get("temperature");self.lastHumidity=bme680.get("humidity");self.lastPressure=bme680.get("pressure");self.lastGas=bme680.get("gas");self.lastAltitude=bme680.get("altitude");self.lastUpdate=self.__formatDateTime(bme680.get("createdAt"));self.temperatures.update();self.humidities.update();self.pressures.update();self.gases.update();self.altitudes.update()})})}}__handleParseError(error){switch(error.code){case Parse.Error.INVALID_SESSION_TOKEN:self.dispatchEvent(new CustomEvent("logout-event",{bubbles:!0,composed:!0}));break;}}__formatDateTime(date){return date.toDateString().substring(0,15)+" at "+this.__getShortTime(date)}__getShortTime(date){return date.toTimeString().substring(0,8)}}window.customElements.define("bme680-widget",Bme680Widget);class Bmp280Widget extends mixinBehaviors([IronResizableBehavior],PolymerElement){static get template(){return html`
-      <style> 
-        :host {
-          display: block;
-        }
-
-        .container {
-          margin-top: 4vh;
-        }
-
-        paper-tabs {
-          --paper-tabs-selection-bar-color: var(--paper-blue-500);
-        }
-
-        .title {
-          text-align: center;
-          color: var(--paper-blue-grey-700);
-          font-size: 0.8em;
-          @apply --layout-flex;
-          width: 100%;
-        }
-      </style>
-
-      <app-localstorage-document key="[[__computeKey(device)]]" data="{{selected}}"></app-localstorage-document>
-
-      <paper-tabs selected="{{selected}}" fallback-selection="0">
-        <paper-tab>Last 4h</paper-tab>
-        <paper-tab>Last 24h</paper-tab>
-        <paper-tab>Last 7days</paper-tab>
-        <paper-tab>Last 10 values</paper-tab>
-      </paper-tabs>
-
-      <div class="container">
-        <div class="title">Temperature</div>
-        <canvas id="chart1" aria-label="Temperature chart" role="chart"></canvas>
-      </div>
-      <div class="container">
-        <div class="title">Humidity</div>
-        <canvas id="chart2" aria-label="Humidity chart" role="chart"></canvas>
-      </div>
-      <div class="container">
-        <div class="title">Pressure</div>
-        <canvas id="chart3" aria-label="Pressure chart" role="chart"></canvas>
-      </div>
-      <div class="container">
-        <div class="title">Altitude</div>
-        <canvas id="chart4" aria-label="Altitude chart" role="chart"></canvas>
-      </div>
-    `}static get properties(){return{device:{type:String},temperatures:{type:Object},lastTemperature:{type:String,value:"N/A",notify:!0},humidities:{type:Array},lastHumidity:{type:String,value:"N/A",notify:!0},pressures:{type:Array},lastPressure:{type:String,value:"N/A",notify:!0},altitudes:{type:Array},lastAltitude:{type:String,value:"N/A",notify:!0},lastUpdate:{type:String,value:"N/A",notify:!0},query:{type:Object},from:{type:Date},limit:{type:Number},selected:{type:Number,value:0,observer:"__handleSelectedChanged"},initialized:{type:Boolean,value:!1,readOnly:!0}}}constructor(){super();this._authListener=this.__initData.bind(this);Chart.defaults.global.legend.display=!1;afterNextRender(this,function(){var ctx=this.$.chart1.getContext("2d");this.temperatures=new Chart(ctx,{type:"line",data:{labels:[],datasets:[{label:"Temperature",borderColor:"#e57373",borderWidth:1,backgroundColor:"rgba(229, 115, 115, 0.2)",data:[]}]},options:{scales:{yAxes:[{ticks:{beginAtZero:!0}}]}}});var ctx=this.$.chart2.getContext("2d");this.humidities=new Chart(ctx,{type:"line",data:{labels:[],datasets:[{label:"Humidity",borderColor:"#4fc3f7",borderWidth:1,backgroundColor:"rgba(79, 195, 247, 0.2)",data:[]}]},options:{scales:{yAxes:[{ticks:{beginAtZero:!0}}]}}});var ctx=this.$.chart3.getContext("2d");this.pressures=new Chart(ctx,{type:"line",data:{labels:[],datasets:[{label:"Pressure",borderColor:"#7986cb",borderWidth:1,backgroundColor:"rgba(121, 134, 203, 0.2)",data:[]}]},options:{scales:{yAxes:[{ticks:{beginAtZero:!0}}]}}});var ctx=this.$.chart4.getContext("2d");this.altitudes=new Chart(ctx,{type:"line",data:{labels:[],datasets:[{label:"Altitude",borderColor:"#ffb74d",borderWidth:1,backgroundColor:"rgba(255, 183, 77, 0.2)",data:[]}]},options:{scales:{yAxes:[{ticks:{beginAtZero:!0}}]}}});this.addEventListener("iron-resize",()=>{this.temperatures.resize();this.humidities.resize();this.pressures.resize();this.altitudes.resize()})})}connectedCallback(){super.connectedCallback();window.addEventListener("user-authenticated",this._authListener)}disconnectedCallback(){super.disconnectedCallback();window.removeEventListener("user-authenticated",this._authListener)}__computeKey(device){return device+"/selected"}__initData(){if(!this.initialized){this.query=this.__computeQuery();this.__queryData();this.__subscribeData();this._setInitialized(!0)}}__handleSelectedChanged(){if(this.initialized){this.query=this.__computeQuery();this.__queryData()}}__computeQueryParams(){let date=new Date,limit=1e3;switch(this.selected){case 0:date.setHours(date.getHours()-4);break;case 1:date.setHours(date.getHours()-24);break;case 2:date.setHours(date.getHours()-7*24);break;default:limit=10;date=new Date("January 1, 1970 00:00:00");break;}this.from=date;this.limit=limit}__computeQuery(){this.__computeQueryParams();const BMP280=Parse.Object.extend("BMP280"),query=new Parse.Query(BMP280);if(this.device){query.equalTo("device",this.device)}query.greaterThan("createdAt",this.from);query.descending("createdAt");query.limit(this.limit);return query}__queryData(){console.log(this.device,this.query);if(Parse.User.current()){afterNextRender(this,function(){this.temperatures.data.labels=[];this.temperatures.data.datasets[0].data=[];let lastTemperature="N/A";this.humidities.data.labels=[];this.humidities.data.datasets[0].data=[];let lastHumidity="N/A";this.pressures.data.labels=[];this.pressures.data.datasets[0].data=[];let lastPressure="N/A";this.altitudes.data.labels=[];this.altitudes.data.datasets[0].data=[];let lastAltitude="N/A",lastUpdate="N/A";this.query.find().then(results=>{if(0<results.length){results.forEach(e=>{let label=this.__getShortTime(e.get("createdAt"));this.temperatures.data.labels.push(label);this.temperatures.data.datasets[0].data.push(e.get("temperature"));this.humidities.data.labels.push(label);this.humidities.data.datasets[0].data.push(e.get("humidity"));this.pressures.data.labels.push(label);this.pressures.data.datasets[0].data.push(e.get("pressure"));this.altitudes.data.labels.push(label);this.altitudes.data.datasets[0].data.push(e.get("altitude"))});lastTemperature=results[0].get("temperature")+" \xB0";lastHumidity=results[0].get("humidity")+" %";lastPressure=results[0].get("pressure")+" Pa";lastAltitude=results[0].get("altitude")+" m";lastUpdate=this.__formatDateTime(results[0].get("createdAt"))}this.lastTemperature=lastTemperature;this.lastHumidity=lastHumidity;this.lastPressure=lastPressure;this.lastAltitude=lastAltitude;this.lastUpdate=lastUpdate;this.temperatures.update();this.humidities.update();this.pressures.update();this.altitudes.update()},error=>{console.error("Query BMP280 entries failed.",error);this.__handleParseError(error)})});flush()}}__subscribeData(){if(Parse.User.current()){var subscription=this.query.subscribe(),self=this;subscription.on("create",function(bmp280){afterNextRender(this,function(){let label=self.__getShortTime(bmp280.get("createdAt"));self.temperatures.data.labels.unshift(label);self.temperatures.data.labels.pop();self.temperatures.data.datasets[0].data.unshift(bmp280.get("temperature"));self.temperatures.data.datasets[0].data.pop();self.humidities.data.labels.unshift(label);self.humidities.data.labels.pop();self.humidities.data.datasets[0].data.unshift(bmp280.get("humidity"));self.humidities.data.datasets[0].data.pop();self.pressures.data.labels.unshift(label);self.pressures.data.labels.pop();self.pressures.data.datasets[0].data.unshift(bmp280.get("pressure"));self.pressures.data.datasets[0].data.pop();self.altitudes.data.labels.unshift(label);self.altitudes.data.labels.pop();self.altitudes.data.datasets[0].data.unshift(bmp280.get("pressure"));self.altitudes.data.datasets[0].data.pop();self.lastTemperature=bmp280.get("temperature");self.lastHumidity=bmp280.get("humidity");self.lastPressure=bmp280.get("pressure");self.lastAltitude=bmp280.get("altitude");self.lastUpdate=self.__formatDateTime(bmp280.get("createdAt"));self.temperatures.update();self.humidities.update();self.pressures.update();self.altitudes.update()})})}}__handleParseError(error){switch(error.code){case Parse.Error.INVALID_SESSION_TOKEN:self.dispatchEvent(new CustomEvent("logout-event",{bubbles:!0,composed:!0}));break;}}__formatDateTime(date){return date.toDateString().substring(0,15)+" at "+this.__getShortTime(date)}__getShortTime(date){return date.toTimeString().substring(0,8)}}window.customElements.define("bmp280-widget",Bmp280Widget);class LoginPage extends GestureEventListeners(PolymerElement){static get template(){return html`
+    `}static get properties(){return{device:{type:String},temperatures:{type:Object},lastTemperature:{type:String,value:"N/A",notify:!0},humidities:{type:Array},lastHumidity:{type:String,value:"N/A",notify:!0},pressures:{type:Array},lastPressure:{type:String,value:"N/A",notify:!0},altitudes:{type:Array},lastAltitude:{type:String,value:"N/A",notify:!0},lastUpdate:{type:String,value:"N/A",notify:!0},query:{type:Object},from:{type:Date},limit:{type:Number},selected:{type:Number,value:0,observer:"__handleSelectedChanged"}}}constructor(){super();this._authListener=this.__initData.bind(this);Chart.defaults.global.legend.display=!1;afterNextRender(this,function(){var ctx=this.$.chart1.getContext("2d");this.temperatures=new Chart(ctx,{type:"line",data:{labels:[],datasets:[{label:"Temperature",borderColor:"#e57373",borderWidth:1,backgroundColor:"rgba(229, 115, 115, 0.2)",data:[]}]},options:{scales:{yAxes:[{ticks:{beginAtZero:!0}}]}}});var ctx=this.$.chart2.getContext("2d");this.humidities=new Chart(ctx,{type:"line",data:{labels:[],datasets:[{label:"Humidity",borderColor:"#4fc3f7",borderWidth:1,backgroundColor:"rgba(79, 195, 247, 0.2)",data:[]}]},options:{scales:{yAxes:[{ticks:{beginAtZero:!0}}]}}});var ctx=this.$.chart3.getContext("2d");this.pressures=new Chart(ctx,{type:"line",data:{labels:[],datasets:[{label:"Pressure",borderColor:"#7986cb",borderWidth:1,backgroundColor:"rgba(121, 134, 203, 0.2)",data:[]}]},options:{scales:{yAxes:[{ticks:{beginAtZero:!0}}]}}});var ctx=this.$.chart4.getContext("2d");this.altitudes=new Chart(ctx,{type:"line",data:{labels:[],datasets:[{label:"Altitude",borderColor:"#ffb74d",borderWidth:1,backgroundColor:"rgba(255, 183, 77, 0.2)",data:[]}]},options:{scales:{yAxes:[{ticks:{beginAtZero:!0}}]}}});this.addEventListener("iron-resize",()=>{this.temperatures.resize();this.humidities.resize();this.pressures.resize();this.altitudes.resize()});this.query=this.__computeQuery();this.__subscribeData()})}connectedCallback(){super.connectedCallback();window.addEventListener("user-authenticated",this._authListener)}disconnectedCallback(){super.disconnectedCallback();window.removeEventListener("user-authenticated",this._authListener)}__computeKey(device){return device+"/selected"}__initData(){console.log("__initData called")}__handleSelectedChanged(){this.query=this.__computeQuery();this.__fetchData()}__computeQuery(){this.__computeQueryParams();const BME280=Parse.Object.extend("BME280"),query=new Parse.Query(BME280);if(this.device){query.equalTo("device",this.device)}query.greaterThan("createdAt",this.from);query.descending("createdAt");query.limit(this.limit);return query}__computeQueryParams(){let date=new Date,limit=1e3;switch(this.selected){case 0:date.setHours(date.getHours()-4);break;case 1:date.setHours(date.getHours()-24);break;case 2:date.setHours(date.getHours()-7*24);break;default:limit=10;date=new Date("January 1, 1970 00:00:00");break;}this.from=date;this.limit=limit}__fetchData(){console.log(this.device,this.query);if(Parse.User.current()){afterNextRender(this,function(){this.temperatures.data.labels=[];this.temperatures.data.datasets[0].data=[];let lastTemperature="N/A";this.humidities.data.labels=[];this.humidities.data.datasets[0].data=[];let lastHumidity="N/A";this.pressures.data.labels=[];this.pressures.data.datasets[0].data=[];let lastPressure="N/A";this.altitudes.data.labels=[];this.altitudes.data.datasets[0].data=[];let lastAltitude="N/A",lastUpdate="N/A";this.query.find().then(results=>{if(0<results.length){results.forEach(e=>{let label=this.__getShortTime(e.get("createdAt"));this.temperatures.data.labels.push(label);this.temperatures.data.datasets[0].data.push(e.get("temperature"));this.humidities.data.labels.push(label);this.humidities.data.datasets[0].data.push(e.get("humidity"));this.pressures.data.labels.push(label);this.pressures.data.datasets[0].data.push(e.get("pressure"));this.altitudes.data.labels.push(label);this.altitudes.data.datasets[0].data.push(e.get("altitude"))});lastTemperature=results[0].get("temperature")+" \xB0";lastHumidity=results[0].get("humidity")+" %";lastPressure=results[0].get("pressure")+" Pa";lastAltitude=results[0].get("altitude")+" m";lastUpdate=this.__formatDateTime(results[0].get("createdAt"))}this.lastTemperature=lastTemperature;this.lastHumidity=lastHumidity;this.lastPressure=lastPressure;this.lastAltitude=lastAltitude;this.lastUpdate=lastUpdate;this.temperatures.update();this.humidities.update();this.pressures.update();this.altitudes.update()},error=>{console.error("Query BME280 entries failed.",error);this.__handleParseError(error)})});flush()}}__subscribeData(){if(Parse.User.current()){var subscription=this.query.subscribe(),self=this;subscription.on("create",function(bme280){afterNextRender(this,function(){let label=self.__getShortTime(bme280.get("createdAt"));self.temperatures.data.labels.unshift(label);self.temperatures.data.labels.pop();self.temperatures.data.datasets[0].data.unshift(bme280.get("temperature"));self.temperatures.data.datasets[0].data.pop();self.humidities.data.labels.unshift(label);self.humidities.data.labels.pop();self.humidities.data.datasets[0].data.unshift(bme280.get("humidity"));self.humidities.data.datasets[0].data.pop();self.pressures.data.labels.unshift(label);self.pressures.data.labels.pop();self.pressures.data.datasets[0].data.unshift(bme280.get("pressure"));self.pressures.data.datasets[0].data.pop();self.altitudes.data.labels.unshift(label);self.altitudes.data.labels.pop();self.altitudes.data.datasets[0].data.unshift(bme280.get("pressure"));self.altitudes.data.datasets[0].data.pop();self.lastTemperature=bme280.get("temperature");self.lastHumidity=bme280.get("humidity");self.lastPressure=bme280.get("pressure");self.lastAltitude=bme280.get("altitude");self.lastUpdate=self.__formatDateTime(bme280.get("createdAt"));self.temperatures.update();self.humidities.update();self.pressures.update();self.altitudes.update()})})}}__handleParseError(error){switch(error.code){case Parse.Error.INVALID_SESSION_TOKEN:self.dispatchEvent(new CustomEvent("logout-event",{bubbles:!0,composed:!0}));break;}}__formatDateTime(date){return date.toDateString().substring(0,15)+" at "+this.__getShortTime(date)}__getShortTime(date){return date.toTimeString().substring(0,8)}}window.customElements.define("bme280-widget",Bme280Widget);class LoginPage extends GestureEventListeners(PolymerElement){static get template(){return html`
       <style>
         :host {
           display: block;
@@ -3430,8 +3330,6 @@ and this string can then be deleted`;function elementIsScrollLocked(element){var
           padding-bottom: 5px;
           border-top-left-radius: 5px;
           border-top-right-radius: 5px;
-          @apply --layout-flex;
-          @apply --layout-horizontal;
         }
 
         iron-collapse {
@@ -3451,12 +3349,7 @@ and this string can then be deleted`;function elementIsScrollLocked(element){var
       <app-localstorage-document key="[[__computeKey(key)]]" data="{{opened}}"></app-localstorage-document>
 
       <div class="widget-header" on-tap="toggle">
-        <div>
-          <slot name="title"></slot>
-        </div>  
-        <div>
-          <slot name="details"></slot>
-        </div>
+        <slot name="header"></slot>
       </div>
       <iron-collapse id="collapse" opened="{{opened}}" tabindex="0">
         <slot></slot>
@@ -3492,18 +3385,25 @@ and this string can then be deleted`;function elementIsScrollLocked(element){var
         }
 
         .header {
-          
+          @apply --layout-flex;
           @apply --layout-horizontal;
+        }
+
+        .info {
+          width: 100%;
+          @apply --layout-vertical;
           @apply --layout-center;
         }
 
-        .title {
+        .label {
           font-size: 2em;
           font-weight: 500;
           text-align: center;
-          height: 100%;
-          @apply --layout-vertical;
-          @apply --layout-center-center;
+        }
+
+        .key {
+          font-size: 0.8em;
+          text-align: center;
         }
 
         .details {
@@ -3529,75 +3429,49 @@ and this string can then be deleted`;function elementIsScrollLocked(element){var
       <div class="content-area">
         <div id="_grid" class="app-grid">
 
-          <widget-layout key="ESP-2391099">
+          <dom-repeat items="[[__fetchBME280Devices()]]">
+            <template strip-whitespace>
+              <widget-layout key="[[item.key]]">
+              
+                <div slot="header" class="header">
+                  <div class="info">
+                    <div class="label">[[item.label]]</div>
+                    <div class="key">[[item.key]]</div>
+                  </div>
+                  <div class="details">
+                    <div class="column">
+                      <div>Temperature</div>
+                      <div>Humidity</div>
+                      <div>Pressure</div>
+                      <div>Altitude</div>
+                    </div>
+                    <div class="column">
+                      <div>[[item.temperature]]</div>
+                      <div>[[item.humidity]]</div>
+                      <div>[[item.pressure]]</div>
+                      <div>[[item.altitude]]</div>
+                    </div>
+                  </div>
+                </div>
 
-            <div slot="title" class="title">Kitchen</div>
-            
-            <div slot="details" class="details">
-              <div class="column">
-                <div>Temperature</div>
-                <div>Humidity</div>
-                <div>Temperature</div>
-                <div>Humidity</div>
-              </div>
-              <div class="column">
-                <div>[[__ESP-2391099_temperature]]</div>
-                <div>[[__ESP-2391099_humidity]]</div>
-                <div>[[__ESP-2391099_temperature]]</div>
-                <div>[[__ESP-2391099_humidity]]</div>
-              </div>
-            </div>
+                <bme280-widget
+                  device="[[item.key]]"
+                  last-temperature="{{item.temperature}}" 
+                  last-humidity="{{item.humidity}}" 
+                  last-pressure="{{item.pressure}}" 
+                  last-altitude="{{item.altitude}}"
+                  last-update="{{item.updatedAt}}">
+                </bme280-widget>
 
-            <bme280-widget 
-              device="ESP-2391099"
-              last-temperature="{{__ESP-2391099_temperature}}" 
-              last-humidity="{{__ESP-2391099_humidity}}" 
-              last-pressure="{{__ESP-2391099_pressure}}" 
-              last-altitude="{{__ESP-2391099_altitude}}"
-              last-update="{{__ESP-2391099_last_update}}">
-            </bme280-widget>
-
-            <div slot="footer" class="footer">
-              Last update: [[__ESP-2391099_last_update]]
-            </div>
-          </widget-layout>
-
-          <widget-layout key="ESP-2355357">
-
-            <div slot="title" class="title">Bedroom</div>
-            
-            <div slot="details" class="details">
-              <div class="column">
-                <div>Temperature</div>
-                <div>Humidity</div>
-                <div>Temperature</div>
-                <div>Humidity</div>
-              </div>
-              <div class="column">
-                <div>[[__ESP-2355357_temperature]]</div>
-                <div>[[__ESP-2355357_humidity]]</div>
-                <div>[[__ESP-2355357_temperature]]</div>
-                <div>[[__ESP-2355357_humidity]]</div>
-              </div>
-            </div>
-
-            <bme280-widget 
-              device="ESP-2355357"
-              last-temperature="{{__ESP-2355357_temperature}}" 
-              last-humidity="{{__ESP-2355357_humidity}}" 
-              last-pressure="{{__ESP-2355357_pressure}}" 
-              last-altitude="{{__ESP-2355357_altitude}}"
-              last-update="{{__ESP-2355357_last_update}}">
-            </bme280-widget>
-
-            <div slot="footer" class="footer">
-              Last update: [[__ESP-2355357_last_update]]
-            </div>
-          </widget-layout>
-
+                <div slot="footer" class="footer">
+                  Last update: [[item.updatedAt]]
+                </div>
+              </widget-layout>
+            </template>
+          </dom-repeat>
         </div>
       </div>
-    `}static get properties(){return{collapsed:{type:Boolean,notify:!0}}}constructor(){super();afterNextRender(this,function(){this.__updateGridStyles=this.__updateGridStyles||function(){this.updateStyles()}.bind(this);window.addEventListener("resize",this.__updateGridStyles);this.__computeCollapsedState()})}__computeCollapsedState(){for(var nodes=this.$._grid.querySelectorAll("widget-layout"),state=0,i=0;i<nodes.length;i++){state+=nodes[i].isCollapsed()}this.collapsed=0===state?!1:!0}__toggleWidgets(){var nodes=this.$._grid.querySelectorAll("widget-layout");this.collapsed=!this.collapsed;for(var i=0;i<nodes.length;i++){nodes[i].collapse(this.collapsed)}}}window.customElements.define("widgets-page",WidgetsPage);class SmartSensorApp extends GestureEventListeners(PolymerElement){static get template(){return html`
+    `}static get properties(){return{collapsed:{type:Boolean,notify:!0}}}constructor(){super();afterNextRender(this,function(){this.__updateGridStyles=this.__updateGridStyles||function(){this.updateStyles()}.bind(this);window.addEventListener("resize",this.__updateGridStyles);this.__computeCollapsedState()})}__fetchBME280Devices(){if(Parse.User.current()){}return[{key:"ESP-000023f09d",label:"ESP-01",temperature:NaN,humidity:NaN,pressure:NaN,altitude:NaN,updatedAt:NaN},{key:"ESP-0023a4ae30",label:"ESP-02",temperature:NaN,humidity:NaN,pressure:NaN,altitude:NaN,updatedAt:NaN}]}__computeCollapsedState(){for(var nodes=this.$._grid.querySelectorAll("widget-layout"),state=0,i=0;i<nodes.length;i++){state+=nodes[i].isCollapsed()}this.collapsed=0===state?!1:!0}__toggleWidgets(){var nodes=this.$._grid.querySelectorAll("widget-layout");this.collapsed=!this.collapsed;for(var i=0;i<nodes.length;i++){nodes[i].collapse(this.collapsed)}}}window.customElements.define("widgets-page",WidgetsPage);class SmartSensorApp extends GestureEventListeners(PolymerElement){static get template(){return html`
       <style include="app-grid-style">
         :host {
           display: block;

@@ -37,7 +37,7 @@
 /* eslint-disable indent, no-unused-vars, no-multiple-empty-lines, max-nested-callbacks, space-before-function-paren, quotes, comma-spacing */
 'use strict';
 
-var precacheConfig = [["index.html","f265cc633735b47a43e6332b1ab87ad8"],["src/smart-sensor-app/main-app.js","616549ce62b03256a77ad9bf74734ce5"]];
+var precacheConfig = [["index.html","f265cc633735b47a43e6332b1ab87ad8"],["src/smart-sensor-app/main-app.js","c02de6dab20e455c6b609d05d155c50d"]];
 var cacheName = 'sw-precache-v3--' + (self.registration ? self.registration.scope : '');
 
 
