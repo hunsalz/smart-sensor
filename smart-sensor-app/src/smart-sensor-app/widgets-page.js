@@ -1,14 +1,14 @@
 import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 import { afterNextRender } from '@polymer/polymer/lib/utils/render-status.js';
 
+import '@polymer/app-layout/app-grid/app-grid-style.js';
+
 import '@polymer/iron-icons/iron-icons.js';
 import '@polymer/iron-icons/hardware-icons.js';
 
 import '@polymer/paper-styles/paper-styles.js';
 
-import './bmp280-widget.js';
 import './bme280-widget.js';
-import './bme680-widget.js';
 import './widget-layout.js';
 
 class WidgetsPage extends PolymerElement {
@@ -41,18 +41,25 @@ class WidgetsPage extends PolymerElement {
         }
 
         .header {
-          
+          @apply --layout-flex;
           @apply --layout-horizontal;
+        }
+
+        .info {
+          width: 100%;
+          @apply --layout-vertical;
           @apply --layout-center;
         }
 
-        .title {
+        .label {
           font-size: 2em;
           font-weight: 500;
           text-align: center;
-          height: 100%;
-          @apply --layout-vertical;
-          @apply --layout-center-center;
+        }
+
+        .key {
+          font-size: 0.8em;
+          text-align: center;
         }
 
         .details {
@@ -78,72 +85,46 @@ class WidgetsPage extends PolymerElement {
       <div class="content-area">
         <div id="_grid" class="app-grid">
 
-          <widget-layout key="ESP-2391099">
+          <dom-repeat items="[[__fetchBME280Devices()]]">
+            <template strip-whitespace>
+              <widget-layout key="[[item.key]]">
+              
+                <div slot="header" class="header">
+                  <div class="info">
+                    <div class="label">[[item.label]]</div>
+                    <div class="key">[[item.key]]</div>
+                  </div>
+                  <div class="details">
+                    <div class="column">
+                      <div>Temperature</div>
+                      <div>Humidity</div>
+                      <div>Pressure</div>
+                      <div>Altitude</div>
+                    </div>
+                    <div class="column">
+                      <div>[[item.temperature]]</div>
+                      <div>[[item.humidity]]</div>
+                      <div>[[item.pressure]]</div>
+                      <div>[[item.altitude]]</div>
+                    </div>
+                  </div>
+                </div>
 
-            <div slot="title" class="title">Kitchen</div>
-            
-            <div slot="details" class="details">
-              <div class="column">
-                <div>Temperature</div>
-                <div>Humidity</div>
-                <div>Temperature</div>
-                <div>Humidity</div>
-              </div>
-              <div class="column">
-                <div>[[__ESP-2391099_temperature]]</div>
-                <div>[[__ESP-2391099_humidity]]</div>
-                <div>[[__ESP-2391099_temperature]]</div>
-                <div>[[__ESP-2391099_humidity]]</div>
-              </div>
-            </div>
+                <bme280-widget
+                  device="[[item.key]]"
+                  last-temperature="{{item.temperature}}" 
+                  last-humidity="{{item.humidity}}" 
+                  last-pressure="{{item.pressure}}" 
+                  last-altitude="{{item.altitude}}"
+                  last-update="{{item.updatedAt}}">
+                </bme280-widget>
 
-            <bme280-widget 
-              device="ESP-2391099"
-              last-temperature="{{__ESP-2391099_temperature}}" 
-              last-humidity="{{__ESP-2391099_humidity}}" 
-              last-pressure="{{__ESP-2391099_pressure}}" 
-              last-altitude="{{__ESP-2391099_altitude}}"
-              last-update="{{__ESP-2391099_last_update}}">
-            </bme280-widget>
-
-            <div slot="footer" class="footer">
-              Last update: [[__ESP-2391099_last_update]]
-            </div>
-          </widget-layout>
-
-          <widget-layout key="ESP-2355357">
-
-            <div slot="title" class="title">Bedroom</div>
-            
-            <div slot="details" class="details">
-              <div class="column">
-                <div>Temperature</div>
-                <div>Humidity</div>
-                <div>Temperature</div>
-                <div>Humidity</div>
-              </div>
-              <div class="column">
-                <div>[[__ESP-2355357_temperature]]</div>
-                <div>[[__ESP-2355357_humidity]]</div>
-                <div>[[__ESP-2355357_temperature]]</div>
-                <div>[[__ESP-2355357_humidity]]</div>
-              </div>
-            </div>
-
-            <bme280-widget 
-              device="ESP-2355357"
-              last-temperature="{{__ESP-2355357_temperature}}" 
-              last-humidity="{{__ESP-2355357_humidity}}" 
-              last-pressure="{{__ESP-2355357_pressure}}" 
-              last-altitude="{{__ESP-2355357_altitude}}"
-              last-update="{{__ESP-2355357_last_update}}">
-            </bme280-widget>
-
-            <div slot="footer" class="footer">
-              Last update: [[__ESP-2355357_last_update]]
-            </div>
-          </widget-layout>
-
+                <div slot="footer" class="footer">
+                  Last update: [[item.updatedAt]]
+                </div>
+              </widget-layout>
+            </template>
+          </dom-repeat>
         </div>
       </div>
     `;
@@ -171,6 +152,19 @@ class WidgetsPage extends PolymerElement {
       // initial compute of collapsed state
       this.__computeCollapsedState();
     });
+  }
+
+  __fetchBME280Devices() {
+
+    // only proceed if user is known
+    if (Parse.User.current()) {
+      // TODO fetch all avaialable BME280 devices and remove hard coded array
+    }
+
+    return [
+      { key: "ESP-000023f09d", label: "ESP-01", temperature: NaN, humidity: NaN, pressure: NaN, altitude: NaN, updatedAt: NaN },
+      { key: "ESP-0023a4ae30", label: "ESP-02", temperature: NaN, humidity: NaN, pressure: NaN, altitude: NaN, updatedAt: NaN }
+    ];
   }
 
   /**
