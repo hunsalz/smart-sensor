@@ -1,5 +1,9 @@
 #pragma once
 
+#ifndef DEBUG_ESP_PORT
+  #define DEBUG_ESP_PORT Serial
+#endif
+
 // provide WiFi settings
 static const char* WIFI_SSID_1 = "YOUR SSID";
 static const char* WIFI_PSK_1 = "YOUR PRE SHARED KEY";
