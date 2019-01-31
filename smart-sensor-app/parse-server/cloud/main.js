@@ -30,6 +30,21 @@ Parse.Cloud.define("temperature", async (request) => {
   return response;
 });
 
+Parse.Cloud.define("getBME280Devices", async (request) => {
+
+  var response = [];
+  var query = new Parse.Query("BME280");
+  await query.distinct("device")
+    .then(function(results) {
+      response = results;
+    })
+    .catch(function(error) {
+      console.error(error);
+    });
+
+  return response;
+});
+
 // TODO split afterSave() in sub-functions and add implementations for other sensor classes
 
 Parse.Cloud.afterSave("BME280", async (request) => {
