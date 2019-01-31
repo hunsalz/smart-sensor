@@ -82,15 +82,6 @@ class WidgetsPage extends PolymerElement {
         }
       </style>
 
-      <!--iron-ajax
-        auto
-        url="{{server}}/functions/fetchAllBME280Devices"
-        headers='{"X-Requested-With": "XMLHttpRequest"}'
-        handle-as="json"
-        on-response="handleResponse"
-        debounce-duration="300">
-      </iron-ajax-->
-
       <div class="content-area">
         <div id="_grid" class="app-grid">
 
