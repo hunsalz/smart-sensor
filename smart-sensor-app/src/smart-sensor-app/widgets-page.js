@@ -82,10 +82,19 @@ class WidgetsPage extends PolymerElement {
         }
       </style>
 
+      <!--iron-ajax
+        auto
+        url="{{server}}/functions/fetchAllBME280Devices"
+        headers='{"X-Requested-With": "XMLHttpRequest"}'
+        handle-as="json"
+        on-response="handleResponse"
+        debounce-duration="300">
+      </iron-ajax-->
+
       <div class="content-area">
         <div id="_grid" class="app-grid">
 
-          <dom-repeat items="[[__fetchBME280Devices()]]">
+          <dom-repeat items="[[__initBME280Devices()]]">
             <template strip-whitespace>
               <widget-layout key="[[item.key]]">
               
@@ -154,11 +163,25 @@ class WidgetsPage extends PolymerElement {
     });
   }
 
-  __fetchBME280Devices() {
+  __initBME280Devices() {
+
+    var response = [];
 
     // only proceed if user is known
     if (Parse.User.current()) {
-      // TODO fetch all avaialable BME280 devices and remove hard coded array
+      
+      // console.log("Parse.Cloud.run()");
+      
+      // Parse.Cloud.run("getBME280Devices")
+      //   .then(function(results) {
+          
+      //     console.log(results);
+          
+      //     response = results;
+      //   })
+      //   .catch(function(error) {
+      //     console.error(error);
+      //   }); 
     }
 
     return [
