@@ -3429,7 +3429,7 @@ and this string can then be deleted`;function elementIsScrollLocked(element){var
       <div class="content-area">
         <div id="_grid" class="app-grid">
 
-          <dom-repeat items="[[__fetchBME280Devices()]]">
+          <dom-repeat items="[[__initBME280Devices()]]">
             <template strip-whitespace>
               <widget-layout key="[[item.key]]">
               
@@ -3471,7 +3471,7 @@ and this string can then be deleted`;function elementIsScrollLocked(element){var
           </dom-repeat>
         </div>
       </div>
-    `}static get properties(){return{collapsed:{type:Boolean,notify:!0}}}constructor(){super();afterNextRender(this,function(){this.__updateGridStyles=this.__updateGridStyles||function(){this.updateStyles()}.bind(this);window.addEventListener("resize",this.__updateGridStyles);this.__computeCollapsedState()})}__fetchBME280Devices(){if(Parse.User.current()){}return[{key:"ESP-000023f09d",label:"ESP-01",temperature:NaN,humidity:NaN,pressure:NaN,altitude:NaN,updatedAt:NaN},{key:"ESP-0023a4ae30",label:"ESP-02",temperature:NaN,humidity:NaN,pressure:NaN,altitude:NaN,updatedAt:NaN}]}__computeCollapsedState(){for(var nodes=this.$._grid.querySelectorAll("widget-layout"),state=0,i=0;i<nodes.length;i++){state+=nodes[i].isCollapsed()}this.collapsed=0===state?!1:!0}__toggleWidgets(){var nodes=this.$._grid.querySelectorAll("widget-layout");this.collapsed=!this.collapsed;for(var i=0;i<nodes.length;i++){nodes[i].collapse(this.collapsed)}}}window.customElements.define("widgets-page",WidgetsPage);class SmartSensorApp extends GestureEventListeners(PolymerElement){static get template(){return html`
+    `}static get properties(){return{collapsed:{type:Boolean,notify:!0}}}constructor(){super();afterNextRender(this,function(){this.__updateGridStyles=this.__updateGridStyles||function(){this.updateStyles()}.bind(this);window.addEventListener("resize",this.__updateGridStyles);this.__computeCollapsedState()})}__initBME280Devices(){var response=[];if(Parse.User.current()){}return[{key:"ESP-000023f09d",label:"ESP-01",temperature:NaN,humidity:NaN,pressure:NaN,altitude:NaN,updatedAt:NaN},{key:"ESP-0023a4ae30",label:"ESP-02",temperature:NaN,humidity:NaN,pressure:NaN,altitude:NaN,updatedAt:NaN}]}__computeCollapsedState(){for(var nodes=this.$._grid.querySelectorAll("widget-layout"),state=0,i=0;i<nodes.length;i++){state+=nodes[i].isCollapsed()}this.collapsed=0===state?!1:!0}__toggleWidgets(){var nodes=this.$._grid.querySelectorAll("widget-layout");this.collapsed=!this.collapsed;for(var i=0;i<nodes.length;i++){nodes[i].collapse(this.collapsed)}}}window.customElements.define("widgets-page",WidgetsPage);class SmartSensorApp extends GestureEventListeners(PolymerElement){static get template(){return html`
       <style include="app-grid-style">
         :host {
           display: block;
