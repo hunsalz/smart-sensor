@@ -1,9 +1,35 @@
-.gitignore
+# macOs files
+**/.DS_Store
+
+# C++ config files
 **/config.h
+
+# SPIFFS upload folder
+**/www/
+
+# Parse project files
 **/parse-server/public
 **/parse-server/.parse.local
 **/parse-server/.parse.project
-**/build/
-**/node_modules
-**/www/
-**/package-lock.json
+
+# npm files
+node_modules
+package-lock.json
+npm-debug.log*
+
+# builds
+**/build
+**/dist
+
+# local env files
+.env.local
+.env.*.local
+
+# editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw*
