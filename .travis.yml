@@ -22,8 +22,7 @@ install:
   - mkdir -p ~/Arduino/libraries
   - ln -s $PWD ~/Arduino/libraries/
   - git clone https://github.com/hunsalz/esp8266utils.git ~/Arduino/libraries/esp8266utils
-  - arduino --install-library "log4Esp:1.0.0"
-  - arduino --install-library "ArduinoJson:5.13.2"
+  - arduino --install-library "ArduinoJson:6.6-beta"
   - git clone https://github.com/me-no-dev/ESPAsyncTCP.git ~/Arduino/libraries/ESPAsyncTCP
   - git clone https://github.com/me-no-dev/ESPAsyncWebServer.git ~/Arduino/libraries/ESPAsyncWebServer
   - arduino --pref "boardsmanager.additional.urls=http://arduino.esp8266.com/stable/package_esp8266com_index.json" --install-boards esp8266:esp8266;

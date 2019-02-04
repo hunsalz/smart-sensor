@@ -72,17 +72,18 @@ class ParseAuth extends PolymerElement {
   __login(username, password) {
 
     var self = this;
-    Parse.User.logIn(username, password).then(function (user) {
-      // notify listeners about authentication state and set corrensponding attribute value
-      self._setAuthenticated(true);
-      self.dispatchEvent(new CustomEvent('user-authenticated', { bubbles: true, composed: true }));
-      console.info("Login successful.", user);
-    }, function (error) {
-      // notify listeners about authentication failure and set corrensponding attribute value
-      self._setAuthenticated(false);
-      self.dispatchEvent(new CustomEvent('login-failed', { bubbles: true, composed: true }));
-      console.error("Login failed.", error);
-    });
+    Parse.User.logIn(username, password)
+      .then(function (user) {
+        // notify listeners about authentication state and set corrensponding attribute value
+        self._setAuthenticated(true);
+        self.dispatchEvent(new CustomEvent('user-authenticated', { bubbles: true, composed: true }));
+        console.info("Login successful.", user);
+      }, function (error) {
+        // notify listeners about authentication failure and set corrensponding attribute value
+        self._setAuthenticated(false);
+        self.dispatchEvent(new CustomEvent('login-failed', { bubbles: true, composed: true }));
+        console.error("Login failed.", error);
+      });
   }
 
   __handleLogoutEvent() {

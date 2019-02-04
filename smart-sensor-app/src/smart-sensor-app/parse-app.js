@@ -37,7 +37,7 @@ class ParseApp extends PolymerElement {
 
   __computeApp(applicationId, javaScriptKey, serverUrl, liveQueryServerUrl) {
 
-    if (applicationId && javaScriptKey && serverUrl) {
+    if (applicationId && javaScriptKey && serverUrl && liveQueryServerUrl) {
       Parse.initialize(applicationId, javaScriptKey);
       Parse.serverURL = serverUrl;
       Parse.liveQueryServerURL = liveQueryServerUrl;
