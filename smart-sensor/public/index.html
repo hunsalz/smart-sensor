@@ -1,19 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title>Smart Sensor</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons">
-  </head>
-  <body>
-    <noscript>
-      Please enable JavaScript to view this website.
-    </noscript>
-    <div id="app"></div>
-    <!-- built files will be auto injected -->
-  </body>
+
+<head>
+  <!-- general -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+  <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+  <title>Smart Sensor</title>
+
+  <!-- see https://goo.gl/qRE0vM -->
+  <meta name="theme-color" content="#3f51b5">
+
+  <!-- add homescreen capability for Chrome on Android -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Smart-Sensor">
+
+  <!-- add homescreen capability for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Smart-Sensor">
+
+  <!-- homescreen icons -->
+  <link rel="apple-touch-icon" type="image/png" href="<%= BASE_URL %>/img/icons/apple-touch-icon.png">
+  <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="<%= BASE_URL %>/img/icons/apple-touch-icon-60x60.png">
+  <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="<%= BASE_URL %>/img/icons/apple-touch-icon-76x76.png">
+  <link rel="apple-touch-icon" type="image/png" sizes="120x120" href="<%= BASE_URL %>/img/icons/apple-touch-icon-120x120.png">
+  <link rel="apple-touch-icon" type="image/png" sizes="152x152" href="<%= BASE_URL %>/img/icons/apple-touch-icon-152x152.png">
+  <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="<%= BASE_URL %>/img/icons/apple-touch-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="<%= BASE_URL %>/img/icons/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="<%= BASE_URL %>/img/icons/android-chrome-512x512.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="<%= BASE_URL %>/img/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="<%= BASE_URL %>/img/icons/favicon-32x32.png">
+
+  <!-- tile icon for Windows 8 (144x144 + tile color) -->
+  <meta name="msapplication-TileImage" content="<%= BASE_URL %>/img/icons/icon-144x144.png">
+  <meta name="msapplication-TileColor" content="#3f51b5">
+  <meta name="msapplication-tap-highlight" content="no">
+
+  <!-- fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons">
+
+  <!-- add any global styles for body, document, etc. -->
+  <style>
+    @font-face {
+      font-family: 'Pacifico';
+      font-style: normal;
+      font-weight: 400;
+      src: local('Pacifico Regular'), local('Pacifico-Regular'), url(https://fonts.gstatic.com/s/pacifico/v12/Q_Z9mv4hySLTMoMjnk_rCXYhjbSpvc47ee6xR_80Hnw.woff2) format('woff2');
+      /* The browser draws the text immediately in the fallback font if the font
+        isn't loaded, then swaps it with the webfont when it eventually loads
+        See: https://developers.google.com/web/updates/2016/02/font-display
+      */
+      font-display: swap;
+    }
+
+    body {
+      margin: 0;
+      /* This is a font-stack that tries to use the system-default sans-serifs first */
+      font-family: Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      -webkit-font-smoothing: antialiased;
+    }
+
+    * {
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -o-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+  </style>
+</head>
+
+<body>
+  <noscript>
+    Please enable JavaScript to view this website.
+  </noscript>
+  <div id="app"></div>
+  <!-- built files will be auto injected -->
+</body>
+
 </html>
