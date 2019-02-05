@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar app>
+  <v-toolbar app dark color="primary">
     <v-toolbar-title class="headline text-uppercase">
       <span>Smart-</span>
       <span class="font-weight-light">SENSOR</span>
