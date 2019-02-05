@@ -1,7 +1,8 @@
 <template>
   <v-container grid-list-md>
-    <v-layout align-space-between justify-start wrap>
-      <v-flex v-for="i in 5" :key="i" xs6>
+    <h1>current: {{$mq | mq({ sm: 'xs12', md: 'xs6', lg: 'xs4' })}}</h1>
+    <v-layout column wrap>
+      <v-flex v-for="i in 5" :key="i" :xs="$mq | mq({ sm: 12, md: 6, lg: 4 })">
         <v-expansion-panel expand>
           <v-expansion-panel-content>
             <div slot="header">ESP-8266</div>
