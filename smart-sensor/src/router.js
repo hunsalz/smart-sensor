@@ -36,16 +36,29 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
+    
+    // verify if auth is required
     if (to.matched.some(record => record.meta.authRequired)) {
-        if (!store.state.authenticated) {
+        // route to target if authentication is done
+        if (store.state.authenticated) {
+            next();
+        // otherwise route to login
+        } else {
             next({
-                path: '/login'
+                name: 'login'
             });
+        }
+    // if no auth is required ...
+    } else {
+        // redirect to overview if authentication is already done
+        if (to.name === 'login' && store.state.authenticated) {
+            next({
+                name: 'overview'
+            });
+        // otherwise move on to routes that do not require authentication
         } else {
             next();
         }
-    } else {
-        next();
     }
 });
 
