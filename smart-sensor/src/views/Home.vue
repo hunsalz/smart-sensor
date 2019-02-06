@@ -1,7 +1,7 @@
 <template>
   <v-container grid-list-sm>
     <v-layout row wrap>
-      <v-flex v-for="i in 5" :key="i" xs12 sm6 md4 lg2>
+      <v-flex v-for="i in 5" :key="i" xs12 sm6 md4>
         <v-expansion-panel expand>
           <v-expansion-panel-content>
             <div slot="header">

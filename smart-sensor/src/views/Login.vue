@@ -4,7 +4,7 @@
       <v-flex xs12 sm8 md4>
         <v-card class="elevation-12">
           <v-toolbar color="primary">
-            <v-toolbar-title>Login</v-toolbar-title>
+            <v-toolbar-title class="white--text">Login</v-toolbar-title>
           </v-toolbar>
           <v-card-text>
             <v-form ref="form" v-model="valid">
@@ -16,7 +16,6 @@
                 v-model="email"
                 :rules="emailRules"
                 autocomplete="username"
-                placeholder
                 required
               ></v-text-field>
               <v-text-field
@@ -27,7 +26,6 @@
                 v-model="password"
                 :rules="passwordRules"
                 autocomplete="current-password"
-                placeholder
                 required
               ></v-text-field>
             </v-form>
