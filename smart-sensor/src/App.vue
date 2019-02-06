@@ -25,11 +25,6 @@
     },
     methods: {
       setTitle() {
-
-        console.log(this.$i18n);
-        console.log(this.$i18n.locale);
-        console.log(process.env);
-
         document.title = this.$t("application.name");
       }
     }
