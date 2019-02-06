@@ -10,10 +10,10 @@
       <v-spacer></v-spacer>
       <v-flex>
         <v-layout column>
-          <v-flex>Temperature 22</v-flex>
-          <v-flex>Humidity 54 %</v-flex>
-          <v-flex>Pressure 32322 Pa</v-flex>
-          <v-flex>Altitude 122 m</v-flex>
+          <v-flex>{{ $t('label.temperature') }} 22 °</v-flex>
+          <v-flex>{{ $t('label.humidity') }} 54 %</v-flex>
+          <v-flex>{{ $t('label.pressure') }} 32322 Pa</v-flex>
+          <v-flex>{{ $t('label.altitude') }} 122 m</v-flex>
         </v-layout>
       </v-flex>
     </v-layout>

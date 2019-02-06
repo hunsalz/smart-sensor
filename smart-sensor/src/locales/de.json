@@ -1,0 +1,11 @@
+{
+  "application": {
+    "name": "Smart Sensor"
+  },
+  "label": {
+    "temperature": "Temperatur",
+    "humidity": "Luftfeuchtigkeit",
+    "pressure": "Druck",
+    "altitude": "Höhe"
+  }
+}

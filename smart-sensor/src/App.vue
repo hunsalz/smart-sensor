@@ -25,7 +25,12 @@
     },
     methods: {
       setTitle() {
-        //document.title = this.$t("application.name");
+
+        console.log(this.$i18n);
+        console.log(this.$i18n.locale);
+        console.log(process.env);
+
+        document.title = this.$t("application.name");
       }
     }
   };
