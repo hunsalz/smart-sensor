@@ -1,11 +1,29 @@
 <template>
-  <v-container grid-list-md>
-    <h1>current: {{$mq | mq({ sm: 'xs12', md: 'xs6', lg: 'xs4' })}}</h1>
-    <v-layout column wrap>
-      <v-flex v-for="i in 5" :key="i" :xs="$mq | mq({ sm: 12, md: 6, lg: 4 })">
+  <v-container grid-list-sm>
+    <v-layout row wrap>
+      <v-flex v-for="i in 5" :key="i" xs12 sm6 md4 lg2>
         <v-expansion-panel expand>
           <v-expansion-panel-content>
-            <div slot="header">ESP-8266</div>
+            <div slot="header">
+              <div class="info2">
+                <div class="label">Label-</div>
+                <div class="key">ESP-8266-</div>
+              </div>
+              <!--div class="details">
+                <div class="column">
+                  <div>Temperature</div>
+                  <div>Humidity</div>
+                  <div>Pressure</div>
+                  <div>Altitude</div>
+                </div>
+                <div class="column">
+                  <div>22.3 °</div>
+                  <div>39 %</div>
+                  <div>974367 Pa</div>
+                  <div>234 m</div>
+                </div>
+              </div-->
+            </div>
             <v-card>
               <v-card-text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</v-card-text>
             </v-card>
@@ -23,4 +41,28 @@
 </script>
 
 <style scoped>
+  .info2 {
+    width: 100%;
+  }
+
+  .label {
+    font-size: 2em;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .key {
+    font-size: 0.8em;
+    text-align: center;
+  }
+
+  .details {
+    font-size: 0.8em;
+    width: 100%;
+  }
+
+  .column {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
 </style>
