@@ -1,7 +1,7 @@
 <template>
   <v-toolbar app prominent color="primary" class="white--text">
     <v-toolbar-title class="headline text-uppercase">
-      <span>Smart-</span>
+      <span>Smart </span>
       <span class="font-weight-light">SENSOR</span>
     </v-toolbar-title>
     <v-spacer></v-spacer>

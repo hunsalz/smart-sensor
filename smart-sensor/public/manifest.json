@@ -1,7 +1,7 @@
 {
-  "name": "Smart-Sensor",
-  "short_name": "Smart-Sensor",
-  "description": "Smart-Sensor for various sensor values",
+  "name": "Smart Sensor",
+  "short_name": "Smart Sensor App",
+  "description": "Smart Sensor App for various sensor values",
   "icons": [
     {
       "src": "./img/icons/android-chrome-192x192.png",
