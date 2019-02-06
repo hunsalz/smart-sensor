@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import VuexPersistence from 'vuex-persist';
 import Parse from "parse";
-import router from '@/router';
+import router from './router';
 
 Vue.use(Vuex);
 
