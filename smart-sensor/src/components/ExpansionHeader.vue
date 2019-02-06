@@ -21,9 +21,9 @@
 </template>
 
 <script>
-  export default {
-    name: "ExpansionHeader"
-  };
+export default {
+  name: 'ExpansionHeader'
+}
 </script>
 
 <style scoped>

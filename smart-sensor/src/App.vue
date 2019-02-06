@@ -15,20 +15,20 @@
 </template>
 
 <script>
-  export default {
-    name: "App",
-    components: {
-      AppNavigation: () => import("./components/AppNavigation.vue")
-    },
-    created() {
-      this.setTitle();
-    },
-    methods: {
-      setTitle() {
-        document.title = this.$t("application.name");
-      }
+export default {
+  name: 'App',
+  components: {
+    AppNavigation: () => import('./components/AppNavigation.vue')
+  },
+  created () {
+    this.setTitle()
+  },
+  methods: {
+    setTitle () {
+      document.title = this.$t('application.name')
     }
-  };
+  }
+}
 </script>
 
 <style>

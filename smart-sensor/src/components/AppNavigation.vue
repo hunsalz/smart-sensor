@@ -12,19 +12,19 @@
 </template>
 
 <script>
-  export default {
-    name: "AppNavigation",
-    computed: {
-      isAuthenticated() {
-        return this.$store.getters.isAuthenticated;
-      }
-    },
-    methods: {
-      logout() {
-        this.$store.dispatch("userLogout");
-      }
+export default {
+  name: 'AppNavigation',
+  computed: {
+    isAuthenticated () {
+      return this.$store.getters.isAuthenticated
     }
-  };
+  },
+  methods: {
+    logout () {
+      this.$store.dispatch('userLogout')
+    }
+  }
+}
 </script>
 
 <style scoped>

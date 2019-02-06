@@ -41,34 +41,34 @@
 </template>
 
 <script>
-  export default {
-    name: "Login",
-    data: function() {
-      return {
-        valid: false,
-        email: "",
-        password: "",
-        emailRules: [
-          v => !!v || "E-mail is required",
-          v => /.+@.+/.test(v) || "E-mail must be valid"
-        ],
-        passwordRules: [
-          v => !!v || "Password is required",
-          v => v.length >= 5 || "Password must be at least 5 characters"
-        ]
-      };
-    },
-    methods: {
-      submit() {
-        if (this.$refs.form.validate()) {
-          this.$store.dispatch("userLogin", {
-            email: this.email,
-            password: this.password
-          });
-        }
+export default {
+  name: 'Login',
+  data: function () {
+    return {
+      valid: false,
+      email: '',
+      password: '',
+      emailRules: [
+        v => !!v || 'E-mail is required',
+        v => /.+@.+/.test(v) || 'E-mail must be valid'
+      ],
+      passwordRules: [
+        v => !!v || 'Password is required',
+        v => v.length >= 5 || 'Password must be at least 5 characters'
+      ]
+    }
+  },
+  methods: {
+    submit () {
+      if (this.$refs.form.validate()) {
+        this.$store.dispatch('userLogin', {
+          email: this.email,
+          password: this.password
+        })
       }
     }
-  };
+  }
+}
 </script>
 
 <style scoped>

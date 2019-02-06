@@ -18,14 +18,14 @@
 </template>
 
 <script>
-  import ExpansionHeader from "@/components/ExpansionHeader";
+import ExpansionHeader from '@/components/ExpansionHeader'
 
-  export default {
-    name: "Home",
-    components: {
-      ExpansionHeader
-    }
-  };
+export default {
+  name: 'Home',
+  components: {
+    ExpansionHeader
+  }
+}
 </script>
 
 <style scoped>
