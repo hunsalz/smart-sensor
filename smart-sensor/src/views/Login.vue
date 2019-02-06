@@ -44,7 +44,7 @@
 
 <script>
   export default {
-    name: "AppLogin",
+    name: "Login",
     data: function() {
       return {
         valid: false,

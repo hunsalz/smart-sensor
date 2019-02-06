@@ -39,7 +39,7 @@ const store = new Vuex.Store({
             //         console.log("Login successful.");
 
             //         commit('setAuthenticated', true);
-            //         router.push({ name: "overview" });
+            //         router.push({ name: "home" });
             //     })
             //     .catch(function (e) {
 
@@ -49,7 +49,7 @@ const store = new Vuex.Store({
             //     });
 
             commit('setAuthenticated', true);
-            router.push({ name: "overview" });
+            router.push({ name: "home" });
         },
         userLogout({ commit }) {
 

@@ -16,12 +16,12 @@ const router = new Router({
         {
             path: '/login',
             name: 'login',
-            component: () => import('./components/AppLogin.vue'),
+            component: () => import('./views/Login.vue'),
         },
         {
-            path: '/overview',
-            name: 'overview',
-            component: () => import('./components/AppOverview.vue'),
+            path: '/home',
+            name: 'home',
+            component: () => import('./views/Home.vue'),
             meta: {
                 authRequired: true
             }
@@ -50,10 +50,10 @@ router.beforeEach((to, from, next) => {
         }
     // if no auth is required ...
     } else {
-        // redirect to overview if authentication is already done
+        // redirect to home if authentication is already done
         if (to.name === 'login' && store.state.authenticated) {
             next({
-                name: 'overview'
+                name: 'home'
             });
         // otherwise move on to routes that do not require authentication
         } else {

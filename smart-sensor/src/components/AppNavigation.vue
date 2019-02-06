@@ -1,12 +1,12 @@
 <template>
-  <v-toolbar app color="primary">
+  <v-toolbar app prominent color="primary" class="white--text">
     <v-toolbar-title class="headline text-uppercase">
       <span>Smart-</span>
       <span class="font-weight-light">SENSOR</span>
     </v-toolbar-title>
     <v-spacer></v-spacer>
     <div v-if="isAuthenticated">
-      <v-btn flat @click="logout">Logout</v-btn>
+      <v-btn flat @click="logout" class="white--text">Logout</v-btn>
     </div>
   </v-toolbar>
 </template>

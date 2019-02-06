@@ -5,24 +5,7 @@
         <v-expansion-panel expand>
           <v-expansion-panel-content>
             <div slot="header">
-              <div class="info2">
-                <div class="label">Label-</div>
-                <div class="key">ESP-8266-</div>
-              </div>
-              <!--div class="details">
-                <div class="column">
-                  <div>Temperature</div>
-                  <div>Humidity</div>
-                  <div>Pressure</div>
-                  <div>Altitude</div>
-                </div>
-                <div class="column">
-                  <div>22.3 °</div>
-                  <div>39 %</div>
-                  <div>974367 Pa</div>
-                  <div>234 m</div>
-                </div>
-              </div-->
+              <expansion-header></expansion-header>
             </div>
             <v-card>
               <v-card-text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</v-card-text>
@@ -35,8 +18,13 @@
 </template>
 
 <script>
+  import ExpansionHeader from "@/components/ExpansionHeader";
+
   export default {
-    name: "AppOverview"
+    name: "Home",
+    components: {
+      ExpansionHeader
+    }
   };
 </script>
 
