@@ -42,6 +42,9 @@
   <meta name="msapplication-TileColor" content="#4DBA87">
   <meta name="msapplication-tap-highlight" content="no">
 
+  <!-- performance tip: hint to the browser to start the handshake for the fonts site -->
+  <link rel="preconnect" href="https://fonts.googleapis.com/" crossorigin>
+
   <!-- fonts -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons">
@@ -65,16 +68,6 @@
       /* This is a font-stack that tries to use the system-default sans-serifs first */
       font-family: Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
       -webkit-font-smoothing: antialiased;
-    }
-
-    * {
-      -webkit-touch-callout: none;
-      -webkit-user-select: none;
-      -khtml-user-select: none;
-      -moz-user-select: none;
-      -o-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
     }
   </style>
 </head>
