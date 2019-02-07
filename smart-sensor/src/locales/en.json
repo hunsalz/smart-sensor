@@ -1,6 +1,10 @@
 {
-  "application": {
-    "name": "Smart Sensor"
+  "app": {
+    "name": "Smart Sensor",
+    "login": {
+      "email": "Email",
+      "password": "Password"
+    }
   },
   "label": {
     "temperature": "Temperature",

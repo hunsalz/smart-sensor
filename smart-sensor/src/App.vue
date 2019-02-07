@@ -25,7 +25,7 @@ export default {
   },
   methods: {
     setTitle () {
-      document.title = this.$t('application.name')
+      document.title = this.$t('app.name')
     }
   }
 }
