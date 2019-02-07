@@ -3,7 +3,7 @@
     <v-layout align-center justify-center>
       <v-flex xs12 sm8 md4>
         <ValidationObserver ref="obs">
-          <v-card class="elevation-12" slot-scope="{ invalid, validated }">
+          <v-card class="elevation-12" slot-scope="{invalid,validated}">
             <v-toolbar color="primary">
               <v-toolbar-title class="white--text">Login</v-toolbar-title>
             </v-toolbar>
@@ -13,7 +13,7 @@
                   <v-text-field
                     prepend-icon="person"
                     name="email"
-                    label="Email"
+                    :label="$t('app.login.email')"
                     type="email"
                     v-model="email"
                     autocomplete="email"
@@ -27,7 +27,7 @@
                   <v-text-field
                     prepend-icon="lock"
                     name="password"
-                    label="Password"
+                    :label="$t('app.login.password')"
                     type="password"
                     v-model="password"
                     autocomplete="password"
@@ -65,14 +65,19 @@
         password: ""
       };
     },
+    created() {
+      // TODO remove
+      this.locale = this.$validator.locale = "de";
+      console.log("locale", this.$validator);
+    },
     methods: {
       async submit() {
         const valid = await this.$refs.obs.validate();
         if (valid) {
-          this.$store.dispatch('userLogin', {
+          this.$store.dispatch("userLogin", {
             email: this.email,
             password: this.password
-          })
+          });
         }
       }
     }
