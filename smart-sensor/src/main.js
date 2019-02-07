@@ -3,6 +3,7 @@ import App from './App.vue'
 import i18n from './plugins/i18n'
 import router from './plugins/router'
 import store from './plugins/store'
+import './plugins/vee-validate';
 import './plugins/vuetify'
 import './registerServiceWorker'
 
