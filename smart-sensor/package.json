@@ -10,10 +10,11 @@
   "dependencies": {
     "parse": "^2.1.0",
     "register-service-worker": "^1.5.2",
-    "vue": "^2.5.22",
+    "vee-validate": "^2.1.7",
+    "vue": "^2.6.3",
     "vue-i18n": "^8.0.0",
     "vue-router": "^3.0.2",
-    "vuetify": "^1.4.4",
+    "vuetify": "^1.5.0",
     "vuex": "^3.1.0",
     "vuex-persist": "^2.0.0"
   },
@@ -31,7 +32,7 @@
     "stylus-loader": "^3.0.1",
     "vue-cli-plugin-i18n": "^0.5.1",
     "vue-cli-plugin-vuetify": "^0.4.6",
-    "vue-template-compiler": "^2.5.21",
+    "vue-template-compiler": "^2.6.3",
     "vuetify-loader": "^1.0.5"
   },
   "eslintConfig": {
