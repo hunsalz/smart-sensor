@@ -4,7 +4,8 @@
     "login": {
       "name": "Login",
       "email": "Email",
-      "password": "Password"
+      "password": "Password",
+      "btn": "Login"
     },
     "logout": {
       "name": "Logout"
