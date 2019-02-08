@@ -7,7 +7,7 @@
           <v-flex>ESP-0000001</v-flex>
         </v-layout>
       </v-flex>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-flex>
         <v-layout column>
           <v-flex>{{ $t('label.temperature') }} 22 °</v-flex>

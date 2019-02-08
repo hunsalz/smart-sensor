@@ -1,11 +1,20 @@
 <template>
   <v-container grid-list-sm>
-    <v-layout row wrap>
-      <v-flex v-for="i in 5" :key="i" xs12 sm6 md4>
+    <v-layout
+      row
+      wrap
+    >
+      <v-flex
+        v-for="i in 5"
+        :key="i"
+        xs12
+        sm6
+        md4
+      >
         <v-expansion-panel expand>
           <v-expansion-panel-content>
             <div slot="header">
-              <panel-header></panel-header>
+              <panel-header />
             </div>
             <v-card>
               <v-card-text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</v-card-text>
@@ -18,39 +27,15 @@
 </template>
 
 <script>
-import PanelHeader from '@/components/PanelHeader'
+  import PanelHeader from "@/components/PanelHeader";
 
-export default {
-  name: 'Home',
-  components: {
-    PanelHeader
-  }
-}
+  export default {
+    name: "Home",
+    components: {
+      PanelHeader
+    }
+  };
 </script>
 
 <style scoped>
-  .info2 {
-    width: 100%;
-  }
-
-  .label {
-    font-size: 2em;
-    font-weight: 500;
-    text-align: center;
-  }
-
-  .key {
-    font-size: 0.8em;
-    text-align: center;
-  }
-
-  .details {
-    font-size: 0.8em;
-    width: 100%;
-  }
-
-  .column {
-    padding-left: 5px;
-    padding-right: 5px;
-  }
 </style>

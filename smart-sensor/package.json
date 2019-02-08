@@ -2,6 +2,10 @@
   "name": "smart-sensor",
   "version": "0.1.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hunsalz/smart-sensor.git"
+  },
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -13,21 +17,21 @@
     "vee-validate": "^2.1.7",
     "vue": "^2.6.3",
     "vue-i18n": "^8.0.0",
+    "@kazupon/vue-i18n-loader": "^0.3.0",
     "vue-router": "^3.0.2",
     "vuetify": "^1.5.0",
     "vuex": "^3.1.0",
     "vuex-persist": "^2.0.0"
   },
   "devDependencies": {
-    "@kazupon/vue-i18n-loader": "^0.3.0",
     "@vue/cli-plugin-babel": "^3.3.0",
     "@vue/cli-plugin-eslint": "^3.4.0",
     "@vue/cli-plugin-pwa": "^3.4.0",
     "@vue/cli-service": "^3.3.0",
-    "@vue/eslint-config-standard": "^4.0.0",
     "babel-eslint": "^10.0.1",
-    "eslint": "^5.8.0",
-    "eslint-plugin-vue": "^5.0.0",
+    "eslint": "^5.13.0",
+    "eslint-plugin-babel": "^5.3.0",
+    "eslint-plugin-vue": "^5.1.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
     "vue-cli-plugin-i18n": "^0.5.1",
@@ -42,12 +46,12 @@
     },
     "extends": [
       "plugin:vue/essential",
-      "eslint:recommended",
-      "@vue/standard"
+      "eslint:recommended"
     ],
     "rules": {},
     "parserOptions": {
-      "parser": "babel-eslint"
+      "parser": "babel-eslint",
+      "allowImportExportEverywhere": true
     }
   },
   "postcss": {

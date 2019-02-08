@@ -19,4 +19,4 @@ import messagesDE from 'vee-validate/dist/locale/de'
 
 Validator.localize({ de: messagesDE })
 
-Vue.use(VeeValidate, {locale: 'de'})
+Vue.use(VeeValidate, { locale: 'de' })

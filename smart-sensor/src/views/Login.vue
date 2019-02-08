@@ -1,47 +1,71 @@
 <template>
   <v-container fill-height>
-    <v-layout align-center justify-center>
-      <v-flex xs12 sm8 md4>
+    <v-layout
+      align-center
+      justify-center
+    >
+      <v-flex
+        xs12
+        sm8
+        md4
+      >
         <validation-observer ref="obs">
-          <v-card class="elevation-12" slot-scope="{invalid,validated}">
+          <v-card
+            slot-scope="{invalid,validated}"
+            class="elevation-12"
+          >
             <v-toolbar color="primary">
-              <v-toolbar-title class="white--text">{{$t('app.login.name')}}</v-toolbar-title>
+              <v-toolbar-title class="white--text">
+                {{ $t('app.login.name') }}
+              </v-toolbar-title>
             </v-toolbar>
             <v-card-text>
               <v-form>
-                <validation-provider name="Email" rules="required|email">
+                <validation-provider
+                  name="Email"
+                  rules="required|email"
+                >
                   <v-text-field
+                    slot-scope="{errors,valid}"
+                    v-model="email"
                     prepend-icon="person"
                     name="email"
                     :label="$t('app.login.email')"
                     type="email"
-                    v-model="email"
                     autocomplete="email"
-                    slot-scope="{errors,valid}"
                     :error-messages="errors"
                     :success="valid"
                     required
-                  ></v-text-field>
+                  />
                 </validation-provider>
-                <validation-provider name="Password" rules="required|min:5">
+                <validation-provider
+                  name="Password"
+                  rules="required|min:5"
+                >
                   <v-text-field
+                    slot-scope="{errors,valid}"
+                    v-model="password"
                     prepend-icon="lock"
                     name="password"
                     :label="$t('app.login.password')"
                     type="password"
-                    v-model="password"
                     autocomplete="password"
-                    slot-scope="{errors,valid}"
                     :error-messages="errors"
                     :success="valid"
                     required
-                  ></v-text-field>
+                  />
                 </validation-provider>
               </v-form>
             </v-card-text>
             <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="primary" @click="submit" :disabled="invalid || !validated">{{$t('app.login.btn')}}</v-btn>
+              <v-spacer />
+              <v-btn
+                color="primary"
+                :disabled="invalid || !validated"
+                @click="submit"
+              >
+                {{ $t('app.login.btn') }}
+              </v-btn>
             </v-card-actions>
           </v-card>
         </validation-observer>

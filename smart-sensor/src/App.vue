@@ -1,13 +1,26 @@
 <template>
   <v-app id="app">
-    <the-navigation></the-navigation>
+    <the-navigation />
     <v-content transition="slide-x-transition">
-      <router-view></router-view>
+      <router-view />
     </v-content>
-    <v-footer height="auto" color="primary">
-      <v-layout justify-center row>
-        <v-btn flat href="https://github.com/hunsalz/smart-sensor" target="_blank" rel="noreferrer">
-          <span class="white--text">GitHub</span>
+    <v-footer
+      height="auto"
+      color="primary"
+    >
+      <v-layout
+        justify-center
+        row
+      >
+        <v-btn
+          flat
+          href="https://github.com/hunsalz/smart-sensor"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <span class="white--text">
+            GitHub
+          </span>
         </v-btn>
       </v-layout>
     </v-footer>
@@ -15,20 +28,22 @@
 </template>
 
 <script>
-export default {
-  name: 'App',
-  components: {
-    TheNavigation: () => import('./components/TheNavigation.vue')
-  },
-  created () {
-    this.setTitle()
-  },
-  methods: {
-    setTitle () {
-      document.title = this.$t('app.name')
+  import TheNavigation from "@/components/TheNavigation";
+
+  export default {
+    name: "App",
+    components: {
+      TheNavigation
+    },
+    created() {
+      this.setTitle();
+    },
+    methods: {
+      setTitle() {
+        document.title = this.$t("app.name");
+      }
     }
-  }
-}
+  };
 </script>
 
 <style>

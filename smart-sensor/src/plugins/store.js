@@ -23,6 +23,7 @@ const store = new Vuex.Store({
   },
   actions: {
     userLogin ({ commit }, { email, password }) {
+      // eslint-disable-next-line no-console
       console.log('userLogin called', commit, email, password)
 
       // set up Parse
@@ -53,6 +54,7 @@ const store = new Vuex.Store({
     },
     userLogout ({ commit }) {
       // TODO
+      // eslint-disable-next-line no-console
       console.log('logout')
       commit('setAuthenticated', false)
       router.push({ name: 'login' })

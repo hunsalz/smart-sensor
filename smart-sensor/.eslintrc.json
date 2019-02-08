@@ -1,0 +1,15 @@
+{
+    "extends": [
+        "eslint:recommended",
+        "plugin:vue/recommended"
+    ],
+    "plugins": [
+        "babel"
+    ],
+    "parser": "vue-eslint-parser",
+    "parserOptions": {
+        "parser": "babel-eslint",
+        "sourceType": "module",
+        "allowImportExportEverywhere": true
+    }
+}
