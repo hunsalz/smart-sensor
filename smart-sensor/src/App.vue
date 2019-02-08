@@ -1,6 +1,6 @@
 <template>
   <v-app id="app">
-    <app-navigation></app-navigation>
+    <the-navigation></the-navigation>
     <v-content transition="slide-x-transition">
       <router-view></router-view>
     </v-content>
@@ -18,7 +18,7 @@
 export default {
   name: 'App',
   components: {
-    AppNavigation: () => import('./components/AppNavigation.vue')
+    TheNavigation: () => import('./components/TheNavigation.vue')
   },
   created () {
     this.setTitle()

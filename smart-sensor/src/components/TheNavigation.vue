@@ -13,7 +13,7 @@
 
 <script>
 export default {
-  name: 'AppNavigation',
+  name: 'TheNavigation',
   computed: {
     isAuthenticated () {
       return this.$store.getters.isAuthenticated
