@@ -2,14 +2,14 @@
   <v-container fill-height>
     <v-layout align-center justify-center>
       <v-flex xs12 sm8 md4>
-        <ValidationObserver ref="obs">
+        <validation-observer ref="obs">
           <v-card class="elevation-12" slot-scope="{invalid,validated}">
             <v-toolbar color="primary">
               <v-toolbar-title class="white--text">{{$t('app.login.name')}}</v-toolbar-title>
             </v-toolbar>
             <v-card-text>
               <v-form>
-                <ValidationProvider name="email" rules="required|email">
+                <validation-provider name="email" rules="required|email">
                   <v-text-field
                     prepend-icon="person"
                     name="email"
@@ -22,8 +22,8 @@
                     :success="valid"
                     required
                   ></v-text-field>
-                </ValidationProvider>
-                <ValidationProvider name="Password" rules="required|min:5">
+                </validation-provider>
+                <validation-provider name="Password" rules="required|min:5">
                   <v-text-field
                     prepend-icon="lock"
                     name="password"
@@ -36,7 +36,7 @@
                     :success="valid"
                     required
                   ></v-text-field>
-                </ValidationProvider>
+                </validation-provider>
               </v-form>
             </v-card-text>
             <v-card-actions>
@@ -44,7 +44,7 @@
               <v-btn color="primary" @click="submit" :disabled="invalid || !validated">Login</v-btn>
             </v-card-actions>
           </v-card>
-        </ValidationObserver>
+        </validation-observer>
       </v-flex>
     </v-layout>
   </v-container>
