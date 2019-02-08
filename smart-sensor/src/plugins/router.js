@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import store from './store'
+import store from './store/store'
 
 Vue.use(Router)
 
@@ -35,10 +35,11 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
+
   // verify if auth is required
   if (to.matched.some(record => record.meta.authRequired)) {
     // route to target if authentication is done
-    if (store.state.authenticated) {
+    if (store.getters.isAuthenticated) {
       next()
       // otherwise route to login
     } else {
@@ -49,7 +50,7 @@ router.beforeEach((to, from, next) => {
     // if no auth is required ...
   } else {
     // redirect to home if authentication is already done
-    if (to.name === 'login' && store.state.authenticated) {
+    if (to.name === 'login' && store.getters.isAuthenticated) {
       next({
         name: 'home'
       })
