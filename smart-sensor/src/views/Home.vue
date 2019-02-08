@@ -5,7 +5,7 @@
         <v-expansion-panel expand>
           <v-expansion-panel-content>
             <div slot="header">
-              <expansion-header></expansion-header>
+              <panel-header></panel-header>
             </div>
             <v-card>
               <v-card-text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</v-card-text>
@@ -18,12 +18,12 @@
 </template>
 
 <script>
-import ExpansionHeader from '@/components/ExpansionHeader'
+import PanelHeader from '@/components/PanelHeader'
 
 export default {
   name: 'Home',
   components: {
-    ExpansionHeader
+    PanelHeader
   }
 }
 </script>
