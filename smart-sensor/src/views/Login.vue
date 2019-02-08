@@ -5,7 +5,7 @@
         <ValidationObserver ref="obs">
           <v-card class="elevation-12" slot-scope="{invalid,validated}">
             <v-toolbar color="primary">
-              <v-toolbar-title class="white--text">Login</v-toolbar-title>
+              <v-toolbar-title class="white--text">{{$t('app.login.name')}}</v-toolbar-title>
             </v-toolbar>
             <v-card-text>
               <v-form>

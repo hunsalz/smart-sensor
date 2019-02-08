@@ -6,7 +6,7 @@
     </v-toolbar-title>
     <v-spacer></v-spacer>
     <div v-if="isAuthenticated">
-      <v-btn flat @click="logout" class="white--text">Logout</v-btn>
+      <v-btn flat @click="logout" class="white--text">{{$t('app.logout.name')}}</v-btn>
     </div>
   </v-toolbar>
 </template>

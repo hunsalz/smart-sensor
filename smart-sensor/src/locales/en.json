@@ -2,8 +2,12 @@
   "app": {
     "name": "Smart Sensor",
     "login": {
+      "name": "Login",
       "email": "Email",
       "password": "Password"
+    },
+    "logout": {
+      "name": "Logout"
     }
   },
   "label": {
