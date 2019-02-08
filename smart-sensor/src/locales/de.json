@@ -15,5 +15,9 @@
     "humidity": "Luftfeuchtigkeit",
     "pressure": "Druck",
     "altitude": "Höhe"
+  },
+  "validations": {
+    "messages": {
+    }
   }
 }
