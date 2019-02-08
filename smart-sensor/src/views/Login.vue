@@ -9,7 +9,7 @@
             </v-toolbar>
             <v-card-text>
               <v-form>
-                <validation-provider name="email" rules="required|email">
+                <validation-provider name="Email" rules="required|email">
                   <v-text-field
                     prepend-icon="person"
                     name="email"
@@ -64,11 +64,6 @@
         email: "",
         password: ""
       };
-    },
-    created() {
-      // TODO remove
-      this.locale = this.$validator.locale = "de";
-      console.log("locale", this.$validator);
     },
     methods: {
       async submit() {
