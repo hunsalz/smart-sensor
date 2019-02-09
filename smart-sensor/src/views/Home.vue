@@ -1,12 +1,14 @@
 <template>
-  <v-container grid-list-sm>
+  <v-container
+    grid-list-xl
+    fluid
+  >
     <v-layout
+      align-center
+      justify-space-around
       row
-      wrap
     >
       <v-flex
-        v-for="i in 5"
-        :key="i"
         xs12
         sm6
         md4
@@ -14,10 +16,20 @@
         <v-expansion-panel expand>
           <v-expansion-panel-content>
             <div slot="header">
-              <panel-header />
+              <panel-header device="ESP-000023f09d" />
             </div>
             <v-card>
-              <v-card-text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</v-card-text>
+              <v-card-text>Lorem ipsum dolor sit amet ...</v-card-text>
+            </v-card>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+        <v-expansion-panel expand>
+          <v-expansion-panel-content>
+            <div slot="header">
+              <panel-header device="ESP-0023a4ae30" />
+            </div>
+            <v-card>
+              <v-card-text>Lorem ipsum dolor sit amet ...</v-card-text>
             </v-card>
           </v-expansion-panel-content>
         </v-expansion-panel>
@@ -33,6 +45,9 @@
     name: "Home",
     components: {
       PanelHeader
+    },
+    created() {
+      this.$store.dispatch("queryValues");
     }
   };
 </script>
