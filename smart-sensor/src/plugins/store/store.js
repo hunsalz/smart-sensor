@@ -16,8 +16,7 @@ const store = new Vuex.Store({
   // eslint-disable-next-line no-undef
   strict: process.env.NODE_ENV !== 'production',
   state: {
-    authenticated: false,
-    devices: [] 
+    authenticated: false
   },
   modules: {
     bme280: () => import('./modules/BME280')
@@ -26,9 +25,8 @@ const store = new Vuex.Store({
     setAuthenticated(state, authenticated) {
       state.authenticated = authenticated;
     },
-    setBME280(state, bme280) {
-      state.bme280.device = bme280.device;
-      state.bme280.temperature = bme280.temperature;
+    setBME280(state, payload) {
+      state[payload.device] = payload.data;
     }
   },
   actions: {
@@ -67,13 +65,15 @@ const store = new Vuex.Store({
       commit('setAuthenticated', false);
       router.push({ name: 'login' });
     },
-    first({ commit }, { device }) {
+    queryValues({ commit }) {
 
-      // eslint-disable-next-line no-console
-      console.log('first called', commit, device);
+      // create test data
+      var bme280_1 = {device:'ESP-000023f09d', data:{temperature:12.6, humidity:54.9}};
+      commit('setBME280', bme280_1);
+      var bme280_2 = {device:'ESP-0023a4ae30', data:{temperature:23.5, humidity:43.2}};
+      commit('setBME280', bme280_2);
 
 
-      commit('setBME280', {device: 'ESP-000023f09d', temperature: 23.4});
     }
   },
   getters: {
