@@ -47,7 +47,7 @@
       PanelHeader
     },
     created() {
-      this.$store.dispatch("queryValues");
+      //this.$store.dispatch("queryDevices");
     }
   };
 </script>
