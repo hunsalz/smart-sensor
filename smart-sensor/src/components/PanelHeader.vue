@@ -40,7 +40,7 @@
       }
     },
     created() {
-      this.$store.dispatch("queryBME280", this.device );
+      this.$store.dispatch("getCurrentBME280EntryByDevice", this.device );
     }
   };
 </script>

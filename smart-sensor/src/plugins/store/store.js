@@ -77,7 +77,7 @@ const store = new Vuex.Store({
       //     console.error(error);
       //   }); 
     },
-    async queryBME280({ commit }, device) {
+    async getCurrentBME280EntryByDevice({ commit }, device) {
 
       // build query to fetch last BME280 entry of according device
       const BME280 = Parse.Object.extend("BME280");
