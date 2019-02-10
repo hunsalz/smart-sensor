@@ -38,6 +38,9 @@
       getData() {
         return this.$store.state[this.device];
       }
+    },
+    created() {
+      this.$store.dispatch("queryBME280", this.device );
     }
   };
 </script>
