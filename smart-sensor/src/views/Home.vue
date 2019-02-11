@@ -12,10 +12,8 @@
     >
       <v-flex
         xs12
-        sm12
         md6
-        lg4
-        xl2
+        xl4
       >
         <v-expansion-panel>
           <v-expansion-panel-content>
@@ -50,6 +48,9 @@
     components: {
       PanelHeader
     },
+    data: () => ({
+      show: false
+    }),
     created() {
       //this.$store.dispatch("queryDevices");
     }

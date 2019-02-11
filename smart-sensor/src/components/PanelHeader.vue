@@ -1,11 +1,7 @@
 <template>
   <v-container fluid>
     <v-layout row>
-      <v-flex
-        xs6
-        sm4
-        md2
-      >
+      <v-flex xs6>
         <v-card flat>
           <v-card-title primary-title>
             <div>
