@@ -1,19 +1,23 @@
 <template>
   <v-container
-    grid-list-xl
+    grid-list-md
     fluid
+    fill-height
   >
     <v-layout
       align-center
       justify-space-around
       row
+      wrap
     >
       <v-flex
         xs12
-        sm6
-        md4
+        sm12
+        md6
+        lg4
+        xl2
       >
-        <v-expansion-panel expand>
+        <v-expansion-panel>
           <v-expansion-panel-content>
             <div slot="header">
               <panel-header device="ESP-000023f09d" />
@@ -23,7 +27,7 @@
             </v-card>
           </v-expansion-panel-content>
         </v-expansion-panel>
-        <v-expansion-panel expand>
+        <v-expansion-panel>
           <v-expansion-panel-content>
             <div slot="header">
               <panel-header device="ESP-0023a4ae30" />
