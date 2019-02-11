@@ -4,6 +4,8 @@ import VuexPersistence from 'vuex-persist'
 import Parse from 'parse'
 import router from '../router'
 
+import BME280 from './modules/BME280';
+
 Vue.use(Vuex)
 
 const STORAGE_KEY = 'smart-sensor'
@@ -15,20 +17,17 @@ const vuexPersist = new VuexPersistence({
 const store = new Vuex.Store({
   // eslint-disable-next-line no-undef
   strict: process.env.NODE_ENV !== 'production',
+  namespaced: true,
   state: {
     authenticated: false
   },
   modules: {
-    bme280: () => import('./modules/BME280')
+    //bme280: () => import('./modules/BME280')
+    BME280
   },
   mutations: {
     setAuthenticated(state, authenticated) {
       state.authenticated = authenticated;
-    },
-    setBME280(state, bme280) {
-      if (bme280) {
-        state[bme280.get('device')] = bme280.attributes;
-      }
     }
   },
   actions: {
@@ -67,7 +66,7 @@ const store = new Vuex.Store({
       commit('setAuthenticated', false);
       router.push({ name: 'login' });
     },
-    async queryDevices({ commit }) {
+    queryDevices({ commit }) {
 
       // Parse.Cloud.run("getBME280Devices")
       //   .then(function(results) {
@@ -76,35 +75,6 @@ const store = new Vuex.Store({
       //   .catch(function(error) {
       //     console.error(error);
       //   }); 
-    },
-    async getCurrentBME280EntryByDevice({ commit }, device) {
-
-      // build query to fetch last BME280 entry of according device
-      const BME280 = Parse.Object.extend("BME280");
-      const query = new Parse.Query(BME280);
-      if (device) {
-        query.equalTo("device", device);
-      }
-      query.descending("createdAt");
-      // query data
-      query
-        .first()
-        .then(bme280 => {
-          commit("setBME280", bme280);
-        })
-        .then(() => {
-          // subsrcibe to newer values too
-          query.subscribe().on("create", bme280 => {
-            commit("setBME280", bme280);
-          });
-        }),
-        error => {
-          // eslint-disable-next-line no-console
-          console.error("Query BME280 entries failed.", error);
-
-          // TODO -> loqout
-        };
-
     }
   },
   getters: {

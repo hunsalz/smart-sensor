@@ -36,11 +36,11 @@
     },
     computed: {
       getData() {
-        return this.$store.state[this.device];
+        return this.$store.getters["BME280/getData"](this.device);
       }
     },
     created() {
-      this.$store.dispatch("getCurrentBME280EntryByDevice", this.device );
+      this.$store.dispatch("BME280/subscribeToLastBME280Entry", this.device);
     }
   };
 </script>
