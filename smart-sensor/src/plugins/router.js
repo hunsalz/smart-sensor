@@ -39,7 +39,7 @@ router.beforeEach((to, from, next) => {
   // verify if auth is required
   if (to.matched.some(record => record.meta.authRequired)) {
     // route to target if authentication is done
-    if (store.getters.isAuthenticated) {
+    if (store.getters["User/isAuthenticated"]) {
       next()
       // otherwise route to login
     } else {
@@ -50,7 +50,7 @@ router.beforeEach((to, from, next) => {
     // if no auth is required ...
   } else {
     // redirect to home if authentication is already done
-    if (to.name === 'login' && store.getters.isAuthenticated) {
+    if (to.name === 'login' && store.getters["User/isAuthenticated"]) {
       next({
         name: 'home'
       })

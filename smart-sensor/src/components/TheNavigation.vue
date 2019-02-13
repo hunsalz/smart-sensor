@@ -29,12 +29,12 @@
     name: "TheNavigation",
     computed: {
       isAuthenticated() {
-        return this.$store.getters.isAuthenticated;
+        return this.$store.getters["User/isAuthenticated"];
       }
     },
     methods: {
       logout() {
-        this.$store.dispatch("userLogout");
+        this.$store.dispatch("User/logout");
       }
     }
   };

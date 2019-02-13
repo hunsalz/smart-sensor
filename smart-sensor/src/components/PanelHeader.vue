@@ -1,30 +1,38 @@
 <template>
-  <v-container fluid>
+  <v-container
+    ma-0
+    pa-0
+    fluid
+  >
     <v-layout row>
-      <v-flex xs6>
-        <v-card flat>
-          <v-card-title primary-title>
+      <v-flex xs5>
+        <v-card
+          flat
+        >
+          <v-card-text>
             <div>
-              <div class="headline">
+              <div class="subheading">
                 {{ label }}
               </div>
-              <span class="grey--text">
+              <span class="font-weight-light grey--text caption">
                 {{ device }}
               </span>
             </div>
-          </v-card-title>
+          </v-card-text>
         </v-card>
       </v-flex>
       <v-flex>
-        <v-card flat>
-          <v-card-title primary-title>
+        <v-card
+          flat
+        >
+          <v-card-text class="font-weight-light caption">
             <div>
               <div>{{ $t('label.temperature') }} {{ getData.temperature }} °</div>
               <div>{{ $t('label.humidity') }} {{ getData.humidity }} %</div>
               <div>{{ $t('label.pressure') }} {{ getData.pressure }} Pa</div>
               <div>{{ $t('label.altitude') }} {{ getData.altitude }} m</div>
             </div>
-          </v-card-title>
+          </v-card-text>
         </v-card>
       </v-flex>
     </v-layout>

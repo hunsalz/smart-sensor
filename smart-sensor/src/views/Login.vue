@@ -93,7 +93,7 @@
       async submit() {
         const valid = await this.$refs.obs.validate();
         if (valid) {
-          this.$store.dispatch("userLogin", {
+          this.$store.dispatch("User/login", {
             email: this.email,
             password: this.password
           });
