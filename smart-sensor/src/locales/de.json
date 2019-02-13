@@ -14,7 +14,7 @@
   "label": {
     "temperature": "Temperatur",
     "humidity": "Luftfeuchtigkeit",
-    "pressure": "Druck",
+    "pressure": "Luftdruck",
     "altitude": "Höhe"
   },
   "validations": {
