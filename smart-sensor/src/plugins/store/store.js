@@ -3,22 +3,28 @@ import Vuex from 'vuex'
 import VuexPersistence from 'vuex-persist'
 import Cookies from 'js-cookie'
 import BME280 from './modules/BME280'
+import Device from './modules/Device'
 import User from './modules/User'
 
 Vue.use(Vuex)
 
+const STORE_KEY = 'smart-sensor';
+
 const vuexCookie = new VuexPersistence({
+  key: STORE_KEY,
+  // eslint-disable-next-line no-unused-vars
   restoreState: (key, storage) => Cookies.getJSON(key),
+  // eslint-disable-next-line no-unused-vars
   saveState: (key, state, storage) => Cookies.set(key, state, {
-    expires: 3
+    expires: 7 // valid for 7 days
   }),
   modules: ['User']
 })
 
-const vuexLocal= new VuexPersistence({
-  key: 'smart-sensor',
+const vuexLocal = new VuexPersistence({
+  key: STORE_KEY,
   storage: window.sessionStorage,
-  modules: ['BME280']
+  modules: ['BME280', 'Device']
 })
 
 const store = new Vuex.Store({
@@ -26,23 +32,9 @@ const store = new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
   namespaced: true,
   modules: {
-    User,
-    BME280
-  },
-  mutations: {
-
-  },
-  actions: {
-    queryDevices({ commit }) {
-
-      // Parse.Cloud.run("getBME280Devices")
-      //   .then(function(results) {
-      //     console.log(results);
-      //   })
-      //   .catch(function(error) {
-      //     console.error(error);
-      //   }); 
-    }
+    BME280,
+    Device,
+    User
   },
   plugins: [vuexCookie.plugin, vuexLocal.plugin]
 })

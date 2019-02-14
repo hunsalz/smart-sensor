@@ -9,7 +9,7 @@ export default {
     }
   },
   actions: {
-    subscribeToLastBME280Entry({ commit }, device) {
+    subscribeToRecentBME280Entry({ commit }, device) {
       // declare BME280 subclass
       const BME280 = Parse.Object.extend("BME280");
       // define an intital fallback entry
@@ -21,7 +21,7 @@ export default {
       bme280.set("altitude", "NaN");
       // commit initial entry
       commit("setBME280", bme280);
-      // try to fetch last BME280 entry
+      // try to fetch recent BME280 entry
       const query = new Parse.Query(BME280);
       query.equalTo("device", device)
         .descending("createdAt")
@@ -42,7 +42,7 @@ export default {
         }),
         error => {
           // eslint-disable-next-line no-console
-          console.error("Query BME280 entries failed.", error);
+          console.error("Query " + BME280 + " entries failed.", error);
 
           // TODO -> loqout
         };
@@ -50,7 +50,7 @@ export default {
   },
   getters: {
     getData: (state) => (device) => {
-      return state[device]
+      return state[device];
     }
   }
 };
