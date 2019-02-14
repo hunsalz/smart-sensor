@@ -9,7 +9,7 @@ export default {
     }
   },
   actions: {
-    subscribeToRecentBME280Entry({ commit }, device) {
+    subscribeToRecentValue({ commit }, device) {
       // declare BME280 subclass
       const BME280 = Parse.Object.extend("BME280");
       // define an intital fallback entry
@@ -49,7 +49,7 @@ export default {
     }
   },
   getters: {
-    getData: (state) => (device) => {
+    getRecentValue: (state) => (device) => {
       return state[device];
     }
   }
