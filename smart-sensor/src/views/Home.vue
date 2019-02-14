@@ -9,7 +9,7 @@
         md6
         xl4
       >
-        <v-expansion-panel>
+        <v-expansion-panel expand>
           <v-expansion-panel-content
             v-for="(device, index) in devices"
             :key="index"
@@ -29,7 +29,7 @@
                 :key="index"
                 class="caption"
               >
-                {{ tab.name }}
+                {{ $t(tab) }}
               </v-tab>
               <v-tab-item
                 v-for="(tab, index) in tabs"
@@ -60,12 +60,7 @@
       PanelHeader
     },
     data: () => ({
-      tabs: [
-        { name: "Last 24h" },
-        { name: "Last 24h" },
-        { name: "Last 7 days" },
-        { name: "Recent 10" }
-      ],
+      tabs: ["tabs.last4h", "tabs.last24h", "tabs.last7d", "tabs.last10"],
       chartData: {
         labels: ["A", "B", "C"],
         series: [[1, 3, 2], [4, 6, 5]]

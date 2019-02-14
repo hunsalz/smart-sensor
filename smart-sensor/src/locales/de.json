@@ -11,11 +11,17 @@
       "name": "Abmelden"
     }
   },
-  "label": {
+  "units": {
     "temperature": "Temperatur",
     "humidity": "Luftfeuchtigkeit",
     "pressure": "Luftdruck",
     "altitude": "Höhe"
+  },
+  "tabs": {
+    "last4h": "Letzte 4h",
+    "last24h": "Letzte 24h",
+    "last7d": "Letzte 7d",
+    "last10": "Letzte 10"
   },
   "validations": {
     "messages": {
