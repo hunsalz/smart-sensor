@@ -1,38 +1,49 @@
 <template>
   <v-container
-    grid-list-md
+    grid-list-xs
     fluid
-    fill-height
   >
-    <v-layout
-      align-center
-      justify-space-around
-      row
-      wrap
-    >
+    <v-layout row>
       <v-flex
         xs12
         md6
         xl4
       >
         <v-expansion-panel>
-          <v-expansion-panel-content>
+          <v-expansion-panel-content
+            v-for="(device, index) in devices"
+            :key="index"
+          >
             <div slot="header">
-              <panel-header device="ESP-000023f09d" />
+              <panel-header
+                :device="device.name"
+                :label="device.label"
+              />
             </div>
-            <v-card>
-              <v-card-text>Lorem ipsum dolor sit amet ...</v-card-text>
-            </v-card>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-        <v-expansion-panel>
-          <v-expansion-panel-content>
-            <div slot="header">
-              <panel-header device="ESP-0023a4ae30" />
-            </div>
-            <v-card>
-              <v-card-text>Lorem ipsum dolor sit amet ...</v-card-text>
-            </v-card>
+            <v-tabs
+              grow
+              slider-color="yellow"
+            >
+              <v-tab
+                v-for="(tab, index) in tabs"
+                :key="index"
+                class="caption"
+              >
+                {{ tab.name }}
+              </v-tab>
+              <v-tab-item
+                v-for="(tab, index) in tabs"
+                :key="index"
+                lazy
+              >
+                <!--chartist
+                  ratio="ct-major-second"
+                  type="Line"
+                  :data="chartData"
+                  :options="chartOptions"
+                /-->
+              </v-tab-item>
+            </v-tabs>
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-flex>
@@ -49,10 +60,27 @@
       PanelHeader
     },
     data: () => ({
-      show: false
+      tabs: [
+        { name: "Last 24h" },
+        { name: "Last 24h" },
+        { name: "Last 7 days" },
+        { name: "Recent 10" }
+      ],
+      chartData: {
+        labels: ["A", "B", "C"],
+        series: [[1, 3, 2], [4, 6, 5]]
+      },
+      chartOptions: {
+        lineSmooth: false
+      }
     }),
+    computed: {
+      devices: function() {
+        return this.$store.getters["Device/getDevices"];
+      }
+    },
     created() {
-      //this.$store.dispatch("queryDevices");
+      this.$store.dispatch("Device/getDevices");
     }
   };
 </script>
