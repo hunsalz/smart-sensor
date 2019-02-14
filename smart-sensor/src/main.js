@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import './plugins/chartist'
 import i18n from './plugins/i18n'
-import parse from './plugins/parse'
+import './plugins/parse'
 import router from './plugins/router'
 import store from './plugins/store/store'
 import './plugins/vee-validate'
@@ -13,7 +13,6 @@ Vue.config.productionTip = false
 
 new Vue({
   i18n,
-  parse,
   router,
   store,
   render: h => h(App)
