@@ -20,30 +20,11 @@
                 :label="device.label"
               />
             </div>
-            <v-tabs
-              grow
-              slider-color="yellow"
-            >
-              <v-tab
-                v-for="(tab, index) in tabs"
-                :key="index"
-                class="caption"
-              >
-                {{ $t(tab) }}
-              </v-tab>
-              <v-tab-item
-                v-for="(tab, index) in tabs"
-                :key="index"
-                lazy
-              >
-                <!--chartist
-                  ratio="ct-major-second"
-                  type="Line"
-                  :data="chartData"
-                  :options="chartOptions"
-                /-->
-              </v-tab-item>
-            </v-tabs>
+
+            <panel-tabs>
+              <panel-chart :device="device.name" />
+            </panel-tabs>
+
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-flex>
@@ -53,22 +34,16 @@
 
 <script>
   import PanelHeader from "@/components/PanelHeader";
+  import PanelTabs from "@/components/PanelTabs";
+  import PanelChart from "@/components/PanelChart";
 
   export default {
     name: "Home",
     components: {
-      PanelHeader
+      PanelHeader,
+      PanelTabs,
+      PanelChart
     },
-    data: () => ({
-      tabs: ["tabs.last4h", "tabs.last24h", "tabs.last7d", "tabs.last10"],
-      chartData: {
-        labels: ["A", "B", "C"],
-        series: [[1, 3, 2], [4, 6, 5]]
-      },
-      chartOptions: {
-        lineSmooth: false
-      }
-    }),
     computed: {
       devices: function() {
         return this.$store.getters["Device/getDevices"];
