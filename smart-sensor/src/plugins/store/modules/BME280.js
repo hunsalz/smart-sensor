@@ -4,15 +4,17 @@ import Parse from 'parse'
 export default {
   namespaced: true,
   mutations: {
-    setBME280(state, {device, entry}) {
+    setValue(state, { device, entry }) {
       Vue.set(state, device, entry);
     },
-    setBMEResults(state, {device, entries}) {
-      Vue.set(state, device + '.results', entries);
+    // store any kind of series by a synthetic key of device&label syntax 
+    // no nested dynamic extension possible
+    setValues(state, { device, label, entries }) {
+      Vue.set(state, [device + '&' + label], entries);
     }
   },
   actions: {
-    subscribeToRecentValue({ commit }, device) {
+    subscribeToValues({ commit }, device) {
       // declare BME280 subclass
       const BME280 = Parse.Object.extend("BME280");
       // define an intital fallback entry
@@ -23,7 +25,7 @@ export default {
       bme280.set("pressure", "NaN");
       bme280.set("altitude", "NaN");
       // commit initial entry
-      commit("setBME280", bme280);
+      commit("setValue", bme280);
       // try to fetch recent BME280 entry
       const query = new Parse.Query(BME280);
       query.equalTo("device", device)
@@ -31,19 +33,19 @@ export default {
         .first()
         .then(bme280 => {
           if (bme280) {
-            commit("setBME280", { 
-              device: bme280.get('device'), 
-              entry: bme280.attributes 
+            commit("setValue", {
+              device: bme280.get('device'),
+              entry: bme280.attributes
             });
           }
         })
         .then(() => {
           // subscribe to changes
           query.subscribe().on("create", bme280 => {
-            commit("setBME280", bme280);
+            commit("setValue", bme280);
           });
           query.subscribe().on('update', bme280 => {
-            commit("setBME280", bme280);
+            commit("setValue", bme280);
           });
         }),
         error => {
@@ -53,7 +55,7 @@ export default {
           // TODO -> loqout
         };
     },
-    getValues({ commit }, { device, createdAt, limit = 1000 }) {
+    loadValues({ commit }, { device, label, createdAt, limit = 1000 }) {
 
       const BME280 = Parse.Object.extend("BME280");
       new Parse.Query(BME280)
@@ -62,13 +64,19 @@ export default {
         .descending("createdAt")
         .limit(limit)
         .find().then((results) => {
-          let entries = [];
+          let data = [];
           results.forEach(e => {
-            entries.push(e.attributes);
+            let x = e.attributes.createdAt;
+            let y = e.attributes.temperature;
+
+            data.push({ x: x, y: y });
+
           });
-          commit("setBMEResults", {
+          commit("setValues", {
             device: device,
-            entries: entries
+            label: label,
+
+            entries: data
           });
         }),
         error => {
@@ -80,8 +88,23 @@ export default {
     }
   },
   getters: {
-    getRecentValue: (state) => (device) => {
+    getValue: (state) => (device) => {
       return state[device];
-    }
+    },
+    getValuesByLabel: (state) => (device, label) => {
+
+      return state[device + '&' + label];
+
+      // console.log(values);
+
+      // let labels = [];
+      // let series = [];
+      // values.forEach(e => {
+      //   labels.push(e.createdAt);
+      //   series.push(e.temperature);
+      // });
+
+      // return { labels: labels, series: series };
+    },
   }
 };

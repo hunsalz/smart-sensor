@@ -23,10 +23,10 @@
         <v-card flat>
           <v-card-text class="font-weight-light caption">
             <div>
-              <div>{{ $t('units.temperature') }} {{ recentValue.temperature }} °</div>
-              <div>{{ $t('units.humidity') }} {{ recentValue.humidity }} %</div>
-              <div>{{ $t('units.pressure') }} {{ recentValue.pressure }} Pa</div>
-              <div>{{ $t('units.altitude') }} {{ recentValue.altitude }} m</div>
+              <div>{{ $t('units.temperature') }} {{ value.temperature }} °</div>
+              <div>{{ $t('units.humidity') }} {{ value.humidity }} %</div>
+              <div>{{ $t('units.pressure') }} {{ value.pressure }} Pa</div>
+              <div>{{ $t('units.altitude') }} {{ value.altitude }} m</div>
             </div>
           </v-card-text>
         </v-card>
@@ -54,12 +54,12 @@
         // add device name as fallback
         return this.label === '' ? this.device : this.label;
       },
-      recentValue: function() {
-        return this.$store.getters["BME280/getRecentValue"](this.device);
+      value: function() {
+        return this.$store.getters["BME280/getValue"](this.device);
       }
     },
     created() {
-      this.$store.dispatch("BME280/subscribeToRecentValue", this.device);
+      this.$store.dispatch("BME280/subscribeToValues", this.device);
     }
   };
 </script>

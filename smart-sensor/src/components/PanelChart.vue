@@ -9,6 +9,7 @@
         <v-card>
           <chartist
             ref="chart"
+            ratio="ct-major-second"
             type="Line"
             :data="data"
             :options="options"
@@ -20,6 +21,8 @@
 </template>
 
 <script>
+  import moment from "moment";
+
   export default {
     name: "PanelChart",
     props: {
@@ -28,27 +31,64 @@
         required: true
       }
     },
-    data: () => ({
-      data: {
-        labels: ["12am", "3pm", "6pm", "9pm", "12pm", "3am", "6am", "9am"],
-        series: [[230, 750, 450, 300, 280, 240, 200, 190]]
-      },
-      options: {
-        lineSmooth: true,
-        low: 0,
-        high: 1000,
-        chartPadding: {
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0
+    data() {
+      return {
+        options: {
+          lineSmooth: true,
+          axisX: {
+            type: this.$chartist.FixedScaleAxis,
+            divisor: 5,
+            labelInterpolationFnc(value) {
+              return moment(new Date()).format("hh::mm::ss");
+            }
+          },
+          yAxes: [
+            {
+              ticks: {
+                suggestedMin: -50,
+                suggestedMax: 50
+              }
+            }
+          ]
         }
+      };
+    },
+    computed: {
+      data: function() {
+        return {
+          series: [
+            {
+              data: [
+                { x: new Date(143134652600), y: 53 },
+                { x: new Date(143234652600), y: 40 },
+                { x: new Date(143340052600), y: 45 },
+                { x: new Date(143366652600), y: 40 },
+                { x: new Date(143410652600), y: 20 },
+                { x: new Date(143508652600), y: 32 },
+                { x: new Date(143569652600), y: 18 },
+                { x: new Date(143579652600), y: 11 }
+              ]
+            }
+          ]
+        };
+
+        // return {
+        //   series: [
+        //     {
+        //       data: this.$store.getters["BME280/getValuesByLabel"](
+        //         this.device,
+        //         "all"
+        //       )
+        //     }
+        //   ]
+        // };
       }
-    }),
+    },
     created() {
-      this.$store.dispatch("BME280/getValues", { 
-        device: this.device, 
-        createdAt: new Date('January 1, 1970 00:00:00') 
+      this.$store.dispatch("BME280/loadValues", {
+        device: this.device,
+        label: "all",
+        createdAt: new Date("January 1, 1970 00:00:00")
       });
     },
     mounted() {
@@ -59,4 +99,24 @@
 </script>
 
 <style scoped>
+  .ct-label {
+    color: inherit;
+    opacity: 0.7;
+    font-size: 0.975rem;
+    font-weight: 100;
+  }
+
+  .ct-grid {
+    stroke: rgba(255, 255, 255, 0.2);
+  }
+  .ct-series-a .ct-point,
+  .ct-series-a .ct-line,
+  .ct-series-a .ct-bar,
+  .ct-series-a .ct-slice-donut {
+    stroke: rgba(255, 255, 255, 0.8);
+  }
+  .ct-series-a .ct-slice-pie,
+  .ct-series-a .ct-area {
+    fill: rgba(255, 255, 255, 0.4);
+  }
 </style>
