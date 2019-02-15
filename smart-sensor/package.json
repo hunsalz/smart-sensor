@@ -20,6 +20,7 @@
     "vue": "^2.6.6",
     "vue-chartist": "^2.2.0",
     "vue-i18n": "^8.8.1",
+    "vue-moment": "^4.0.0",
     "vue-router": "^3.0.2",
     "vuetify": "^1.5.1",
     "vuex": "^3.1.0",
