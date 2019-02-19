@@ -8,7 +8,7 @@ export default {
       Vue.set(state, device, entry);
     },
     // store any kind of series by a synthetic key of device&label syntax 
-    // no nested dynamic extension possible
+    // note: no nested dynamic extension possible
     setValues(state, { device, label, entries }) {
       Vue.set(state, [device + '&' + label], entries);
     }
@@ -17,15 +17,6 @@ export default {
     subscribeToValues({ commit }, device) {
       // declare BME280 subclass
       const BME280 = Parse.Object.extend("BME280");
-      // define an intital fallback entry
-      var bme280 = new BME280();
-      bme280.set("device", device);
-      bme280.set("temperature", "NaN");
-      bme280.set("humidity", "NaN");
-      bme280.set("pressure", "NaN");
-      bme280.set("altitude", "NaN");
-      // commit initial entry
-      commit("setValue", bme280);
       // try to fetch recent BME280 entry
       const query = new Parse.Query(BME280);
       query.equalTo("device", device)
@@ -69,7 +60,7 @@ export default {
             let x = e.attributes.createdAt;
             let y = e.attributes.temperature;
 
-            data.push({ x: x, y: y });
+            data.push([x, y]);
 
           });
           commit("setValues", {
@@ -89,22 +80,20 @@ export default {
   },
   getters: {
     getValue: (state) => (device) => {
-      return state[device];
+      return state[device] === undefined ? {
+        device: device,
+        temperature: NaN,
+        humidity: NaN,
+        pressure: NaN,
+        altitude: NaN
+      } : state[device];
     },
     getValuesByLabel: (state) => (device, label) => {
 
-      return state[device + '&' + label];
+      const x = state[device + '&' + label]
+      console.log(x);
 
-      // console.log(values);
-
-      // let labels = [];
-      // let series = [];
-      // values.forEach(e => {
-      //   labels.push(e.createdAt);
-      //   series.push(e.temperature);
-      // });
-
-      // return { labels: labels, series: series };
-    },
+      return x;
+    }
   }
 };
