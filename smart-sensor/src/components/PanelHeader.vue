@@ -10,7 +10,7 @@
           <v-card-text>
             <div>
               <div class="subheading">
-                {{ computeLabel }}
+                {{ computedLabel }}
               </div>
               <span class="font-weight-light grey--text caption">
                 {{ device }}
@@ -23,10 +23,10 @@
         <v-card flat>
           <v-card-text class="font-weight-light caption">
             <div>
-              <div>{{ $t('units.temperature') }} {{ computeValue.temperature }} °</div>
-              <div>{{ $t('units.humidity') }} {{ computeValue.humidity }} %</div>
-              <div>{{ $t('units.pressure') }} {{ computeValue.pressure }} Pa</div>
-              <div>{{ $t('units.altitude') }} {{ computeValue.altitude }} m</div>
+              <div>{{ $t('units.temperature') }} {{ computedValue.temperature }} °</div>
+              <div>{{ $t('units.humidity') }} {{ computedValue.humidity }} %</div>
+              <div>{{ $t('units.pressure') }} {{ computedValue.pressure }} Pa</div>
+              <div>{{ $t('units.altitude') }} {{ computedValue.altitude }} m</div>
             </div>
           </v-card-text>
         </v-card>
@@ -50,11 +50,11 @@
       }
     },
     computed: {
-      computeLabel: function() {
+      computedLabel: function() {
         // add device name as fallback
         return this.label === "" ? this.device : this.label;
       },
-      computeValue: function() {
+      computedValue: function() {
         return this.$store.getters["BME280/getValue"](this.device);
       }
     },
