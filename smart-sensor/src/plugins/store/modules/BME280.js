@@ -4,13 +4,13 @@ import Parse from 'parse'
 export default {
   namespaced: true,
   mutations: {
-    setValue(state, { device, entry }) {
-      Vue.set(state, device, entry);
+    setValue(state, { device, value }) {
+      Vue.set(state, device, value);
     },
     // store any kind of series by a synthetic key of device&label syntax 
     // note: no nested dynamic extension possible
-    setValues(state, { device, label, entries }) {
-      Vue.set(state, [device + '&' + label], entries);
+    setValues(state, { device, label, values }) {
+      Vue.set(state, [device + '&' + label], values);
     }
   },
   actions: {
@@ -26,7 +26,7 @@ export default {
           if (bme280) {
             commit("setValue", {
               device: bme280.get('device'),
-              entry: bme280.attributes
+              value: bme280.attributes
             });
           }
         })
@@ -55,19 +55,19 @@ export default {
         .descending("createdAt")
         .limit(limit)
         .find().then((results) => {
+          let labels = [];
           let data = [];
           results.forEach(e => {
-            let x = e.attributes.createdAt;
-            let y = e.attributes.temperature;
-
-            data.push([x, y]);
-
+            labels.push(e.attributes.createdAt);
+            data.push(e.attributes.temperature);
           });
           commit("setValues", {
             device: device,
             label: label,
-
-            entries: data
+            values: {
+              labels: labels,
+              data: data
+            }
           });
         }),
         error => {
@@ -89,11 +89,7 @@ export default {
       } : state[device];
     },
     getValuesByLabel: (state) => (device, label) => {
-
-      const x = state[device + '&' + label]
-      console.log(x);
-
-      return x;
+      return state[device + '&' + label];
     }
   }
 };

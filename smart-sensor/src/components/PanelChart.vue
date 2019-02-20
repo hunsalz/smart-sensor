@@ -7,11 +7,8 @@
     <v-layout row>
       <v-flex>
         <v-card>
-          <chartist
-            ref="chart"
-            ratio="ct-major-second"
-            type="Line"
-            :data="data"
+          <line-chart
+            :chart-data="computedData"
             :options="options"
           />
         </v-card>
@@ -21,67 +18,69 @@
 </template>
 
 <script>
-  import moment from "moment";
+  import LineChart from "./LineChart.js";
 
   export default {
     name: "PanelChart",
+    components: {
+      LineChart
+    },
     props: {
       device: {
         type: String,
         required: true
       }
     },
-    data() {
+    data: function() {
       return {
         options: {
-          lineSmooth: true,
-          axisX: {
-            type: this.$chartist.FixedScaleAxis,
-            divisor: 5,
-            labelInterpolationFnc(value) {
-              return moment(new Date()).format("hh::mm::ss");
-            }
+          fill: true,
+          legend: {
+            display: false
           },
-          yAxes: [
-            {
-              ticks: {
-                suggestedMin: -50,
-                suggestedMax: 50
+          scales: {
+            xAxes: [
+              {
+                type: "time",
+                distribution: "series",
+                time: {
+                  unit: "minute",
+                  //round: "minute",
+                  displayFormats: {
+                    minute: "dd HH:mm:ss"
+                  }
+                },
+                ticks: {
+                  source: "labels"
+                }
               }
-            }
-          ]
+            ],
+            yAxes: [
+              {
+                ticks: {
+                  beginAtZero: true
+                }
+              }
+            ]
+          }
         }
       };
     },
     computed: {
-      data: function() {
+      computedData: function() {
+        let series = this.$store.getters["BME280/getValuesByLabel"](
+          this.device,
+          "all"
+        );
         return {
-          series: [
+          labels: series.labels,
+          datasets: [
             {
-              data: [
-                { x: new Date(143134652600), y: 53 },
-                { x: new Date(143234652600), y: 40 },
-                { x: new Date(143340052600), y: 45 },
-                { x: new Date(143366652600), y: 40 },
-                { x: new Date(143410652600), y: 20 },
-                { x: new Date(143508652600), y: 32 },
-                { x: new Date(143569652600), y: 18 },
-                { x: new Date(143579652600), y: 11 }
-              ]
+              backgroundColor: "rgba(33, 150, 243, 0.3)",
+              data: series.data
             }
           ]
         };
-
-        // return {
-        //   series: [
-        //     {
-        //       data: this.$store.getters["BME280/getValuesByLabel"](
-        //         this.device,
-        //         "all"
-        //       )
-        //     }
-        //   ]
-        // };
       }
     },
     created() {
@@ -90,33 +89,9 @@
         label: "all",
         createdAt: new Date("January 1, 1970 00:00:00")
       });
-    },
-    mounted() {
-      //console.log(this.$refs.chart)
-      //this.$refs.chart.redraw();
     }
   };
 </script>
 
 <style scoped>
-  .ct-label {
-    color: inherit;
-    opacity: 0.7;
-    font-size: 0.975rem;
-    font-weight: 100;
-  }
-
-  .ct-grid {
-    stroke: rgba(255, 255, 255, 0.2);
-  }
-  .ct-series-a .ct-point,
-  .ct-series-a .ct-line,
-  .ct-series-a .ct-bar,
-  .ct-series-a .ct-slice-donut {
-    stroke: rgba(255, 255, 255, 0.8);
-  }
-  .ct-series-a .ct-slice-pie,
-  .ct-series-a .ct-area {
-    fill: rgba(255, 255, 255, 0.4);
-  }
 </style>
