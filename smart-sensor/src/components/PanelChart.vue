@@ -68,7 +68,7 @@
     },
     computed: {
       computedData: function() {
-        let series = this.$store.getters["BME280/getValuesByLabel"](
+        let series = this.$store.getters["BME280/getSeries"](
           this.device,
           "all"
         );
@@ -84,9 +84,9 @@
       }
     },
     created() {
-      this.$store.dispatch("BME280/loadValues", {
+      this.$store.dispatch("BME280/loadSeries", {
         device: this.device,
-        label: "all",
+        key: "all",
         createdAt: new Date("January 1, 1970 00:00:00")
       });
     }

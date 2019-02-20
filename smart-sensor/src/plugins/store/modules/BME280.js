@@ -7,10 +7,10 @@ export default {
     setValue(state, { device, value }) {
       Vue.set(state, device, value);
     },
-    // store any kind of series by a synthetic key of device&label syntax 
-    // note: no nested dynamic extension possible
-    setValues(state, { device, label, values }) {
-      Vue.set(state, [device + '&' + label], values);
+    // store any kind of series by a synthetic key of device&key syntax 
+    // note: no nested dynamic extension is possible
+    setSeries(state, { device, key, series }) {
+      Vue.set(state, [device + '-' + key], series);
     }
   },
   actions: {
@@ -46,7 +46,7 @@ export default {
           // TODO -> loqout
         };
     },
-    loadValues({ commit }, { device, label, createdAt, limit = 1000 }) {
+    loadSeries({ commit }, { device, key, createdAt, limit = 1000 }) {
 
       const BME280 = Parse.Object.extend("BME280");
       new Parse.Query(BME280)
@@ -61,10 +61,10 @@ export default {
             labels.push(e.attributes.createdAt);
             data.push(e.attributes.temperature);
           });
-          commit("setValues", {
+          commit("setSeries", {
             device: device,
-            label: label,
-            values: {
+            key: key,
+            series: {
               labels: labels,
               data: data
             }
@@ -80,6 +80,7 @@ export default {
   },
   getters: {
     getValue: (state) => (device) => {
+      // return stored state or a fallback value
       return state[device] === undefined ? {
         device: device,
         temperature: NaN,
@@ -88,8 +89,8 @@ export default {
         altitude: NaN
       } : state[device];
     },
-    getValuesByLabel: (state) => (device, label) => {
-      return state[device + '&' + label];
+    getSeries: (state) => (device, key) => {
+      return state[device + '-' + key];
     }
   }
 };
