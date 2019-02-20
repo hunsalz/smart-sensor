@@ -7,4 +7,5 @@ Vue.use(require('vue-moment'), {
   moment
 })
 
-console.log(Vue.moment().locale())
+// TODO
+// console.log(Vue.moment().locale())
