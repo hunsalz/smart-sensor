@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import App from './App.vue'
-import './plugins/chartist'
 import i18n from './plugins/i18n'
 import './plugins/moment'
 import './plugins/parse'
