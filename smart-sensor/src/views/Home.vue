@@ -20,11 +20,9 @@
                 :label="device.label"
               />
             </div>
-
             <panel-tabs>
               <panel-chart :device="device.name" />
             </panel-tabs>
-
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-flex>
