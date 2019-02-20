@@ -1,22 +1,24 @@
 import Vue from 'vue'
 import Parse from 'parse'
 
+const SEPARATOR = '-';
+const BME280 = Parse.Object.extend("BME280"); // declare BME280 subclass
+
 export default {
   namespaced: true,
   mutations: {
+    // store recent value
     setValue(state, { device, value }) {
       Vue.set(state, device, value);
     },
-    // store any kind of series by a synthetic key of device&key syntax 
-    // note: no nested dynamic extension is possible
+    // store any kind of series by a synthetic key of 'device{SEPARATOR}key' syntax 
+    // note: no nested dynamic extensions are possible
     setSeries(state, { device, key, series }) {
-      Vue.set(state, [device + '-' + key], series);
+      Vue.set(state, [device + SEPARATOR + key], series);
     }
   },
   actions: {
     subscribeToValues({ commit }, device) {
-      // declare BME280 subclass
-      const BME280 = Parse.Object.extend("BME280");
       // try to fetch recent BME280 entry
       const query = new Parse.Query(BME280);
       query.equalTo("device", device)
@@ -47,8 +49,6 @@ export default {
         };
     },
     loadSeries({ commit }, { device, key, createdAt, limit = 1000 }) {
-
-      const BME280 = Parse.Object.extend("BME280");
       new Parse.Query(BME280)
         .equalTo("device", device)
         .greaterThan("createdAt", createdAt)
@@ -74,13 +74,13 @@ export default {
           // eslint-disable-next-line no-console
           console.error("Query " + BME280 + " entries failed.", error);
 
-          // TODO -> loqout
+          // TODO -> logout
         };
     }
   },
   getters: {
+    // return a fallback value or the recent stored value
     getValue: (state) => (device) => {
-      // return stored state or a fallback value
       return state[device] === undefined ? {
         device: device,
         temperature: NaN,
@@ -89,8 +89,9 @@ export default {
         altitude: NaN
       } : state[device];
     },
+    // return a stored series
     getSeries: (state) => (device, key) => {
-      return state[device + '-' + key];
+      return state[device + SEPARATOR + key];
     }
   }
 };
