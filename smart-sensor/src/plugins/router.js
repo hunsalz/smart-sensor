@@ -26,6 +26,14 @@ const router = new Router({
       }
     },
     {
+      path: '/more',
+      name: 'more',
+      component: () => import('../views/More.vue'),
+      meta: {
+        authRequired: true
+      }
+    },
+    {
       path: '*',
       redirect: {
         name: 'login'

@@ -45,7 +45,7 @@ export default {
           // eslint-disable-next-line no-console
           console.error("Query " + BME280 + " entries failed.", error);
 
-          // TODO -> loqout
+          // TODO -> logout
         };
     },
     loadSeries({ commit }, { device, key, offsetFromNowInMillis, limit }) {

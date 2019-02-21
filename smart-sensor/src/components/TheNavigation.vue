@@ -21,7 +21,18 @@
       </v-btn>
     </div>
     <v-btn
+      v-if="$route.name === 'more'"
+      flat
       icon
+      @click="home"
+    >
+      <v-icon>chevron_left</v-icon>
+    </v-btn>
+    <v-btn
+      v-if="$route.name === 'home'"
+      flat
+      icon
+      @click="more"
     >
       <v-icon>more_vert</v-icon>
     </v-btn>
@@ -29,6 +40,8 @@
 </template>
 
 <script>
+  import router from "../plugins/router";
+
   export default {
     name: "TheNavigation",
     computed: {
@@ -37,8 +50,14 @@
       }
     },
     methods: {
+      home() {
+        router.push({ name: "home" });
+      },
       logout() {
         this.$store.dispatch("User/logout");
+      },
+      more() {
+        router.push({ name: "more" });
       }
     }
   };
