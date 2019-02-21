@@ -48,7 +48,7 @@ export default {
           // TODO -> loqout
         };
     },
-    loadSeries({ commit }, { device, key, createdAt, limit = 1000 }) {
+    loadSeries({ commit }, { device, key, createdAt, limit }) {
       new Parse.Query(BME280)
         .equalTo("device", device)
         .greaterThan("createdAt", createdAt)
@@ -89,9 +89,12 @@ export default {
         altitude: NaN
       } : state[device];
     },
-    // return a stored series
+    // return a fallback series or the recent stored series
     getSeries: (state) => (device, key) => {
-      return state[device + SEPARATOR + key];
+      return state[device + SEPARATOR + key] === undefined ? {
+        labels: [],
+        data: []
+      } : state[device + SEPARATOR + key];
     }
   }
 };
