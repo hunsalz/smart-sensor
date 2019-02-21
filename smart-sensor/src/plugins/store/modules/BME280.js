@@ -48,25 +48,38 @@ export default {
           // TODO -> loqout
         };
     },
-    loadSeries({ commit }, { device, key, createdAt, limit }) {
-      new Parse.Query(BME280)
+    loadSeries({ commit }, { device, key, offsetFromNowInMillis, limit }) {
+      let query = new Parse.Query(BME280);
+      if (offsetFromNowInMillis) {
+        var millis = Date.now() - offsetFromNowInMillis;
+        query.greaterThan("createdAt", new Date(millis));
+      }
+      query
         .equalTo("device", device)
-        .greaterThan("createdAt", createdAt)
         .descending("createdAt")
         .limit(limit)
         .find().then((results) => {
           let labels = [];
-          let data = [];
+          let temperatures = [];
+          let humidities = [];
+          let pressures = [];
+          let altitudes = [];
           results.forEach(e => {
             labels.push(e.attributes.createdAt);
-            data.push(e.attributes.temperature);
+            temperatures.push(e.attributes.temperature);
+            humidities.push(e.attributes.humidity);
+            pressures.push(e.attributes.pressure);
+            altitudes.push(e.attributes.altitude);
           });
           commit("setSeries", {
             device: device,
             key: key,
             series: {
               labels: labels,
-              data: data
+              temperatures: temperatures,
+              humidities: humidities,
+              pressures: pressures,
+              altitudes: altitudes
             }
           });
         }),
@@ -93,7 +106,10 @@ export default {
     getSeries: (state) => (device, key) => {
       return state[device + SEPARATOR + key] === undefined ? {
         labels: [],
-        data: []
+        temperatures: [],
+        humidities: [],
+        pressures: [],
+        altitudes: []
       } : state[device + SEPARATOR + key];
     }
   }
