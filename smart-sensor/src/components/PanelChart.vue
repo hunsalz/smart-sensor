@@ -20,6 +20,8 @@
 <script>
   import LineChart from "./LineChart.js";
 
+  const LAST_1000_ENTRIES = "LAST_1000_ENTRIES";
+
   export default {
     name: "PanelChart",
     components: {
@@ -29,6 +31,16 @@
       device: {
         type: String,
         required: true
+      },
+      filter: {
+        type: Object,
+        default: () => {
+          return {
+            key: LAST_1000_ENTRIES,
+            createdAt: new Date("January 1, 1970 00:00:00"),
+            limit: 1000
+          };
+        }
       }
     },
     data: function() {
@@ -70,7 +82,7 @@
       computedData: function() {
         let series = this.$store.getters["BME280/getSeries"](
           this.device,
-          "all"
+          this.filter.key
         );
         return {
           labels: series.labels,
@@ -86,8 +98,9 @@
     created() {
       this.$store.dispatch("BME280/loadSeries", {
         device: this.device,
-        key: "all",
-        createdAt: new Date("January 1, 1970 00:00:00")
+        key: this.filter.key,
+        createdAt: this.filter.createdAt,
+        limit: this.filter.limit
       });
     }
   };
