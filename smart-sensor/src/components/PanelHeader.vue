@@ -32,10 +32,19 @@
         </v-card>
       </v-flex>
     </v-layout>
+    <v-layout row>
+      <v-flex>
+        <div class="text-xs-center grey--text font-weight-light caption">
+          {{ $t('app.panel.lastUpdate') }} : {{ computedLastUpdateDate }}
+        </div>
+      </v-flex>
+    </v-layout>
   </v-container>
 </template>
 
 <script>
+  import moment from "moment";
+
   export default {
     name: "PanelHeader",
     props: {
@@ -56,6 +65,9 @@
       },
       computedValue: function() {
         return this.$store.getters["BME280/getValue"](this.device);
+      },
+      computedLastUpdateDate() {
+        return moment(this.computedValue.createdAt).format('LLL');
       }
     },
     created() {

@@ -9,6 +9,9 @@
     },
     "logout": {
       "name": "Abmelden"
+    },
+    "panel": {
+      "lastUpdate": "Letzte Aktualisierung"
     }
   },
   "units": {
@@ -24,7 +27,6 @@
     "last10": "Letzte 10"
   },
   "validations": {
-    "messages": {
-    }
+    "messages": {}
   }
 }

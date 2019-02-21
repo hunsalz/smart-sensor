@@ -9,6 +9,9 @@
     },
     "logout": {
       "name": "Logout"
+    },
+    "panel": {
+      "lastUpdate": "Last update"
     }
   },
   "units": {
