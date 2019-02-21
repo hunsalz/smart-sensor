@@ -33,7 +33,7 @@
                 :key="index2"
                 lazy
               >
-                <panel-chart
+                <panel-charts
                   :device="device.name"
                   :filter="tabs[index2]"
                 />
@@ -48,13 +48,13 @@
 
 <script>
   import PanelHeader from "@/components/PanelHeader";
-  import PanelChart from "@/components/PanelChart";
+  import PanelCharts from "@/components/PanelCharts";
 
   export default {
     name: "Home",
     components: {
       PanelHeader,
-      PanelChart
+      PanelCharts
     },
     data: function() {
       return {
