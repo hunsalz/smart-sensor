@@ -18,9 +18,9 @@
     "altitude": "Altitude"
   },
   "tabs": {
-    "last4h": "Last 4h",
-    "last24h": "Last 24h",
-    "last7d": "Last 7 days",
+    "last4hours": "Last 4h",
+    "last24hours": "Last 24h",
+    "last7days": "Last 7 days",
     "last10": "Last 10"
   },
   "validations": {
