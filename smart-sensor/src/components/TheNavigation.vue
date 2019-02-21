@@ -2,8 +2,8 @@
   <v-toolbar
     app
     prominent
+    dark
     color="primary"
-    class="white--text"
   >
     <v-toolbar-title class="headline text-uppercase">
       <span>Smart </span>
@@ -15,12 +15,16 @@
     <div v-if="isAuthenticated">
       <v-btn
         flat
-        class="white--text"
         @click="logout"
       >
         {{ $t('app.logout.name') }}
       </v-btn>
     </div>
+    <v-btn
+      icon
+    >
+      <v-icon>more_vert</v-icon>
+    </v-btn>
   </v-toolbar>
 </template>
 
