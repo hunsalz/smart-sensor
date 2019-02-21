@@ -8,7 +8,11 @@
       <v-flex>
         <v-card>
           <line-chart
-            :chart-data="computedData"
+            :chart-data="computedTemperatures"
+            :options="options"
+          />
+          <line-chart
+            :chart-data="computedHumidities"
             :options="options"
           />
         </v-card>
@@ -37,7 +41,6 @@
         default: () => {
           return {
             key: LAST_1000_ENTRIES,
-            createdAt: new Date("January 1, 1970 00:00:00"),
             limit: 1000
           };
         }
@@ -79,7 +82,7 @@
       };
     },
     computed: {
-      computedData: function() {
+      computedTemperatures: function() {
         let series = this.$store.getters["BME280/getSeries"](
           this.device,
           this.filter.key
@@ -88,8 +91,23 @@
           labels: series.labels,
           datasets: [
             {
-              backgroundColor: "rgba(33, 150, 243, 0.3)",
-              data: series.data
+              backgroundColor: "rgba(211, 47, 47, 0.3)",
+              data: series.temperatures
+            }
+          ]
+        };
+      },
+      computedHumidities: function() {
+        let series = this.$store.getters["BME280/getSeries"](
+          this.device,
+          this.filter.key
+        );
+        return {
+          labels: series.labels,
+          datasets: [
+            {
+              backgroundColor: "rgba(2, 136, 209, 0.3)",
+              data: series.humidities
             }
           ]
         };
@@ -99,7 +117,7 @@
       this.$store.dispatch("BME280/loadSeries", {
         device: this.device,
         key: this.filter.key,
-        createdAt: this.filter.createdAt,
+        offsetFromNowInMillis: this.filter.offsetFromNowInMillis,
         limit: this.filter.limit
       });
     }
