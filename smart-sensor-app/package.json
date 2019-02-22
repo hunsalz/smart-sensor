@@ -1,38 +1,71 @@
 {
-  "name": "smart-sensor-app",
-  "description": "A smart sensor Progressive Web App",
-  "version": "2.0.0",
+  "name": "smart-sensor",
+  "version": "0.1.0",
+  "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/hunsalz/smart-sensor"
+    "url": "https://github.com/hunsalz/smart-sensor.git"
+  },
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@polymer/app-layout": "^3.0.2",
-    "@polymer/app-route": "^3.0.2",
-    "@polymer/app-storage": "^3.0.2",
-    "@polymer/iron-ajax": "^3.0.1",
-    "@polymer/iron-collapse": "^3.0.1",
-    "@polymer/iron-flex-layout": "^3.0.1",
-    "@polymer/iron-icon": "^3.0.1",
-    "@polymer/iron-icons": "^3.0.1",
-    "@polymer/iron-iconset-svg": "^3.0.1",
-    "@polymer/iron-pages": "^3.0.1",
-    "@polymer/paper-button": "^3.0.1",
-    "@polymer/paper-icon-button": "^3.0.2",
-    "@polymer/paper-input": "^3.0.1",
-    "@polymer/paper-slider": "^3.0.1",
-    "@polymer/paper-tabs": "^3.0.1",
-    "@polymer/paper-toast": "^3.0.1",
-    "@polymer/polymer": "^3.1.0",
+    "@kazupon/vue-i18n-loader": "^0.3.0",
     "chart.js": "^2.7.3",
-    "parse": "^2.1.0",
-    "request": "^2.88.0"
+    "js-cookie": "^2.2.0",
+    "parse": "2.1.0",
+    "register-service-worker": "^1.6.2",
+    "vee-validate": "^2.1.7",
+    "vue": "^2.6.6",
+    "vue-chartjs": "^3.4.0",
+    "vue-i18n": "^8.8.2",
+    "vue-moment": "^4.0.0",
+    "vue-router": "^3.0.2",
+    "vuetify": "^1.5.1",
+    "vuex": "^3.1.0",
+    "vuex-persist": "^2.0.0"
   },
   "devDependencies": {
-    "@webcomponents/webcomponentsjs": "^2.2.4",
-    "wct-browser-legacy": "^1.0.2"
+    "@vue/cli-plugin-babel": "^3.4.1",
+    "@vue/cli-plugin-eslint": "^3.4.1",
+    "@vue/cli-plugin-pwa": "^3.4.1",
+    "@vue/cli-service": "^3.4.1",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.14.1",
+    "eslint-plugin-babel": "^5.3.0",
+    "eslint-plugin-vue": "^5.2.2",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.1",
+    "vue-cli-plugin-i18n": "^0.5.1",
+    "vue-cli-plugin-vuetify": "^0.4.6",
+    "vue-template-compiler": "^2.6.6",
+    "vuetify-loader": "^1.2.1"
   },
-  "engines": {
-    "node": ">=10.0"
-  }
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "rules": {},
+    "parserOptions": {
+      "parser": "babel-eslint",
+      "allowImportExportEverywhere": true
+    }
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
 }
