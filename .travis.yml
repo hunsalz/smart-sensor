@@ -34,6 +34,7 @@ script:
   - cd smart-sensor-app
   - npm install
   - npm run build
+  - cd dist/
   - sed -i 's|href=/|href=/smart-sensor/|g' index.html # expand path to match GH-PAGES root dir requirements
 deploy:
   provider: pages
