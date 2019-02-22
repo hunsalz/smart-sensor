@@ -1,22 +1,22 @@
 {
-  "name": "Smart-Sensor",
-  "short_name": "Smart-Sensor",
-  "description": "Smart-Sensor for various sensor values",
-  "start_url": "/",
-  "display": "fullscreen",
-  "orientation": "landscape",
-  "theme_color": "#3f51b5",
-  "background_color": "#3f51b5",
+  "name": "Smart Sensor",
+  "short_name": "Smart Sensor App",
+  "description": "Smart Sensor App for various sensor values",
   "icons": [
     {
-      "src": "images/icon-192x192.png",
+      "src": "./img/icons/android-chrome-192x192.png",
       "sizes": "192x192",
-      "type": "images/png"
+      "type": "image/png"
     },
     {
-      "src": "images/icon-512x512.png",
+      "src": "./img/icons/android-chrome-512x512.png",
       "sizes": "512x512",
-      "type": "images/png"
+      "type": "image/png"
     }
-  ]
+  ],
+  "start_url": "./index.html",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "background_color": "#000000",
+  "theme_color": "#4DBA87"
 }
