@@ -18,6 +18,7 @@ before_install:
   - sudo mv arduino-${ARDUINO_VERSION} /usr/local/share/arduino
   - sudo ln -s /usr/local/share/arduino/arduino /usr/local/bin/arduino
 install:
+  - npm install vue-cli
   - mkdir -p ~/Arduino/libraries
   - ln -s $PWD ~/Arduino/libraries/
   - git clone https://github.com/hunsalz/esp8266utils.git ~/Arduino/libraries/esp8266utils
