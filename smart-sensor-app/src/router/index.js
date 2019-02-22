@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import store from '../store'
+import store from '@/store'
 
 Vue.use(Router)
 
@@ -15,12 +15,12 @@ const router = new Router({
     {
       path: '/login',
       name: 'login',
-      component: () => import('../views/Login.vue')
+      component: () => import('@/views/Login.vue')
     },
     {
       path: '/home',
       name: 'home',
-      component: () => import('../views/Home.vue'),
+      component: () => import('@/views/Home.vue'),
       meta: {
         authRequired: true
       }
@@ -28,7 +28,7 @@ const router = new Router({
     {
       path: '/more',
       name: 'more',
-      component: () => import('../views/More.vue'),
+      component: () => import('@/views/More.vue'),
       meta: {
         authRequired: true
       }
