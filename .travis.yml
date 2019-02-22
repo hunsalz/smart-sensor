@@ -41,9 +41,9 @@ deploy:
   skip-cleanup: true
   github-token: $GH_PAGES_TOKEN
   keep-history: true
-  local-dir: docs/.vuepress/dist
+  local-dir: /smart-sensor/docs/.vuepress/dist
   verbose: true
-  target-branch: master
+  target-branch: gh-pages
   on:
     branch: master
 after_success:
