@@ -1,3 +1,3 @@
 module.exports = {
-  base: '/smart-sensor/'
+  base: '/' // default - https://vuepress.vuejs.org/config/#base
 };
