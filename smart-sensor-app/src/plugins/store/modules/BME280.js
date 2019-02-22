@@ -8,8 +8,8 @@ export default {
   namespaced: true,
   mutations: {
     // store recent value
-    setValue(state, { device, value }) {
-      Vue.set(state, device, value);
+    setValue(state, bme280) {
+      Vue.set(state, bme280.get('device'), bme280.attributes);
     },
     // store any kind of series by a synthetic key of 'device{SEPARATOR}key' syntax 
     // note: no nested dynamic extensions are possible
@@ -26,10 +26,7 @@ export default {
         .first()
         .then(bme280 => {
           if (bme280) {
-            commit("setValue", {
-              device: bme280.get('device'),
-              value: bme280.attributes
-            });
+            commit("setValue", bme280);
           }
         })
         .then(() => {
