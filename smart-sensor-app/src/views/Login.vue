@@ -75,14 +75,8 @@
 </template>
 
 <script>
-  import { ValidationObserver, ValidationProvider } from "vee-validate";
-
   export default {
     name: "Login",
-    components: {
-      ValidationProvider,
-      ValidationObserver
-    },
     data: function() {
       return {
         email: "",

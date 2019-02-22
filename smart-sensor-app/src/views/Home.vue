@@ -47,15 +47,8 @@
 </template>
 
 <script>
-  import PanelHeader from "@/components/PanelHeader";
-  import PanelCharts from "@/components/PanelCharts";
-
   export default {
     name: "Home",
-    components: {
-      PanelHeader,
-      PanelCharts
-    },
     data: function() {
       return {
         tabs: [
