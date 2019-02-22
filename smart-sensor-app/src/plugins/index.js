@@ -1,4 +1,4 @@
 import './moment'
 import './parse'
-import './vee-validate'
+import './vuelidate'
 import './vuetify'

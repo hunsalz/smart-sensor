@@ -27,7 +27,9 @@
     "last10": "Last 10"
   },
   "validations": {
-    "messages": {
-    }
+    "emailRequired": "Email is required",
+    "emailValid": "Must be a valid email",
+    "passwordRequired": "Password is required",
+    "passwordMinLength": "Password must be at least {0} characters long"
   }
 }
