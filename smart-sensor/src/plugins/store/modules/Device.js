@@ -11,18 +11,6 @@ export default {
     }
   },
   actions: {
-    // TODO
-    test({ commit }) {
-      Parse.Cloud.run("getBME280Devices")
-        .then(function (results) {
-          // eslint-disable-next-line no-console
-          console.log(results);
-        })
-        .catch(function (error) {
-          // eslint-disable-next-line no-console
-          console.error(error);
-        });
-    },
     getDevices({ commit }) {
       // declare BME280 subclass
       const Device = Parse.Object.extend("Device");
@@ -40,7 +28,7 @@ export default {
         // eslint-disable-next-line no-console
         console.error("Query " + Device + " entries failed.", error);
 
-        // TODO -> loqout
+        // TODO -> logout
       };
     }
   },
