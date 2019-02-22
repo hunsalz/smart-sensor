@@ -11,7 +11,7 @@ stages:
   - ':ship it to GitHub Pages'
 cache:
   directories:
-    - $HOME/.npm
+    - "node_modules"
 before_install:
   - wget https://downloads.arduino.cc/arduino-${ARDUINO_VERSION}-linux64.tar.xz
   - tar xf arduino-${ARDUINO_VERSION}-linux64.tar.xz
@@ -19,6 +19,7 @@ before_install:
   - sudo ln -s /usr/local/share/arduino/arduino /usr/local/bin/arduino
 install:
   - npm install -g @vue/cli
+  - npm install -g vuepress
   - mkdir -p ~/Arduino/libraries
   - ln -s $PWD ~/Arduino/libraries/
   - git clone https://github.com/hunsalz/esp8266utils.git ~/Arduino/libraries/esp8266utils
@@ -32,18 +33,17 @@ install:
 script:
   - source $TRAVIS_BUILD_DIR/travis/build.sh
   - cd smart-sensor-app
-  - npm install
-  - npm run build
-  - cd dist/
-  - sed -i 's|href=/|href=/smart-sensor/|g' index.html # expand path to match GH-PAGES root dir requirements
-  - sed -i 's|src=/|src=/smart-sensor/|g' index.html # expand path to match GH-PAGES root dir requirements
+  - npm run docs:build
+notifications:
+  email: false
 deploy:
   provider: pages
   skip-cleanup: true
   github-token: $GH_PAGES_TOKEN
   keep-history: true
-  local-dir: smart-sensor-app/dist
+  local-dir: docs/.vuepress/dist
   verbose: true
+  target-branch: master
   on:
     branch: master
 after_success:
