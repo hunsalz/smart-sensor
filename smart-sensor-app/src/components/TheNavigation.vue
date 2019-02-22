@@ -40,7 +40,7 @@
 </template>
 
 <script>
-  import router from "../plugins/router";
+  import router from "../router";
 
   export default {
     name: "TheNavigation",

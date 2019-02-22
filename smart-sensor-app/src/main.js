@@ -1,12 +1,18 @@
 import Vue from 'vue'
-import App from './App.vue'
-import i18n from './plugins/i18n'
-import './plugins/moment'
-import './plugins/parse'
-import router from './plugins/router'
-import store from './plugins/store/store'
-import './plugins/vee-validate'
-import './plugins/vuetify'
+
+// component imports
+import './components'
+
+// plugin imports
+import './plugins'
+
+// application imports
+import App from './App'
+import i18n from '@/i18n'
+import router from '@/router'
+import store from '@/store'
+
+// service worker
 import './registerServiceWorker'
 
 Vue.config.productionTip = false
