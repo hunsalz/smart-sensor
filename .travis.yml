@@ -36,6 +36,7 @@ script:
   - npm run build
   - cd dist/
   - sed -i 's|href=/|href=/smart-sensor/|g' index.html # expand path to match GH-PAGES root dir requirements
+  - sed -i 's|src=/|src=/smart-sensor/|g' index.html # expand path to match GH-PAGES root dir requirements
 deploy:
   provider: pages
   skip-cleanup: true
