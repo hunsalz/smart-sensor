@@ -2,7 +2,8 @@
 
 [![Build Status](https://travis-ci.org/hunsalz/smart-sensor.svg?branch=master)](https://travis-ci.org/hunsalz/smart-sensor)
 [![License](https://img.shields.io/badge/license-MIT%20License-blue.svg)](http://doge.mit-license.org)
-[Smart-Sensor-App ↗](https://hunsalz.github.io/smart-sensor/)
+
+## [Smart-Sensor-App ↗](https://hunsalz.github.io/smart-sensor/)
 
 ## Story
 
@@ -22,7 +23,7 @@ Smart-Sensor consists of various sensor input sources and a central [Progressive
 ## Hardware components
 
 * (NodeMCU) ESP32 or ESP8266
-* Examples for [Bosch environmental sensors](https://www.bosch-sensortec.com/bst/products/environmental/integrated_environmental_unit/overview_integratedenvironmentalunit)
+* A bunch of exemplary [Bosch environmental sensors](https://www.bosch-sensortec.com/bst/products/environmental/integrated_environmental_unit/overview_integratedenvironmentalunit)
 * A bunch of wires
 
 ## Software components
