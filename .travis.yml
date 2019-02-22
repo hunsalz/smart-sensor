@@ -18,7 +18,6 @@ before_install:
   - sudo mv arduino-${ARDUINO_VERSION} /usr/local/share/arduino
   - sudo ln -s /usr/local/share/arduino/arduino /usr/local/bin/arduino
 install:
-  - npm install -g polymer-cli
   - mkdir -p ~/Arduino/libraries
   - ln -s $PWD ~/Arduino/libraries/
   - git clone https://github.com/hunsalz/esp8266utils.git ~/Arduino/libraries/esp8266utils
@@ -32,17 +31,13 @@ install:
 script:
   - source $TRAVIS_BUILD_DIR/travis/build.sh
   - cd smart-sensor-app
-  - npm install
-  - sed -i 's|service-worker.js|smart-sensor/service-worker.js|g' index.html # expand path to match GH-PAGES root dir
-  - sed -i 's|src="node_modules|src="smart-sensor/node_modules|g' index.html # expand path to match GH-PAGES root dir
-  - sed -i 's|src="src|src="smart-sensor/src|g' index.html # expand path to match GH-PAGES root dir
-  - polymer build
+  - npm run build
 deploy:
   provider: pages
   skip-cleanup: true
   github-token: $GH_PAGES_TOKEN
   keep-history: true
-  local-dir: smart-sensor-app/build/public
+  local-dir: smart-sensor-app/dist
   verbose: true
   on:
     branch: master
