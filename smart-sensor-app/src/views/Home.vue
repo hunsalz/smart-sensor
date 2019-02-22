@@ -49,35 +49,33 @@
 <script>
   export default {
     name: "Home",
-    data: function() {
-      return {
-        tabs: [
-          {
-            name: "tabs.last10",
-            key: "LAST_10",
-            limit: 10
-          },
-          {
-            name: "tabs.last4hours",
-            key: "LAST_4_HOURS",
-            offsetFromNowInMillis: 4 * 60 * 60 * 1000,
-            limit: 1000
-          },
-          {
-            name: "tabs.last24hours",
-            key: "LAST_24_HOURS",
-            offsetFromNowInMillis: 24 * 60 * 60 * 1000,
-            limit: 1000
-          },
-          {
-            name: "tabs.last7days",
-            key: "LAST_7_DAYS",
-            offsetFromNowInMillis: 7 * 24 * 60 * 60 * 1000,
-            limit: 1000
-          }
-        ]
-      };
-    },
+    data: () => ({
+      tabs: [
+        {
+          name: "tabs.last10",
+          key: "LAST_10",
+          limit: 10
+        },
+        {
+          name: "tabs.last4hours",
+          key: "LAST_4_HOURS",
+          offsetFromNowInMillis: 4 * 60 * 60 * 1000,
+          limit: 1000
+        },
+        {
+          name: "tabs.last24hours",
+          key: "LAST_24_HOURS",
+          offsetFromNowInMillis: 24 * 60 * 60 * 1000,
+          limit: 1000
+        },
+        {
+          name: "tabs.last7days",
+          key: "LAST_7_DAYS",
+          offsetFromNowInMillis: 7 * 24 * 60 * 60 * 1000,
+          limit: 1000
+        }
+      ]
+    }),
     computed: {
       devices: function() {
         return this.$store.getters["Device/getDevices"];

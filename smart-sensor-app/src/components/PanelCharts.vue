@@ -74,49 +74,47 @@
         }
       }
     },
-    data: function() {
-      return {
-        options: {
-          fill: true,
-          legend: {
-            display: false
-          },
-          layout: {
-            padding: {
-              left: 20,
-              right: 20,
-              top: 0,
-              bottom: 0
-            }
-          },
-          scales: {
-            xAxes: [
-              {
-                type: "time",
-                distribution: "series",
-                time: {
-                  unit: "minute",
-                  //round: "minute",
-                  displayFormats: {
-                    minute: "HH:mm:ss"
-                  }
-                },
-                ticks: {
-                  source: "labels"
-                }
-              }
-            ],
-            yAxes: [
-              {
-                ticks: {
-                  beginAtZero: true
-                }
-              }
-            ]
+    data: () => ({
+      options: {
+        fill: true,
+        legend: {
+          display: false
+        },
+        layout: {
+          padding: {
+            left: 20,
+            right: 20,
+            top: 0,
+            bottom: 0
           }
+        },
+        scales: {
+          xAxes: [
+            {
+              type: "time",
+              distribution: "series",
+              time: {
+                unit: "minute",
+                //round: "minute",
+                displayFormats: {
+                  minute: "HH:mm:ss"
+                }
+              },
+              ticks: {
+                source: "labels"
+              }
+            }
+          ],
+          yAxes: [
+            {
+              ticks: {
+                beginAtZero: true
+              }
+            }
+          ]
         }
-      };
-    },
+      }
+    }),
     computed: {
       computedTemperatures: function() {
         let series = this.$store.getters["BME280/getSeries"](
