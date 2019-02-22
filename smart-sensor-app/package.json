@@ -9,9 +9,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs"
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "@kazupon/vue-i18n-loader": "^0.3.0",
