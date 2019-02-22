@@ -21,7 +21,7 @@
       </v-btn>
     </div>
     <v-btn
-      v-if="$route.name === 'more'"
+      v-show="$route.name === 'more'"
       flat
       icon
       @click="home"
@@ -29,7 +29,7 @@
       <v-icon>chevron_left</v-icon>
     </v-btn>
     <v-btn
-      v-if="$route.name === 'home'"
+      v-show="$route.name === 'home'"
       flat
       icon
       @click="more"
