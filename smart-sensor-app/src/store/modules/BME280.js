@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Parse from 'parse'
+import router from '@/router'
 
 const SEPARATOR = '-';
 const BME280 = Parse.Object.extend("BME280"); // declare BME280 subclass
@@ -11,10 +12,35 @@ export default {
     setValue(state, bme280) {
       Vue.set(state, bme280.get('device'), bme280.attributes);
     },
-    // store any kind of series by a synthetic key of 'device{SEPARATOR}key' syntax 
-    // note: no nested dynamic extensions are possible
+    // store any kind of series by a synthetic key of 'device{SEPARATOR}key' syntax
     setSeries(state, { device, key, series }) {
       Vue.set(state, [device + SEPARATOR + key], series);
+    },
+    // update all existing series with a new value
+    updateSeries(state, bme280) {
+      let device = bme280.get('device');
+      // loop over all existing keys of current state
+      for (const key of Object.keys(state)) {
+        // unshift new value to all keys that match appropriate 'device{SEPARATOR}' tuple
+        if (key.indexOf(device + SEPARATOR) !== -1) {
+          // unshift new value 
+          let series = state[key];
+          series.labels.unshift(bme280.get('createdAt'));
+          series.temperatures.unshift(bme280.get('temperature'));
+          series.humidities.unshift(bme280.get('humidity'));
+          series.pressures.unshift(bme280.get('pressure'));
+          series.altitudes.unshift(bme280.get('altitude'));
+          // call reducer function to define if any former values needs to be removed
+          let i = series.reduceFunction(series, 1 * 30 * 60 * 1000, series.limit);       
+          // remove amout of former values accordingly
+          let start = i * -1;
+          series.labels.splice(start, i);
+          series.temperatures.splice(start, i);
+          series.humidities.splice(start, i);
+          series.pressures.splice(start, i);
+          series.altitudes.splice(start, i);
+        }
+      }
     }
   },
   actions: {
@@ -30,12 +56,10 @@ export default {
           }
         })
         .then(() => {
-          // subscribe to changes
+          // subscribe to new values
           query.subscribe().on("create", bme280 => {
             commit("setValue", bme280);
-          });
-          query.subscribe().on('update', bme280 => {
-            commit("setValue", bme280);
+            commit("updateSeries", bme280);
           });
         }),
         error => {
@@ -45,7 +69,7 @@ export default {
           // TODO -> logout
         };
     },
-    loadSeries({ commit }, { device, key, offsetFromNowInMillis, limit }) {
+    loadSeries({ commit }, { device, key, offsetFromNowInMillis, limit, reduceFunction }) {
       let query = new Parse.Query(BME280);
       if (offsetFromNowInMillis) {
         var millis = Date.now() - offsetFromNowInMillis;
@@ -76,7 +100,10 @@ export default {
               temperatures: temperatures,
               humidities: humidities,
               pressures: pressures,
-              altitudes: altitudes
+              altitudes: altitudes,
+              offsetFromNowInMillis: offsetFromNowInMillis,
+              limit: limit,
+              reduceFunction: reduceFunction
             }
           });
         }),
@@ -84,7 +111,9 @@ export default {
           // eslint-disable-next-line no-console
           console.error("Query " + BME280 + " entries failed.", error);
 
-          // TODO -> logout
+          // TODO extract 
+          commit('setAuthenticated', false);
+          router.push({ name: 'login' });
         };
     }
   },
@@ -106,7 +135,10 @@ export default {
         temperatures: [],
         humidities: [],
         pressures: [],
-        altitudes: []
+        altitudes: [],
+        offsetFromNowInMillis: NaN,
+        limit: 1000,
+        reduceFunction: () => { }
       } : state[device + SEPARATOR + key];
     }
   }

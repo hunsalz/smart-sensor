@@ -69,7 +69,13 @@
         default: () => {
           return {
             key: LAST_1000_ENTRIES,
-            limit: 1000
+            offsetFromNowInMillis: NaN,
+            limit: 1000,
+            // eslint-disable-next-line no-unused-vars
+            reduceFunction: (series, offsetFromNowInMillis, limit) => {
+              let length = series.labels.length;
+              return length > limit ? length - limit : 0;
+            }
           };
         }
       }
@@ -182,7 +188,8 @@
         device: this.device,
         key: this.filter.key,
         offsetFromNowInMillis: this.filter.offsetFromNowInMillis,
-        limit: this.filter.limit
+        limit: this.filter.limit,
+        reduceFunction: this.filter.reduceFunction
       });
     }
   };

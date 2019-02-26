@@ -47,6 +47,24 @@
 </template>
 
 <script>
+  // eslint-disable-next-line no-unused-vars
+  const LIMIT_REDUCE_FUNCTION = (series, offsetFromNowInMillis, limit) => {
+    let length = series.labels.length;
+    return length > limit ? length - limit : 0;
+  };
+
+  // eslint-disable-next-line no-unused-vars
+  const TIME_REDUCE_FUNCTION = (series, offsetFromNowInMillis, limit) => {
+    var millis = Date.now() - offsetFromNowInMillis;
+    let i = series.labels.length - 1;
+    for (; i > 0; i--) {
+      if (millis < new Date(series.labels[i]).getTime()) {
+        break;
+      }
+    }
+    return series.labels.length - i - 1;
+  };
+
   export default {
     name: "Home",
     data: () => ({
@@ -54,25 +72,30 @@
         {
           name: "tabs.last10",
           key: "LAST_10",
-          limit: 10
+          offsetFromNowInMillis: NaN,
+          limit: 10,
+          reduceFunction: LIMIT_REDUCE_FUNCTION
         },
         {
           name: "tabs.last4hours",
           key: "LAST_4_HOURS",
           offsetFromNowInMillis: 4 * 60 * 60 * 1000,
-          limit: 1000
+          limit: 1000,
+          reduceFunction: TIME_REDUCE_FUNCTION
         },
         {
           name: "tabs.last24hours",
           key: "LAST_24_HOURS",
           offsetFromNowInMillis: 24 * 60 * 60 * 1000,
-          limit: 1000
+          limit: 1000,
+          reduceFunction: TIME_REDUCE_FUNCTION
         },
         {
           name: "tabs.last7days",
           key: "LAST_7_DAYS",
           offsetFromNowInMillis: 7 * 24 * 60 * 60 * 1000,
-          limit: 1000
+          limit: 1000,
+          reduceFunction: TIME_REDUCE_FUNCTION
         }
       ]
     }),
