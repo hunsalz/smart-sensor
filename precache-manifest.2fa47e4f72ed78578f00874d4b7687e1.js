@@ -20,11 +20,11 @@ self.__precacheManifest = [
     "url": "/smart-sensor/js/chunk-2d0d3c86.291cb57e.js"
   },
   {
-    "revision": "d31d00ed5c049031c289",
-    "url": "/smart-sensor/js/app.d25e29c1.js"
+    "revision": "d70e240a29fc2506d18b",
+    "url": "/smart-sensor/js/app.15d16d20.js"
   },
   {
-    "revision": "e6d16059164d4ffdfd7fd681f1f8cdba",
+    "revision": "7b9a95947d2ee0f11a408a08d5b57abc",
     "url": "/smart-sensor/index.html"
   },
   {
