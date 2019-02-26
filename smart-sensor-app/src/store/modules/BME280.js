@@ -31,7 +31,7 @@ export default {
           series.pressures.unshift(bme280.get('pressure'));
           series.altitudes.unshift(bme280.get('altitude'));
           // call reducer function to define if any former values needs to be removed
-          let i = series.reduceFunction(series, 1 * 30 * 60 * 1000, series.limit);       
+          let i = series.reduceFunction(series, series.offsetFromNowInMillis, series.limit);
           // remove amout of former values accordingly
           let start = i * -1;
           series.labels.splice(start, i);
