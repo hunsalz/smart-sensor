@@ -4,12 +4,12 @@ self.__precacheManifest = [
     "url": "/smart-sensor/robots.txt"
   },
   {
-    "revision": "1e9c3752b8f4865e6724",
-    "url": "/smart-sensor/js/chunk-vendors.0c5ecf5c.js"
+    "revision": "28ae8ee1d95ce89dc1ae",
+    "url": "/smart-sensor/js/chunk-vendors.2e4bb3da.js"
   },
   {
-    "revision": "8f6820006cbabbc86704",
-    "url": "/smart-sensor/js/chunk-568cac6c.e7712424.js"
+    "revision": "a0dd315b2b1de1f505c6",
+    "url": "/smart-sensor/js/chunk-568cac6c.9c1bd543.js"
   },
   {
     "revision": "893f0e1a335255ff9119",
@@ -20,19 +20,19 @@ self.__precacheManifest = [
     "url": "/smart-sensor/js/chunk-2d0d3c86.291cb57e.js"
   },
   {
-    "revision": "ca8347219c19c3d41e4b",
-    "url": "/smart-sensor/js/app.83f1f069.js"
+    "revision": "d31d00ed5c049031c289",
+    "url": "/smart-sensor/js/app.d25e29c1.js"
   },
   {
-    "revision": "f65a6c45ad1dc73d5c3ece71373c0844",
+    "revision": "e6d16059164d4ffdfd7fd681f1f8cdba",
     "url": "/smart-sensor/index.html"
   },
   {
-    "revision": "1e9c3752b8f4865e6724",
-    "url": "/smart-sensor/css/chunk-vendors.29e3f884.css"
+    "revision": "28ae8ee1d95ce89dc1ae",
+    "url": "/smart-sensor/css/chunk-vendors.75639852.css"
   },
   {
-    "revision": "8f6820006cbabbc86704",
+    "revision": "a0dd315b2b1de1f505c6",
     "url": "/smart-sensor/css/chunk-568cac6c.0db17709.css"
   },
   {
