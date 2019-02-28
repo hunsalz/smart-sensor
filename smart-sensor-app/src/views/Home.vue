@@ -11,8 +11,8 @@
       >
         <v-expansion-panel expand>
           <v-expansion-panel-content
-            v-for="(device, index) in devices"
-            :key="index"
+            v-for="(device, index1) in devices"
+            :key="index1"
           >
             <div slot="header">
               <panel-header
@@ -22,20 +22,20 @@
             </div>
             <v-tabs grow>
               <v-tab
-                v-for="(tab, index1) in tabs"
-                :key="index1"
+                v-for="(tab, index2) in tabs"
+                :key="index2"
                 class="caption"
               >
                 {{ $t(tab.name) }}
               </v-tab>
               <v-tab-item
-                v-for="(tab, index2) in tabs"
-                :key="index2"
+                v-for="(tab, index3) in tabs"
+                :key="index3"
                 lazy
               >
                 <panel-charts
                   :device="device.name"
-                  :filter="tabs[index2]"
+                  :filter="tabs[index3]"
                 />
               </v-tab-item>
             </v-tabs>
@@ -47,6 +47,8 @@
 </template>
 
 <script>
+  import { MODULES } from "@/store";
+
   // eslint-disable-next-line no-unused-vars
   const LIMIT_REDUCE_FUNCTION = (series, offsetFromNowInMillis, limit) => {
     let length = series.labels.length;
@@ -101,11 +103,11 @@
     }),
     computed: {
       devices: function() {
-        return this.$store.getters["Device/getDevices"];
+        return this.$store.getters[MODULES.Device.getters.getDevices];
       }
     },
     created() {
-      this.$store.dispatch("Device/getDevices");
+      this.$store.dispatch(MODULES.Device.actions.loadDevices);
     }
   };
 </script>

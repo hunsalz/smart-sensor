@@ -51,6 +51,7 @@
 
 <script>
   import LineChart from "./LineChart.js";
+  import { MODULES } from "@/store";
 
   const LAST_1000_ENTRIES = "LAST_1000_ENTRIES";
 
@@ -123,7 +124,7 @@
     }),
     computed: {
       computedTemperatures: function() {
-        let series = this.$store.getters["BME280/getSeries"](
+        let series = this.$store.getters[MODULES.BME280.getters.getSeries](
           this.device,
           this.filter.key
         );
@@ -138,7 +139,7 @@
         };
       },
       computedHumidities: function() {
-        let series = this.$store.getters["BME280/getSeries"](
+        let series = this.$store.getters[MODULES.BME280.getters.getSeries](
           this.device,
           this.filter.key
         );
@@ -153,7 +154,7 @@
         };
       },
       computedPressures: function() {
-        let series = this.$store.getters["BME280/getSeries"](
+        let series = this.$store.getters[MODULES.BME280.getters.getSeries](
           this.device,
           this.filter.key
         );
@@ -168,7 +169,7 @@
         };
       },
       computedAltitudes: function() {
-        let series = this.$store.getters["BME280/getSeries"](
+        let series = this.$store.getters[MODULES.BME280.getters.getSeries](
           this.device,
           this.filter.key
         );
@@ -184,7 +185,7 @@
       }
     },
     created() {
-      this.$store.dispatch("BME280/loadSeries", {
+      this.$store.dispatch(MODULES.BME280.actions.loadSeries, {
         device: this.device,
         key: this.filter.key,
         offsetFromNowInMillis: this.filter.offsetFromNowInMillis,

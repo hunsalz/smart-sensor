@@ -44,6 +44,7 @@
 
 <script>
   import moment from "moment";
+  import { MODULES } from "@/store";
 
   export default {
     name: "PanelHeader",
@@ -64,14 +65,14 @@
         return this.label === "" ? this.device : this.label;
       },
       computedValue: function() {
-        return this.$store.getters["BME280/getValue"](this.device);
+        return this.$store.getters[MODULES.BME280.getters.getValue](this.device);
       },
       computedLastUpdateDate() {
         return moment(this.computedValue.createdAt).format('LLL');
       }
     },
     created() {
-      this.$store.dispatch("BME280/subscribeToValues", this.device);
+      this.$store.dispatch(MODULES.BME280.actions.subscribeToValues, this.device);
     }
   };
 </script>

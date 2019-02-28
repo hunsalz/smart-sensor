@@ -1,28 +1,36 @@
 import Parse from 'parse'
 import router from '@/router'
 
+export const ACTIONS = {
+  login: 'login',
+  logout: 'logout'
+}
+
+export const GETTERS = {
+  isAuthenticated: 'isAuthenticated'
+}
+
+export const MUTATIONS = {
+  setAuthenticated: 'setAuthenticated'
+}
+
 export default {
   namespaced: true,
   state: {
     authenticated: false
   },
-  mutations: {
-    setAuthenticated(state, authenticated) {
-      state.authenticated = authenticated;
-    }
-  },
   actions: {
-    login({ commit }, { email, password }) {
+    [ACTIONS.login]({ commit }, { email, password }) {
       Parse.User.logIn(email, password)
         .then(() => {
-          commit('setAuthenticated', true);
+          commit(MUTATIONS.setAuthenticated, true);
           router.push({ name: "home" });
         })
         .catch(function () {
-          commit('setAuthenticated', false);
+          commit(MUTATIONS.setAuthenticated, false);
         });
     },
-    logout({ commit }) {
+    [ACTIONS.logout]({ commit }) {
       Parse.User.logOut()
         .then(() => {
           // nothing else
@@ -30,13 +38,18 @@ export default {
         .catch(function () {
           // nothing else
         });
-      commit('setAuthenticated', false);
+      commit(MUTATIONS.setAuthenticated, false);
       router.push({ name: 'login' });
     }
   },
   getters: {
-    isAuthenticated(state) {
+    [GETTERS.isAuthenticated](state) {
       return state.authenticated;
+    }
+  },
+  mutations: {
+    setAuthenticated(state, authenticated) {
+      state.authenticated = authenticated;
     }
   }
 };

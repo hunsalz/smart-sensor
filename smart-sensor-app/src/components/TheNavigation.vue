@@ -41,12 +41,13 @@
 
 <script>
   import router from "@/router";
+  import { MODULES } from "@/store";
 
   export default {
     name: "TheNavigation",
     computed: {
       isAuthenticated() {
-        return this.$store.getters["User/isAuthenticated"];
+        return this.$store.getters[MODULES.User.getters.isAuthenticated];
       }
     },
     methods: {
@@ -54,7 +55,7 @@
         router.push({ name: "home" });
       },
       logout() {
-        this.$store.dispatch("User/logout");
+        this.$store.dispatch(MODULES.User.actions.logout);
       },
       more() {
         router.push({ name: "more" });

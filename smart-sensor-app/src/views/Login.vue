@@ -61,6 +61,7 @@
 
 <script>
   import { required, email, minLength } from "vuelidate/lib/validators";
+  import { MODULES } from "@/store";
 
   const PASSWORD_MIN_LENGTH = 5;
 
@@ -89,14 +90,16 @@
         !this.$v.password.required &&
           errors.push(this.$t("validations.passwordRequired"));
         !this.$v.password.minLength &&
-          errors.push(this.$t("validations.passwordMinLength", [PASSWORD_MIN_LENGTH]));
+          errors.push(
+            this.$t("validations.passwordMinLength", [PASSWORD_MIN_LENGTH])
+          );
         return errors;
       }
     },
     methods: {
       submit() {
         if (!this.$v.$invalid) {
-          this.$store.dispatch("User/login", {
+          this.$store.dispatch(MODULES.User.actions.login, {
             email: this.email,
             password: this.password
           });

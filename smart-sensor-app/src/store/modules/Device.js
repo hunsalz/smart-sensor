@@ -1,40 +1,56 @@
 import Parse from 'parse'
 
+const DEVICE = Parse.Object.extend("Device"); // declare Device subclass
+
+export const ACTIONS = {
+  loadDevices: 'loadDevices',
+  saveDevices: 'saveDevices'
+}
+
+export const GETTERS = {
+  getDevices: 'getDevices'
+}
+
+export const MUTATIONS = {
+  setDevices: 'setDevices'
+}
+
 export default {
   namespaced: true,
   state: {
     devices: []
   },
-  mutations: {
-    setDevices(state, devices) {
-      state.devices = devices;
-    }
-  },
   actions: {
-    getDevices({ commit }) {
-      // declare BME280 subclass
-      const Device = Parse.Object.extend("Device");
+    [ACTIONS.loadDevices]({ commit }) {
+
       // try to fetch all devices
-      const query = new Parse.Query(Device);
+      const query = new Parse.Query(DEVICE);
       query.find()
         .then(results => {
           let devices = [];
           results.forEach(e => {
             devices.push(e.attributes);
           });
-          commit("setDevices", devices);
+          commit(MUTATIONS.setDevices, devices);
         })
       error => {
         // eslint-disable-next-line no-console
-        console.error("Query " + Device + " entries failed.", error);
+        console.error("Query " + DEVICE + " entries failed.", error);
 
         // TODO -> logout
       };
+    },
+    [ACTIONS.saveDevices]({ commit }, { devices }) {
     }
   },
   getters: {
-    getDevices: (state) => {
+    [GETTERS.getDevices]: (state) => {
       return state.devices;
+    }
+  },
+  mutations: {
+    [MUTATIONS.setDevices](state, devices) {
+      state.devices = devices;
     }
   }
 };
