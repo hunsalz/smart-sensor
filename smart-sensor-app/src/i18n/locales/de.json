@@ -12,6 +12,10 @@
     },
     "panel": {
       "lastUpdate": "Letzte Aktualisierung"
+    },
+    "more": {
+      "name": "Sensor-Bezeichnung ändern",
+      "btn": "speichern"
     }
   },
   "units": {

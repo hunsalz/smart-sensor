@@ -12,6 +12,10 @@
     },
     "panel": {
       "lastUpdate": "Last update"
+    },
+    "more": {
+      "name": "Change senor labels",
+      "btn": "save"
     }
   },
   "units": {
