@@ -15,7 +15,7 @@ import store from '@/store'
 // service worker
 import './registerServiceWorker'
 
-Vue.config.productionTip = false
+Vue.config.productionTip = process.env.NODE_ENV !== 'production'
 
 new Vue({
   i18n,
