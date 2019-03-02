@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/smart-sensor/precache-manifest.e681f148172c12dbceffcd1c6ad43699.js"
+  "/smart-sensor/precache-manifest.57f35f65d231e4615fbb7a8988e0126b.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "smart-sensor"});
