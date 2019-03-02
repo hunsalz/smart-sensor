@@ -54,7 +54,9 @@
     },
     methods: {
       submit() {
-        // TODO
+        this.$store.dispatch(MODULES.Device.actions.saveDevices, {
+          devices: this.devices
+        });
       }
     }
   };
