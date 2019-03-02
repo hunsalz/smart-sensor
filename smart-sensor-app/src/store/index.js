@@ -30,9 +30,6 @@ export const MODULES = {
     },
     getters: {
       getDevices: _DEVICE + '/' + DeviceMethods.GETTERS.getDevices
-    },
-    mutations: {
-      setDevices: _DEVICE + '/' + DeviceMethods.MUTATIONS.setDevices
     }
   },
   User: {
@@ -42,9 +39,6 @@ export const MODULES = {
     },
     getters: {
       isAuthenticated: _USER + '/' + UserMethods.GETTERS.isAuthenticated
-    },
-    mutations: {
-      setAuthenticated: _USER + '/' + UserMethods.MUTATIONS.setAuthenticated
     }
   }
 }
