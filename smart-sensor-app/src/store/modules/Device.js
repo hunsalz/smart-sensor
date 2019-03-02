@@ -1,4 +1,5 @@
 import Parse from 'parse'
+import { handleParseError } from "@/plugins/parse"
 
 const DEVICE = Parse.Object.extend("Device"); // declare Device subclass
 
@@ -34,13 +35,18 @@ export default {
           commit(MUTATIONS.setDevices, devices);
         })
       error => {
-        // eslint-disable-next-line no-console
-        console.error("Query " + DEVICE + " entries failed.", error);
-
-        // TODO -> logout
+        handleParseError(error);
       };
     },
     [ACTIONS.saveDevices]({ commit }, { devices }) {
+
+      // TODO
+      for (let i in devices) {
+        // eslint-disable-next-line no-console
+        console.log(devices[i])
+        //devices[i].save();
+      }
+      commit(MUTATIONS.setDevices, devices);
     }
   },
   getters: {

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Parse from 'parse'
+import { handleParseError } from "@/plugins/parse"
 
 const SEPARATOR = '@';
 const BME280 = Parse.Object.extend("BME280"); // declare BME280 subclass
@@ -42,10 +43,7 @@ export default {
           });
         }),
         error => {
-          // eslint-disable-next-line no-console
-          console.error("Query " + BME280 + " entries failed.", error);
-
-          // TODO -> logout
+          handleParseError(error);
         };
     },
     [ACTIONS.loadSeries]({ commit }, { device, key, offsetFromNowInMillis, limit, reduceFunction }) {
@@ -87,9 +85,7 @@ export default {
           });
         }),
         error => {
-          // eslint-disable-next-line no-console
-          console.error("Query " + BME280 + " entries failed.", error);
-
+          handleParseError(error);
         };
     }
   },
