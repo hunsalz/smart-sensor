@@ -48,7 +48,7 @@
 
 <script>
   import { MODULES } from "@/store";
-  import { LIMIT_REDUCE_FUNCTION, TIME_REDUCE_FUNCTION } from "@/components/PanelCharts";
+  import { LIMIT_REDUCE, TIME_REDUCE } from "@/components/mixins/ReduceFunctions";
 
   export default {
     name: "Home",
@@ -59,28 +59,28 @@
           key: "LAST_10",
           offsetFromNowInMillis: NaN,
           limit: 10,
-          reduceFunction: LIMIT_REDUCE_FUNCTION
+          reduceFunction: LIMIT_REDUCE
         },
         {
           name: "tabs.last4hours",
           key: "LAST_4_HOURS",
           offsetFromNowInMillis: 4 * 60 * 60 * 1000,
           limit: 1000,
-          reduceFunction: TIME_REDUCE_FUNCTION
+          reduceFunction: TIME_REDUCE
         },
         {
           name: "tabs.last24hours",
           key: "LAST_24_HOURS",
           offsetFromNowInMillis: 24 * 60 * 60 * 1000,
           limit: 1000,
-          reduceFunction: TIME_REDUCE_FUNCTION
+          reduceFunction: TIME_REDUCE
         },
         {
           name: "tabs.last7days",
           key: "LAST_7_DAYS",
           offsetFromNowInMillis: 7 * 24 * 60 * 60 * 1000,
           limit: 1000,
-          reduceFunction: TIME_REDUCE_FUNCTION
+          reduceFunction: TIME_REDUCE
         }
       ]
     }),
