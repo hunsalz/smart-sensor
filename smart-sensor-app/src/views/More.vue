@@ -43,6 +43,7 @@
 </template>
 
 <script>
+  import router from "@/router";
   import { MODULES } from "@/store";
 
   export default {
@@ -58,6 +59,7 @@
     methods: {
       submit() {
         this.$store.dispatch(MODULES.Device.actions.saveDevices);
+        router.push({ name: "home" });
       },
       updateLabel(index, label) {
         this.$store.commit(MODULES.Device.mutations.setLabel, { index, label });
