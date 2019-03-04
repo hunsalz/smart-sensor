@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-undef
 module.exports = {
-  publicPath: '/',
+  publicPath: './',
   lintOnSave: process.env.NODE_ENV !== 'production',
   pluginOptions: {
     i18n: {
