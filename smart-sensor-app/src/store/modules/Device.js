@@ -35,7 +35,7 @@ export default {
           commit(MUTATIONS.setDevices, devices);
         })
       error => {
-        handleParseError(error);
+        handleParseError(this, error);
       };
     },
     [ACTIONS.saveDevices]({ state }) {

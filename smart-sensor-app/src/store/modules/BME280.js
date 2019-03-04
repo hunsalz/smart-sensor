@@ -42,7 +42,7 @@ export default {
           });
         }),
         error => {
-          handleParseError(error);
+          handleParseError(this, error);
         };
     },
     [ACTIONS.loadSeries]({ commit }, { device, key, offsetFromNowInMillis, limit, reduceFunction }) {
@@ -84,7 +84,7 @@ export default {
           });
         }),
         error => {
-          handleParseError(error);
+          handleParseError(this, error);
         };
     }
   },
