@@ -30,6 +30,9 @@ export const MODULES = {
     },
     getters: {
       getDevices: _DEVICE + '/' + DeviceMethods.GETTERS.getDevices
+    },
+    mutations: {
+      setLabel: _DEVICE + '/' + DeviceMethods.MUTATIONS.setLabel
     }
   },
   User: {
