@@ -1,7 +1,5 @@
 import Parse from 'parse'
-import { handleParseError } from "@/plugins/parse"
-
-const DEVICE = Parse.Object.extend("Device"); // declare Device subclass
+import { DEVICE, handleParseError } from "@/plugins/parse"
 
 export const ACTIONS = {
   loadDevices: 'loadDevices',
@@ -13,7 +11,8 @@ export const GETTERS = {
 }
 
 export const MUTATIONS = {
-  setDevices: 'setDevices'
+  setDevices: 'setDevices',
+  setLabel: 'setLabel'
 }
 
 export default {
@@ -23,14 +22,15 @@ export default {
   },
   actions: {
     [ACTIONS.loadDevices]({ commit }) {
-
       // try to fetch all devices
       const query = new Parse.Query(DEVICE);
       query.find()
         .then(results => {
           let devices = [];
-          results.forEach(e => {
-            devices.push(e.attributes);
+          results.forEach(entity => {
+            let device = Object.assign({}, entity.attributes);
+            device.id = entity.id;
+            devices.push(device);
           });
           commit(MUTATIONS.setDevices, devices);
         })
@@ -38,15 +38,24 @@ export default {
         handleParseError(error);
       };
     },
-    [ACTIONS.saveDevices]({ commit }, { devices }) {
-
-      // TODO
-      for (let i in devices) {
-        // eslint-disable-next-line no-console
-        console.log(devices[i])
-        //devices[i].save();
-      }
-      commit(MUTATIONS.setDevices, devices);
+    [ACTIONS.saveDevices]({ state }) {
+      // process all devices
+      state.devices.forEach(device => {
+        // process each entity
+        const query = new Parse.Query(DEVICE);
+        query.get(device.id).then((entity) => {
+          // update entity if label changed
+          if (entity.get('label') != device.label) {
+            entity.set('label', device.label);
+            entity.save().then(() => {
+              // success
+            }, (error) => {
+              // eslint-disable-next-line no-console
+              console.error('Updating failed', error);
+            });
+          }
+        });
+      });
     }
   },
   getters: {
@@ -57,6 +66,9 @@ export default {
   mutations: {
     [MUTATIONS.setDevices](state, devices) {
       state.devices = devices;
-    }
+    },
+    [MUTATIONS.setLabel](state, { index, label }) {
+      state.devices[index].label = label;
+    },
   }
 };
