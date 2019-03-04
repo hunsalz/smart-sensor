@@ -12,7 +12,7 @@
             </v-toolbar-title>
           </v-toolbar>
           <v-card-text>
-            <v-form>
+            <v-form ref="form">
               <v-text-field
                 v-for="(device, index) in devices"
                 :key="index"
@@ -23,6 +23,7 @@
                 maxlength="20"
                 :label="device.name"
                 :value="device.label"
+                @input="label => updateLabel(index, label)"
               />
             </v-form>
           </v-card-text>
@@ -48,15 +49,18 @@
     name: "More",
     computed: {
       devices: function() {
-        // note: should be already available while view 'Home' depends on it
         return this.$store.getters[MODULES.Device.getters.getDevices];
       }
     },
+    created() {
+      this.$store.dispatch(MODULES.Device.actions.loadDevices);
+    },
     methods: {
       submit() {
-        this.$store.dispatch(MODULES.Device.actions.saveDevices, {
-          devices: this.devices
-        });
+        this.$store.dispatch(MODULES.Device.actions.saveDevices);
+      },
+      updateLabel(index, label) {
+        this.$store.commit(MODULES.Device.mutations.setLabel, { index, label });
       }
     }
   };
