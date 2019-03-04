@@ -1,9 +1,8 @@
 import Vue from 'vue'
 import Parse from 'parse'
-import { handleParseError } from "@/plugins/parse"
+import { BME280, handleParseError } from "@/plugins/parse"
 
 const SEPARATOR = '@';
-const BME280 = Parse.Object.extend("BME280"); // declare BME280 subclass
 
 export const ACTIONS = {
   subscribeToValues: 'subscribeToValues',
@@ -62,12 +61,12 @@ export default {
           let humidities = [];
           let pressures = [];
           let altitudes = [];
-          results.forEach(e => {
-            labels.push(e.attributes.createdAt);
-            temperatures.push(e.attributes.temperature);
-            humidities.push(e.attributes.humidity);
-            pressures.push(e.attributes.pressure);
-            altitudes.push(e.attributes.altitude);
+          results.forEach(entity => {
+            labels.push(entity.attributes.createdAt);
+            temperatures.push(entity.attributes.temperature);
+            humidities.push(entity.attributes.humidity);
+            pressures.push(entity.attributes.pressure);
+            altitudes.push(entity.attributes.altitude);
           });
           commit(MUTATIONS.setSeries, {
             device: device,
