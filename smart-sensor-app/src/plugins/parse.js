@@ -1,4 +1,5 @@
 import Parse from 'parse'
+import { MODULES } from "@/store";
 
 Parse.initialize(
   process.env.VUE_APP_PARSE_SERVER_APPLICATION_ID,
@@ -11,9 +12,10 @@ Parse.liveQueryServerURL = process.env.VUE_APP_PARSE_SERVER_LIVE_QUERY_URL
 export const BME280 = Parse.Object.extend("BME280");
 export const DEVICE = Parse.Object.extend("Device");
 
-export const handleParseError = (error) => {
+export const handleParseError = (store, error) => {
   // eslint-disable-next-line no-console
-  console.log("called handleParseError", error)
-
-  // TODO
+  console.error("Parse error:", error)
+  // eslint-disable-next-line no-console
+  console.warn("Force logout.")
+  store.dispatch(MODULES.User.actions.logout);
 }
