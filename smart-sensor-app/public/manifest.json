@@ -1,6 +1,6 @@
 {
-  "name": "Smart Sensor",
-  "short_name": "Smart Sensor App",
+  "name": "Smart Sensor App",
+  "short_name": "Smart Sensor",
   "description": "Smart Sensor App for various sensor values",
   "icons": [
     {
