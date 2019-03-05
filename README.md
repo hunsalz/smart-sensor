@@ -7,7 +7,7 @@
 
 ## Story
 
-Smart-Sensor consists of various sensor input sources and a central [Progressive Web App](https://en.wikipedia.org/wiki/Progressive_web_applications). Sensor values are collected via separate ESP8266 units. Smart-Sensor-App is build with [Vue.js](https://vuejs.org/). The App is easily extandable by new cards and shows sensor values instantly. As backend service [Parse](https://parseplatform.org/) is used.
+Smart-Sensor consists of various sensor input sources and a central [Progressive Web App](https://en.wikipedia.org/wiki/Progressive_web_applications). Sensor values are collected via separate ESP units. Smart-Sensor-App is build with [Vue.js](https://vuejs.org/). The App is easily extandable by new cards and shows sensor values instantly. As backend service [Parse](https://parseplatform.org/) is used.
 
 ## Features
 
