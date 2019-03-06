@@ -14,10 +14,10 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "precache-manifest.dd0549691e91a6ac8911472de931cdbb.js"
+  "precache-manifest.1558c59e46400447059b8f4fc732219a.js"
 );
 
-workbox.core.setCacheNameDetails({prefix: "smart-sensor"});
+workbox.core.setCacheNameDetails({prefix: "smart-sensor-app"});
 
 /**
  * The workboxSW.precacheAndRoute() method efficiently caches and responds to
