@@ -1,73 +1,75 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import store from '@/store'
+import Vue from "vue";
+import Router from "vue-router";
+import store from "@/store";
 import { MODULES } from "@/store";
 
-Vue.use(Router)
+Vue.use(Router);
 
 const router = new Router({
   routes: [
     {
-      path: '/',
+      path: "/",
       redirect: {
-        name: 'login'
+        name: "login"
       }
     },
     {
-      path: '/login',
-      name: 'login',
-      component: () => import('@/views/Login.vue')
+      path: "/login",
+      name: "login",
+      component: () => import("@/views/Login.vue")
     },
     {
-      path: '/home',
-      name: 'home',
-      component: () => import('@/views/Home.vue'),
+      path: "/home",
+      name: "home",
+      component: () => import("@/views/Home.vue"),
       meta: {
         authRequired: true
       }
     },
     {
-      path: '/more',
-      name: 'more',
-      component: () => import('@/views/More.vue'),
+      path: "/more",
+      name: "more",
+      component: () => import("@/views/More.vue"),
       meta: {
         authRequired: true
       }
     },
     {
-      path: '*',
+      path: "*",
       redirect: {
-        name: 'login'
+        name: "login"
       }
     }
   ]
-})
+});
 
 router.beforeEach((to, from, next) => {
-
   // verify if auth is required
   if (to.matched.some(record => record.meta.authRequired)) {
     // route to target if authentication is done
     if (store.getters[MODULES.User.getters.isAuthenticated]) {
-      next()
+      next();
       // otherwise route to login
     } else {
       next({
-        name: 'login'
-      })
+        name: "login"
+      });
     }
     // if no auth is required ...
   } else {
     // redirect to home if authentication is already done
-    if (to.name === 'login' && store.getters[MODULES.User.getters.isAuthenticated]) {
+    if (
+      to.name === "login" &&
+      store.getters[MODULES.User.getters.isAuthenticated]
+    ) {
       next({
-        name: 'home'
-      })
+        name: "home"
+      });
       // otherwise move on to routes that do not require authentication
     } else {
-      next()
+      next();
     }
   }
-})
+});
 
-export default router
+export default router;

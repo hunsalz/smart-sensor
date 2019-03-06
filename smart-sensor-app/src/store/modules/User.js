@@ -1,18 +1,18 @@
-import Parse from 'parse'
-import router from '@/router'
+import Parse from "parse";
+import router from "@/router";
 
 export const ACTIONS = {
-  login: 'login',
-  logout: 'logout'
-}
+  login: "login",
+  logout: "logout"
+};
 
 export const GETTERS = {
-  isAuthenticated: 'isAuthenticated'
-}
+  isAuthenticated: "isAuthenticated"
+};
 
 export const MUTATIONS = {
-  setAuthenticated: 'setAuthenticated'
-}
+  setAuthenticated: "setAuthenticated"
+};
 
 export default {
   namespaced: true,
@@ -26,7 +26,7 @@ export default {
           commit(MUTATIONS.setAuthenticated, true);
           router.push({ name: "home" });
         })
-        .catch(function () {
+        .catch(function() {
           commit(MUTATIONS.setAuthenticated, false);
         });
     },
@@ -35,11 +35,11 @@ export default {
         .then(() => {
           // nothing else
         })
-        .catch(function () {
+        .catch(function() {
           // nothing else
         });
       commit(MUTATIONS.setAuthenticated, false);
-      router.push({ name: 'login' });
+      router.push({ name: "login" });
     }
   },
   getters: {

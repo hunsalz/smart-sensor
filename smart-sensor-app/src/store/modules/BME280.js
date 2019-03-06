@@ -1,24 +1,24 @@
-import Vue from 'vue'
-import Parse from 'parse'
-import { BME280, handleParseError } from "@/plugins/parse"
+import Vue from "vue";
+import Parse from "parse";
+import { BME280, handleParseError } from "@/plugins/parse";
 
-const SEPARATOR = '@';
+const SEPARATOR = "@";
 
 export const ACTIONS = {
-  subscribeToValues: 'subscribeToValues',
-  loadSeries: 'loadSeries'
-}
+  subscribeToValues: "subscribeToValues",
+  loadSeries: "loadSeries"
+};
 
 export const GETTERS = {
-  getValue: 'getValue',
-  getSeries: 'getSeries'
-}
+  getValue: "getValue",
+  getSeries: "getSeries"
+};
 
 export const MUTATIONS = {
-  setValue: 'setValue',
-  setSeries: 'setSeries',
-  updateSeries: 'updateSeries'
-}
+  setValue: "setValue",
+  setSeries: "setSeries",
+  updateSeries: "updateSeries"
+};
 
 export default {
   namespaced: true,
@@ -26,7 +26,8 @@ export default {
     [ACTIONS.subscribeToValues]({ commit }, device) {
       // try to fetch recent BME280 entry
       const query = new Parse.Query(BME280);
-      query.equalTo("device", device)
+      query
+        .equalTo("device", device)
         .descending("createdAt")
         .first()
         .then(bme280 => {
@@ -45,7 +46,10 @@ export default {
           handleParseError(this, error);
         };
     },
-    [ACTIONS.loadSeries]({ commit }, { device, key, offsetFromNowInMillis, limit, reduceFunction }) {
+    [ACTIONS.loadSeries](
+      { commit },
+      { device, key, offsetFromNowInMillis, limit, reduceFunction }
+    ) {
       let query = new Parse.Query(BME280);
       if (offsetFromNowInMillis) {
         var millis = Date.now() - offsetFromNowInMillis;
@@ -55,7 +59,8 @@ export default {
         .equalTo("device", device)
         .descending("createdAt")
         .limit(limit)
-        .find().then((results) => {
+        .find()
+        .then(results => {
           let labels = [];
           let temperatures = [];
           let humidities = [];
@@ -90,33 +95,37 @@ export default {
   },
   getters: {
     // return a fallback value or the recent stored value
-    [GETTERS.getValue]: (state) => (device) => {
-      return state[device] === undefined ? {
-        device: device,
-        temperature: NaN,
-        humidity: NaN,
-        pressure: NaN,
-        altitude: NaN
-      } : state[device];
+    [GETTERS.getValue]: state => device => {
+      return state[device] === undefined
+        ? {
+            device: device,
+            temperature: NaN,
+            humidity: NaN,
+            pressure: NaN,
+            altitude: NaN
+          }
+        : state[device];
     },
     // return a fallback series or the recent stored series
-    [GETTERS.getSeries]: (state) => (device, key) => {
-      return state[device + SEPARATOR + key] === undefined ? {
-        labels: [],
-        temperatures: [],
-        humidities: [],
-        pressures: [],
-        altitudes: [],
-        offsetFromNowInMillis: NaN,
-        limit: 1000,
-        reduceFunction: () => { }
-      } : state[device + SEPARATOR + key];
+    [GETTERS.getSeries]: state => (device, key) => {
+      return state[device + SEPARATOR + key] === undefined
+        ? {
+            labels: [],
+            temperatures: [],
+            humidities: [],
+            pressures: [],
+            altitudes: [],
+            offsetFromNowInMillis: NaN,
+            limit: 1000,
+            reduceFunction: () => {}
+          }
+        : state[device + SEPARATOR + key];
     }
   },
   mutations: {
     // store recent value
     [MUTATIONS.setValue](state, bme280) {
-      Vue.set(state, bme280.get('device'), bme280.attributes);
+      Vue.set(state, bme280.get("device"), bme280.attributes);
     },
     // store any kind of series by a synthetic key of 'device{SEPARATOR}key' syntax
     [MUTATIONS.setSeries](state, { device, key, series }) {
@@ -124,20 +133,24 @@ export default {
     },
     // update all existing series with a new value
     [MUTATIONS.updateSeries](state, bme280) {
-      let device = bme280.get('device');
+      let device = bme280.get("device");
       // loop over all existing keys of current state
       for (const key of Object.keys(state)) {
         // unshift new value to all keys that match appropriate 'device{SEPARATOR}' tuple
         if (key.indexOf(device + SEPARATOR) !== -1) {
-          // unshift new value 
+          // unshift new value
           let series = state[key];
-          series.labels.unshift(bme280.get('createdAt'));
-          series.temperatures.unshift(bme280.get('temperature'));
-          series.humidities.unshift(bme280.get('humidity'));
-          series.pressures.unshift(bme280.get('pressure'));
-          series.altitudes.unshift(bme280.get('altitude'));
+          series.labels.unshift(bme280.get("createdAt"));
+          series.temperatures.unshift(bme280.get("temperature"));
+          series.humidities.unshift(bme280.get("humidity"));
+          series.pressures.unshift(bme280.get("pressure"));
+          series.altitudes.unshift(bme280.get("altitude"));
           // call reducer function to define if any former values needs to be removed
-          let i = series.reduceFunction(series, series.offsetFromNowInMillis, series.limit);
+          let i = series.reduceFunction(
+            series,
+            series.offsetFromNowInMillis,
+            series.limit
+          );
           // remove amout of former values accordingly
           let start = i * -1;
           series.labels.splice(start, i);

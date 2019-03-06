@@ -1,18 +1,11 @@
 <template>
   <v-container fill-height>
-    <v-layout
-      align-center
-      justify-center
-    >
-      <v-flex
-        xs12
-        sm8
-        md4
-      >
+    <v-layout align-center justify-center>
+      <v-flex xs12 sm8 md4>
         <v-card class="elevation-12">
           <v-toolbar color="primary">
             <v-toolbar-title class="white--text">
-              {{ $t('app.login.name') }}
+              {{ $t("app.login.name") }}
             </v-toolbar-title>
           </v-toolbar>
           <v-card-text>
@@ -45,12 +38,8 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer />
-            <v-btn
-              color="primary"
-              :disabled="$v.$invalid"
-              @click="submit"
-            >
-              {{ $t('app.login.btn') }}
+            <v-btn color="primary" :disabled="$v.$invalid" @click="submit">
+              {{ $t("app.login.btn") }}
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -60,54 +49,53 @@
 </template>
 
 <script>
-  import { required, email, minLength } from "vuelidate/lib/validators";
-  import { MODULES } from "@/store";
+import { required, email, minLength } from "vuelidate/lib/validators";
+import { MODULES } from "@/store";
 
-  const PASSWORD_MIN_LENGTH = 5;
+const PASSWORD_MIN_LENGTH = 5;
 
-  export default {
-    name: "Login",
-    validations: {
-      email: { required, email },
-      password: { required, minLength: minLength(PASSWORD_MIN_LENGTH) }
+export default {
+  name: "Login",
+  validations: {
+    email: { required, email },
+    password: { required, minLength: minLength(PASSWORD_MIN_LENGTH) }
+  },
+  data: () => ({
+    email: "",
+    password: ""
+  }),
+  computed: {
+    emailErrors() {
+      const errors = [];
+      if (!this.$v.email.$dirty) return errors;
+      !this.$v.email.required &&
+        errors.push(this.$t("validations.emailRequired"));
+      !this.$v.email.email && errors.push(this.$t("validations.emailValid"));
+      return errors;
     },
-    data: () => ({
-      email: "",
-      password: ""
-    }),
-    computed: {
-      emailErrors() {
-        const errors = [];
-        if (!this.$v.email.$dirty) return errors;
-        !this.$v.email.required &&
-          errors.push(this.$t("validations.emailRequired"));
-        !this.$v.email.email && errors.push(this.$t("validations.emailValid"));
-        return errors;
-      },
-      passwordErrors() {
-        const errors = [];
-        if (!this.$v.password.$dirty) return errors;
-        !this.$v.password.required &&
-          errors.push(this.$t("validations.passwordRequired"));
-        !this.$v.password.minLength &&
-          errors.push(
-            this.$t("validations.passwordMinLength", [PASSWORD_MIN_LENGTH])
-          );
-        return errors;
-      }
-    },
-    methods: {
-      submit() {
-        if (!this.$v.$invalid) {
-          this.$store.dispatch(MODULES.User.actions.login, {
-            email: this.email,
-            password: this.password
-          });
-        }
+    passwordErrors() {
+      const errors = [];
+      if (!this.$v.password.$dirty) return errors;
+      !this.$v.password.required &&
+        errors.push(this.$t("validations.passwordRequired"));
+      !this.$v.password.minLength &&
+        errors.push(
+          this.$t("validations.passwordMinLength", [PASSWORD_MIN_LENGTH])
+        );
+      return errors;
+    }
+  },
+  methods: {
+    submit() {
+      if (!this.$v.$invalid) {
+        this.$store.dispatch(MODULES.User.actions.login, {
+          email: this.email,
+          password: this.password
+        });
       }
     }
-  };
+  }
+};
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

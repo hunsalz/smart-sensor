@@ -1,10 +1,5 @@
 <template>
-  <v-toolbar
-    app
-    prominent
-    dark
-    color="primary"
-  >
+  <v-toolbar app prominent dark color="primary">
     <v-toolbar-title class="headline text-uppercase">
       <span>Smart </span>
       <span class="font-weight-light">
@@ -13,56 +8,42 @@
     </v-toolbar-title>
     <v-spacer />
     <div v-if="isAuthenticated">
-      <v-btn
-        flat
-        @click="logout"
-      >
-        {{ $t('app.logout.name') }}
+      <v-btn flat @click="logout">
+        {{ $t("app.logout.name") }}
       </v-btn>
     </div>
-    <v-btn
-      v-show="$route.name === 'more'"
-      flat
-      icon
-      @click="home"
-    >
+    <v-btn v-show="$route.name === 'more'" flat icon @click="home">
       <v-icon>chevron_left</v-icon>
     </v-btn>
-    <v-btn
-      v-show="$route.name === 'home'"
-      flat
-      icon
-      @click="more"
-    >
+    <v-btn v-show="$route.name === 'home'" flat icon @click="more">
       <v-icon>more_vert</v-icon>
     </v-btn>
   </v-toolbar>
 </template>
 
 <script>
-  import router from "@/router";
-  import { MODULES } from "@/store";
+import router from "@/router";
+import { MODULES } from "@/store";
 
-  export default {
-    name: "TheNavigation",
-    computed: {
-      isAuthenticated() {
-        return this.$store.getters[MODULES.User.getters.isAuthenticated];
-      }
-    },
-    methods: {
-      home() {
-        router.push({ name: "home" });
-      },
-      logout() {
-        this.$store.dispatch(MODULES.User.actions.logout);
-      },
-      more() {
-        router.push({ name: "more" });
-      }
+export default {
+  name: "TheNavigation",
+  computed: {
+    isAuthenticated() {
+      return this.$store.getters[MODULES.User.getters.isAuthenticated];
     }
-  };
+  },
+  methods: {
+    home() {
+      router.push({ name: "home" });
+    },
+    logout() {
+      this.$store.dispatch(MODULES.User.actions.logout);
+    },
+    more() {
+      router.push({ name: "more" });
+    }
+  }
+};
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

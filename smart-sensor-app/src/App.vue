@@ -4,14 +4,8 @@
     <v-content transition="slide-x-transition">
       <router-view />
     </v-content>
-    <v-footer
-      height="auto"
-      color="primary"
-    >
-      <v-layout
-        justify-center
-        row
-      >
+    <v-footer height="auto" color="primary">
+      <v-layout justify-center row>
         <v-btn
           flat
           href="https://github.com/hunsalz/smart-sensor"
@@ -28,18 +22,17 @@
 </template>
 
 <script>
-  export default {
-    name: "App",
-    created() {
-      this.setTitle();
-    },
-    methods: {
-      setTitle() {
-        document.title = this.$t("app.name");
-      }
+export default {
+  name: "App",
+  created() {
+    this.setTitle();
+  },
+  methods: {
+    setTitle() {
+      document.title = this.$t("app.name");
     }
-  };
+  }
+};
 </script>
 
-<style>
-</style>
+<style></style>
