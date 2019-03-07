@@ -2,18 +2,30 @@ import Vue from "vue";
 import Vuex from "vuex";
 import VuexPersistence from "vuex-persist";
 import Cookies from "js-cookie";
+import AppPreferences, * as AppPreferencesMethods from "./modules/AppPreferences";
 import BME280, * as BME280Methods from "./modules/BME280";
 import Device, * as DeviceMethods from "./modules/Device";
 import User, * as UserMethods from "./modules/User";
 
 Vue.use(Vuex);
 
+export const _APP_PREFERENCES = "AppPreferences";
 export const _BME280 = "BME280";
 export const _DEVICE = "Device";
 export const _USER = "User";
 
 export const MODULES = {
-  BME280: {
+  [_APP_PREFERENCES]: {
+    getters: {
+      getPanels:
+        _APP_PREFERENCES + "/" + AppPreferencesMethods.GETTERS.getPanels
+    },
+    mutations: {
+      setPanels:
+        _APP_PREFERENCES + "/" + AppPreferencesMethods.MUTATIONS.setPanels
+    }
+  },
+  [_BME280]: {
     actions: {
       subscribeToValues:
         _BME280 + "/" + BME280Methods.ACTIONS.subscribeToValues,
@@ -24,7 +36,7 @@ export const MODULES = {
       getSeries: _BME280 + "/" + BME280Methods.GETTERS.getSeries
     }
   },
-  Device: {
+  [_DEVICE]: {
     actions: {
       loadDevices: _DEVICE + "/" + DeviceMethods.ACTIONS.loadDevices,
       saveDevices: _DEVICE + "/" + DeviceMethods.ACTIONS.saveDevices
@@ -36,7 +48,7 @@ export const MODULES = {
       setLabel: _DEVICE + "/" + DeviceMethods.MUTATIONS.setLabel
     }
   },
-  User: {
+  [_USER]: {
     actions: {
       login: _USER + "/" + UserMethods.ACTIONS.login,
       logout: _USER + "/" + UserMethods.ACTIONS.logout
@@ -70,7 +82,7 @@ const vuexSession = new VuexPersistence({
 const vuexLocal = new VuexPersistence({
   key: STORE_KEY,
   storage: window.localStorage,
-  modules: []
+  modules: [_APP_PREFERENCES]
 });
 
 const store = new Vuex.Store({
@@ -78,6 +90,7 @@ const store = new Vuex.Store({
   strict: process.env.NODE_ENV !== "production",
   namespaced: true,
   modules: {
+    AppPreferences,
     BME280,
     Device,
     User
