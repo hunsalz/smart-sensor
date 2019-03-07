@@ -1,25 +1,28 @@
 <template>
-  <v-container grid-list-xs fluid>
+  <v-container grid-list-md fluid>
     <v-layout row>
       <v-flex xs12 md6 xl4>
-        <v-expansion-panel expand>
+        <v-card-actions>
+          <!--v-select label="Size"></v-select-->
+          <v-spacer></v-spacer>
+          <v-btn @click="toggle" color="primary" fab small>
+            <v-icon>{{ computedExpandToggleIcon }}</v-icon>
+          </v-btn>
+        </v-card-actions>
+        <v-expansion-panel expand v-model="computedPanels">
           <v-expansion-panel-content
-            v-for="(device, index1) in devices"
-            :key="index1"
+            v-for="device in computedDevices"
+            :key="device.name"
           >
             <div slot="header">
               <panel-header :device="device.name" :label="device.label" />
             </div>
             <v-tabs grow>
-              <v-tab
-                v-for="(tab, index2) in tabs"
-                :key="index2"
-                class="caption"
-              >
+              <v-tab v-for="tab in tabs" :key="tab.name" class="caption">
                 {{ $t(tab.name) }}
               </v-tab>
-              <v-tab-item v-for="(tab, index3) in tabs" :key="index3" lazy>
-                <panel-charts :device="device.name" :filter="tabs[index3]" />
+              <v-tab-item v-for="(tab, index) in tabs" :key="index" lazy>
+                <panel-charts :device="device.name" :filter="tabs[index]" />
               </v-tab-item>
             </v-tabs>
           </v-expansion-panel-content>
@@ -68,12 +71,47 @@ export default {
     ]
   }),
   computed: {
-    devices: function() {
+    computedDevices() {
       return this.$store.getters[MODULES.Device.getters.getDevices];
+    },
+    computedExpandToggle() {
+      if (this.computedPanels.length == 0) {
+        return false;
+      }
+      return this.computedPanels.every(value => {
+        return value ? true : false;
+      });
+    },
+    computedExpandToggleIcon() {
+      return !this.computedExpandToggle ? "expand_more" : "expand_less";
+    },
+    computedPanels: {
+      get() {
+        return this.$store.getters[MODULES.AppPreferences.getters.getPanels]
+          ? this.$store.getters[MODULES.AppPreferences.getters.getPanels]
+          : [];
+      },
+      set(computedPanels) {
+        this.$store.commit(
+          MODULES.AppPreferences.mutations.setPanels,
+          computedPanels
+        );
+      }
     }
   },
   created() {
-    this.$store.dispatch(MODULES.Device.actions.loadDevices);
+    //this.$store.dispatch(MODULES.Device.actions.loadDevices);
+  },
+  methods: {
+    toggle() {
+      if (!this.computedExpandToggle) {
+        this.computedPanels = [
+          ...Array(this.computedDevices.length).keys()
+        ].map(() => true);
+      } else {
+        this.computedPanels = [];
+      }
+    }
   }
 };
 </script>
