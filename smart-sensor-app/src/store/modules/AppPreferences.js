@@ -18,9 +18,6 @@ export default {
   },
   mutations: {
     [MUTATIONS.setPanels](state, panels) {
-      
-      console.log(panels)
-      
       state.panels = panels;
     }
   }
