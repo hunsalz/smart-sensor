@@ -21,9 +21,11 @@ npm-debug.log*
 **/build
 **/dist
 
-# local env files
+# env files
+.env
 .env.local
-.env.*.local
+.env.production
+.env.stage
 
 # editor directories and files
 .idea
