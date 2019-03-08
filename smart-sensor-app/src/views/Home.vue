@@ -1,32 +1,64 @@
 <template>
-  <v-container grid-list-md fluid>
+  <v-container fluid>
     <v-layout row>
-      <v-flex xs12 md6 xl4>
+      <v-flex>
         <v-card-actions>
           <!--v-select label="Size"></v-select-->
           <v-spacer></v-spacer>
-          <v-btn @click="toggle" color="primary" fab small>
+          <v-btn @click="toggle" color="info" fab small>
             <v-icon>{{ computedExpandToggleIcon }}</v-icon>
           </v-btn>
         </v-card-actions>
-        <v-expansion-panel expand v-model="computedPanels">
-          <v-expansion-panel-content
-            v-for="device in computedDevices"
-            :key="device.name"
-          >
-            <div slot="header">
-              <panel-header :device="device.name" :label="device.label" />
-            </div>
-            <v-tabs grow>
-              <v-tab v-for="tab in tabs" :key="tab.name" class="caption">
-                {{ $t(tab.name) }}
-              </v-tab>
-              <v-tab-item v-for="(tab, index) in tabs" :key="index" lazy>
-                <panel-charts :device="device.name" :filter="tabs[index]" />
-              </v-tab-item>
-            </v-tabs>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
+        <v-container grid-list-md fluid>
+          <v-layout row wrap>
+            <v-flex xs12 md6 xl4>
+              <!--v-hover>
+                <v-card
+                  slot-scope="{ hover }"
+                  :class="`elevation-${hover ? 12 : 2}`"
+                  flat
+                  tile
+                >
+                  <v-img
+                    :src="
+                      `https://unsplash.it/150/300?image=${Math.floor(
+                        Math.random() * 100
+                      ) + 1}`
+                    "
+                    height="150px"
+                  ></v-img>
+                </v-card>
+              </v-hover-->
+
+              <v-expansion-panel expand v-model="computedPanels">
+                <v-expansion-panel-content
+                  v-for="device in computedDevices"
+                  :key="device.name"
+                >
+                  <div slot="header">
+                    <panel-header :device="device.name" :label="device.label" />
+                  </div>
+                  <v-tabs grow>
+                    <v-tab v-for="tab in tabs" :key="tab.name" class="caption">
+                      {{ $t(tab.name) }}
+                    </v-tab>
+                    <v-tab-item v-for="(tab, index) in tabs" :key="index" lazy>
+                      <panel-charts
+                        :device="device.name"
+                        :filter="tabs[index]"
+                      />
+                    </v-tab-item>
+                  </v-tabs>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+            </v-flex>
+          </v-layout>
+        </v-container>
+        <back-to-top visibleoffset="10" right="14px">
+          <v-btn color="info" fab small>
+            <v-icon>expand_less</v-icon>
+          </v-btn>
+        </back-to-top>
       </v-flex>
     </v-layout>
   </v-container>
