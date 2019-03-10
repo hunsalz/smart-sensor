@@ -1,0 +1,35 @@
+version: "3"
+
+services:
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - ./data-db:/data/db
+
+  parse:
+    image: parseplatform/parse-server
+    ports:
+      - 1337:1337
+    links:
+      - mongo
+    environment:
+      - PARSE_SERVER_APPLICATION_ID=APPLICATION_ID
+      - PARSE_SERVER_MASTER_KEY=MASTER_KEY
+      - PARSE_SERVER_DATABASE_URI=mongodb://mongo:27017/dev
+      - PARSE_SERVER_START_LIVE_QUERY_SERVER=1
+      - PARSE_SERVER_LIVE_QUERY={"classNames":["BME280","Device"]}
+
+  dashboard:
+    image: parseplatform/parse-dashboard
+    ports:
+      - 4040:4040
+    environment:
+      - PARSE_DASHBOARD_SERVER_URL=http://localhost:1337/parse
+      - PARSE_DASHBOARD_APP_ID=APPLICATION_ID
+      - PARSE_DASHBOARD_MASTER_KEY=MASTER_KEY
+      - PARSE_DASHBOARD_APP_NAME=Smart-Sensor
+      - PARSE_DASHBOARD_ALLOW_INSECURE_HTTP=1
+      - PARSE_DASHBOARD_USER_ID=admin
+      - PARSE_DASHBOARD_USER_PASSWORD=admin
