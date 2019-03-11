@@ -4,20 +4,7 @@
     <v-content transition="slide-x-transition">
       <router-view />
     </v-content>
-    <v-footer height="auto" color="primary">
-      <v-layout justify-center row>
-        <v-btn
-          flat
-          href="https://github.com/hunsalz/smart-sensor"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <span class="white--text">
-            GitHub
-          </span>
-        </v-btn>
-      </v-layout>
-    </v-footer>
+    <the-footer />
   </v-app>
 </template>
 
@@ -35,4 +22,4 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped></style>
