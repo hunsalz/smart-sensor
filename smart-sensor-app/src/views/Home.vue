@@ -1,14 +1,14 @@
 <template>
-  <v-container fluid>
+  <v-container fluid pl-0 pr-0>
     <v-layout row>
       <v-flex>
-        <v-card-actions>
+        <v-subheader>
           <!--v-select label="Size"></v-select-->
           <v-spacer></v-spacer>
           <v-btn @click="toggle" color="info" fab small>
             <v-icon>{{ computedExpandToggleIcon }}</v-icon>
           </v-btn>
-        </v-card-actions>
+        </v-subheader>
         <v-container grid-list-md fluid>
           <v-layout row wrap>
             <v-flex xs12 md6 xl4>
@@ -30,14 +30,16 @@
                 </v-card>
               </v-hover-->
 
-              <v-expansion-panel expand v-model="computedPanels">
+              <v-expansion-panel expand v-model="computedPanels" ma-0 pa-0 >
                 <v-expansion-panel-content
                   v-for="device in computedDevices"
                   :key="device.name"
                 >
-                  <div slot="header">
-                    <panel-header :device="device.name" :label="device.label" />
-                  </div>
+                  <panel-header
+                    slot="header"
+                    :device="device.name"
+                    :label="device.label"
+                  />
                   <v-tabs grow>
                     <v-tab v-for="tab in tabs" :key="tab.name" class="caption">
                       {{ $t(tab.name) }}
@@ -54,7 +56,7 @@
             </v-flex>
           </v-layout>
         </v-container>
-        <back-to-top visibleoffset="10" right="14px" bottom="20px">
+        <back-to-top visibleoffset="80" right="14px" bottom="20px">
           <v-btn color="info" fab small>
             <v-icon>expand_less</v-icon>
           </v-btn>
@@ -132,7 +134,7 @@ export default {
     }
   },
   created() {
-    //this.$store.dispatch(MODULES.Device.actions.loadDevices);
+    this.$store.dispatch(MODULES.Device.actions.loadDevices);
   },
   methods: {
     toggle() {
@@ -148,4 +150,8 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.expansion-panel__container {
+  background-color: rgba(255, 0, 0, 1);
+}
+</style>
