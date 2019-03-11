@@ -54,7 +54,7 @@
             </v-flex>
           </v-layout>
         </v-container>
-        <back-to-top visibleoffset="10" right="14px">
+        <back-to-top visibleoffset="10" right="14px" bottom="20px">
           <v-btn color="info" fab small>
             <v-icon>expand_less</v-icon>
           </v-btn>
