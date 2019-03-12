@@ -30,7 +30,7 @@
                 </v-card>
               </v-hover-->
 
-              <v-expansion-panel expand v-model="computedPanels" ma-0 pa-0 >
+              <v-expansion-panel expand v-model="computedPanels" ma-0 pa-0>
                 <v-expansion-panel-content
                   v-for="device in computedDevices"
                   :key="device.name"
