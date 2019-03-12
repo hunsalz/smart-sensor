@@ -28,7 +28,6 @@ void setup() {
   // init Serial with appropriate baud rate
   LOGGER(115200);
   VERBOSE_FP(F("Serial baud rate is %lu"), Serial.baudRate());
-
   // WiFi setup
   wifiMulti.addAP(WIFI_SSID_1, WIFI_PSK_1);
   wifiMulti.addAP(WIFI_SSID_2, WIFI_PSK_2);
@@ -126,7 +125,8 @@ size_t serialize(String& output, String& error) {
   char device[15];
   int size = Sensor::getDevice(device);
 
-  DynamicJsonDocument doc;
+  const size_t CAPACITY = JSON_OBJECT_SIZE(2) + 40;
+  StaticJsonDocument<CAPACITY> doc;
   JsonObject object = doc.to<JsonObject>();
   object["error"] = error;
   object["device"] = device;

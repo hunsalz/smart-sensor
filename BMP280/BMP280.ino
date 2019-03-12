@@ -126,7 +126,8 @@ size_t serialize(String& output, String& error) {
   char device[15];
   int size = Sensor::getDevice(device);
 
-  DynamicJsonDocument doc;
+  const size_t CAPACITY = JSON_OBJECT_SIZE(2) + 40;
+  StaticJsonDocument<CAPACITY> doc;
   JsonObject object = doc.to<JsonObject>();
   object["error"] = error;
   object["device"] = device;
