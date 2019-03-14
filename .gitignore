@@ -21,12 +21,6 @@ npm-debug.log*
 **/build
 **/dist
 
-# env files
-.env
-.env.local
-.env.production
-.env.stage
-
 # test data
 **/data-db
 
