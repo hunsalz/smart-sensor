@@ -2,13 +2,6 @@
   <v-container fluid pl-0 pr-0>
     <v-layout row>
       <v-flex>
-        <v-subheader>
-          <!--v-select label="Size"></v-select-->
-          <v-spacer></v-spacer>
-          <v-btn @click="toggle" color="info" fab small>
-            <v-icon>{{ computedExpandToggleIcon }}</v-icon>
-          </v-btn>
-        </v-subheader>
         <v-container grid-list-md fluid>
           <v-layout row wrap>
             <v-flex xs12 md6 xl4>
@@ -108,17 +101,6 @@ export default {
     computedDevices() {
       return this.$store.getters[MODULES.Device.getters.getDevices];
     },
-    computedExpandToggle() {
-      if (this.computedPanels.length == 0) {
-        return false;
-      }
-      return this.computedPanels.every(value => {
-        return value ? true : false;
-      });
-    },
-    computedExpandToggleIcon() {
-      return !this.computedExpandToggle ? "expand_more" : "expand_less";
-    },
     computedPanels: {
       get() {
         return this.$store.getters[MODULES.AppPreferences.getters.getPanels]
@@ -135,10 +117,30 @@ export default {
   },
   created() {
     this.$store.dispatch(MODULES.Device.actions.loadDevices);
+    this.$eventHub.$on("update:togglePanels", this.togglePanels);
+  },
+  beforeDestroy() {
+    this.$eventHub.$off("update:togglePanels");
+  },
+  watch: {
+    computedPanels: function() {
+      this.$eventHub.$emit(
+        "update:toggleIcon",
+        this.showExpandMore() ? "expand_more" : "expand_less"
+      );
+    }
   },
   methods: {
-    toggle() {
-      if (!this.computedExpandToggle) {
+    showExpandMore() {
+      if (this.computedPanels.length == 0) {
+        return true;
+      }
+      return this.computedPanels.every(value => {
+        return value ? false : true;
+      });
+    },
+    togglePanels() {
+      if (this.showExpandMore()) {
         this.computedPanels = [
           ...Array(this.computedDevices.length).keys()
         ].map(() => true);
@@ -150,8 +152,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.expansion-panel__container {
-  background-color: rgba(255, 0, 0, 1);
-}
-</style>
+<style scoped></style>
