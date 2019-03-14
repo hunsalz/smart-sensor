@@ -12,6 +12,8 @@ import i18n from "@/i18n";
 import router from "@/router";
 import store from "@/store";
 
+Vue.prototype.$eventHub = new Vue(); // global event bus
+
 // service worker
 import "./registerServiceWorker";
 
