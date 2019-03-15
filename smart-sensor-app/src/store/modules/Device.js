@@ -84,7 +84,7 @@ export default {
       state.devices[index].label = label;
     },
     [MUTATIONS.pushDevice](state, device) {
-      let x = state.devices.push(device);
+      state.devices.push(device);
     }
   }
 };
