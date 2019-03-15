@@ -18,7 +18,9 @@ Smart-Sensor consists of various sensor input sources and a central [Progressive
 
 ## Impressions
 
-![Mobile view](./images/smart-sensor-mobile-view.png)
+![Mobile view built with Polymer](./images/Mobile%20view%20built%20with%20Polymer.png)
+![Mobile view built with Vue](./images/Mobile%20view%20built%20with%20Vue.png)
+![ESP32 wired up with BME280](./images/ESP32%20wired%20up%20with%20BME280.png)
 
 ## Hardware components
 
