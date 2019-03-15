@@ -87,7 +87,7 @@ export default {
       get() {
         let panels = this.$store.getters[
           MODULES.AppPreferences.getters.getPanels
-        ];
+        ]();
         return panels ? panels : [];
       },
       set(panels) {
