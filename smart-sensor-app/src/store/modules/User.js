@@ -31,6 +31,9 @@ export default {
         });
     },
     [ACTIONS.logout]({ commit }) {
+      commit(MUTATIONS.setAuthenticated, false);
+      router.push({ name: "login" });
+      // try to logout ...
       Parse.User.logOut()
         .then(() => {
           // nothing else
@@ -38,12 +41,10 @@ export default {
         .catch(function() {
           // nothing else
         });
-      commit(MUTATIONS.setAuthenticated, false);
-      router.push({ name: "login" });
     }
   },
   getters: {
-    [GETTERS.isAuthenticated](state) {
+    [GETTERS.isAuthenticated]: state => () => {
       return state.authenticated;
     }
   },
