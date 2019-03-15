@@ -48,7 +48,7 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch(MODULES.Device.actions.loadDevices);
+    this.$store.dispatch(MODULES.Device.actions.subscribeToDevices);
   },
   methods: {
     submit() {

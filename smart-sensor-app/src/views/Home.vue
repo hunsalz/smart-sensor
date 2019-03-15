@@ -5,24 +5,6 @@
         <v-container grid-list-md fluid>
           <v-layout row wrap>
             <v-flex xs12 md6 xl4>
-              <!--v-hover>
-                <v-card
-                  slot-scope="{ hover }"
-                  :class="`elevation-${hover ? 12 : 2}`"
-                  flat
-                  tile
-                >
-                  <v-img
-                    :src="
-                      `https://unsplash.it/150/300?image=${Math.floor(
-                        Math.random() * 100
-                      ) + 1}`
-                    "
-                    height="150px"
-                  ></v-img>
-                </v-card>
-              </v-hover-->
-
               <v-expansion-panel expand v-model="computedPanels" ma-0 pa-0>
                 <v-expansion-panel-content
                   v-for="device in computedDevices"
@@ -103,20 +85,18 @@ export default {
     },
     computedPanels: {
       get() {
-        return this.$store.getters[MODULES.AppPreferences.getters.getPanels]
-          ? this.$store.getters[MODULES.AppPreferences.getters.getPanels]
-          : [];
+        let panels = this.$store.getters[
+          MODULES.AppPreferences.getters.getPanels
+        ];
+        return panels ? panels : [];
       },
-      set(computedPanels) {
-        this.$store.commit(
-          MODULES.AppPreferences.mutations.setPanels,
-          computedPanels
-        );
+      set(panels) {
+        this.$store.commit(MODULES.AppPreferences.mutations.setPanels, panels);
       }
     }
   },
   created() {
-    this.$store.dispatch(MODULES.Device.actions.loadDevices);
+    this.$store.dispatch(MODULES.Device.actions.subscribeToDevices);
     this.$eventHub.$on("update:togglePanels", this.togglePanels);
   },
   beforeDestroy() {

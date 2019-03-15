@@ -2,7 +2,7 @@ import Parse from "parse";
 import { DEVICE, handleParseError } from "@/plugins/parse";
 
 export const ACTIONS = {
-  loadDevices: "loadDevices",
+  subscribeToDevices: "subscribeToDevices",
   saveDevices: "saveDevices"
 };
 
@@ -12,7 +12,8 @@ export const GETTERS = {
 
 export const MUTATIONS = {
   setDevices: "setDevices",
-  setLabel: "setLabel"
+  setLabel: "setLabel",
+  pushDevice: "pushDevice"
 };
 
 export default {
@@ -21,21 +22,31 @@ export default {
     devices: []
   },
   actions: {
-    [ACTIONS.loadDevices]({ commit }) {
+    [ACTIONS.subscribeToDevices]({ commit }) {
       // try to fetch all devices
       const query = new Parse.Query(DEVICE);
-      query.find().then(results => {
-        let devices = [];
-        results.forEach(entity => {
-          let device = Object.assign({}, entity.attributes);
-          device.id = entity.id;
-          devices.push(device);
-        });
-        commit(MUTATIONS.setDevices, devices);
-      });
-      error => {
-        handleParseError(this, error);
-      };
+      query
+        .find()
+        .then(results => {
+          let devices = [];
+          results.forEach(entity => {
+            let device = Object.assign({}, entity.attributes);
+            device.id = entity.id;
+            devices.push(device);
+          });
+          commit(MUTATIONS.setDevices, devices);
+        })
+        .then(() => {
+          // subscribe to new values
+          query.subscribe().on("create", entity => {
+            let device = Object.assign({}, entity.attributes);
+            device.id = entity.id;
+            commit(MUTATIONS.pushDevice, device);
+          });
+        }),
+        error => {
+          handleParseError(this, error);
+        };
     },
     [ACTIONS.saveDevices]({ state }) {
       // process all devices
@@ -71,6 +82,9 @@ export default {
     },
     [MUTATIONS.setLabel](state, { index, label }) {
       state.devices[index].label = label;
+    },
+    [MUTATIONS.pushDevice](state, device) {
+      let x = state.devices.push(device);
     }
   }
 };

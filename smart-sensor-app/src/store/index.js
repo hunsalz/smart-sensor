@@ -38,7 +38,8 @@ export const MODULES = {
   },
   [_DEVICE]: {
     actions: {
-      loadDevices: _DEVICE + "/" + DeviceMethods.ACTIONS.loadDevices,
+      subscribeToDevices:
+        _DEVICE + "/" + DeviceMethods.ACTIONS.subscribeToDevices,
       saveDevices: _DEVICE + "/" + DeviceMethods.ACTIONS.saveDevices
     },
     getters: {
