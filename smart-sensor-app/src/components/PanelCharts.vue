@@ -36,6 +36,7 @@
 <script>
 import LineChart from "./mixins/LineChart.js";
 import { LIMIT_REDUCE } from "./mixins/ReduceFunctions.js";
+import moment from "moment";
 import { MODULES } from "@/store";
 
 export const LAST_1000_ENTRIES = "LAST_1000_ENTRIES";
@@ -100,6 +101,14 @@ export default {
             }
           }
         ]
+      },
+      tooltips: {
+        callbacks: {
+          // eslint-disable-next-line no-unused-vars
+          title: function(tooltipItems, data) {
+            return moment(tooltipItems.label).format("LLL");
+          }
+        }
       }
     }
   }),
