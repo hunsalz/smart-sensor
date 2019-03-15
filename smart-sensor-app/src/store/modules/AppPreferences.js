@@ -12,8 +12,8 @@ export default {
     panels: []
   },
   getters: {
-    [GETTERS.getPanels]: state => {
-      // TODO: workaround - return a copy to avoid vuex mutation errors while array is used for two-way v-model binding; vuex stated error in strict mode when leaving page
+    [GETTERS.getPanels]: state => () => {
+      // workaround for occuring mutations during v-expansion-panel unregister caused by two-way v-model binding of array
       return state.panels.slice();
     }
   },
