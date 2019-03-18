@@ -1,48 +1,78 @@
+// declare sub classes
+const BME280 = Parse.Object.extend("BME280");
+const DEVICE = Parse.Object.extend("Device");
+
 // Dialogflow fulfillment
+// TODO consider timestamp of sensor value
+// TODO i18n
 Parse.Cloud.define("temperature", async (request) => {
 
-  var place = request.params.place;
-  // TODO match place => device - how to proceed if no place match / is provided ?
-  var device = "ESP-2355357";
+  const label = request.params.label;
+  const temperature = request.params.temperature;
 
-  console.log("req => ", request);
+  // try to find device by label
+  let query = new Parse.Query(DEVICE);
+  query.equalTo("label", label);
+  const device = await query.first();
 
-  var response = Object();
-  var BME280 = Parse.Object.extend("BME280");
-  var query = new Parse.Query(BME280);
-  query.equalTo("device", device);
-  query.descending("createdAt");
-  
-  const result = await query.first();
-  if (result) {
-    // TODO wrong place for fulfillment
-    response.fulfillmentText = 'Die Temperatur beträgt ' + result.get('temperature') + '°';
+  // return 3 alternative labels as response if no corresponding device was found
+  if (!device) {
+    query = new Parse.Query(DEVICE);
+    query.limit(3);
+    const devices = await query.find();
+    let labels = [];
+    devices.forEach(device => {
+      labels.push(device.get('label') ? device.get('label') : device.get('name'));
+    });
+    // build response
+    let response = {};
+    response.fulfillmentText = 'Kein Sensor mit Bezeichnung ' + label + ' gefunden.';
     response.fulfillmentMessages = [];
+    response.payload = {
+      'labels': labels
+    };
+    return response;
+  }
 
-    response.temperature = result.get('temperature');
-    response.humidity = result.get('humidity');
-    response.createdAt = result.get('createdAt');
-    /// ... more
-    response.place = place;
-    response.device = device;
-  };
+  // lookup last sensor value by device
+  query = new Parse.Query(BME280);
+  query.equalTo("device", device.get('name'));
+  query.descending("createdAt");
+  const bme280 = await query.first();
+  // return last sensor value
+  if (bme280) {
+    // build response
+    let response = {};
+    response.fulfillmentText = 'Die Temperatur beträgt ' + bme280.get('temperature') + '°';
+    response.fulfillmentMessages = [];
+    // response.temperature = bme280.get('temperature');
+    // response.humidity = bme280.get('humidity');
+    // response.createdAt = bme280.get('createdAt');
+    response.payload = {
+      'label': request.params.label,
+      'temperature' : request.params.temperature,
+      'device' : device.get('name')
+    };
+    return response;
 
-  return response;
+  // otherwise return that no data is available
+  } else {
+    response.fulfillmentText = 'Keine Daten für Sensor mit Bezeichnung ' + label + ' verfügbar.';
+    response.fulfillmentMessages = [];
+    return response;
+  }
 });
 
 Parse.Cloud.define("getBME280Devices", async (request) => {
 
-  var response = [];
-  var query = new Parse.Query("BME280");
+  let query = new Parse.Query(BME280);
   await query.distinct("device")
-    .then(function(results) {
-      response = results;
+    .then(function (response) {
+      return response;
     })
-    .catch(function(error) {
+    .catch(function (error) {
       console.error(error);
     });
-
-  return response;
 });
 
 // TODO split afterSave() in sub-functions and add implementations for other sensor classes
@@ -51,8 +81,7 @@ Parse.Cloud.afterSave("BME280", async (request) => {
 
   // create device if not already exists
   var name = request.object.get("device");
-  const Device = Parse.Object.extend("Device");
-  var query = new Parse.Query(Device);
+  var query = new Parse.Query(DEVICE);
   query.equalTo("name", name);
   const result = await query.first();
   if (!result) {
@@ -68,7 +97,6 @@ Parse.Cloud.afterSave("BME280", async (request) => {
   }
 
   // build query that fetch all overdue entities
-  var BME280 = Parse.Object.extend("BME280");
   var query = new Parse.Query(BME280);
   query.equalTo("device", name);
   query.skip(1000); // keep only the last 1K entries
