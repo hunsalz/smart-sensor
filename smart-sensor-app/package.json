@@ -46,7 +46,7 @@
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.5.0",
     "css-loader": "^2.1.1",
-    "eslint": "^5.15.2",
+    "eslint": "^5.15.3",
     "eslint-plugin-vue": "^5.2.2",
     "style-loader": "^0.23.1",
     "stylus": "^0.54.5",
