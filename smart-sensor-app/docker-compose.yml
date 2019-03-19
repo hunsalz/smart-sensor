@@ -19,7 +19,7 @@ services:
       - PARSE_SERVER_MASTER_KEY=MASTER_KEY
       - PARSE_SERVER_DATABASE_URI=mongodb://mongo:27017/dev
       - PARSE_SERVER_START_LIVE_QUERY_SERVER=1
-      - PARSE_SERVER_LIVE_QUERY={"classNames":["BME280","Device"]}
+      - PARSE_SERVER_LIVE_QUERY={"classNames":["BME280","BME680","BMP085","BMP280","Device","Error"]}
 
   dashboard:
     image: parseplatform/parse-dashboard
