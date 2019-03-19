@@ -31,5 +31,5 @@ Smart-Sensor consists of various sensor input sources and a central [Progressive
 ## Software components
 
 * ESP sketches with ESP32 and ESP8266 support for different sensor types: [BME280](/BME280), [BME680](/BME680), [BMP085](/BMP085), [BMP280](/BMP280)
-* Parse [cloud functions](/parse-server) and upload folder.
+* [Parse Server](https://parseplatform.org/). See details in [upload folder](/parse-server).
 * [PWA](/smart-sensor-app) build with [Vue.js](https://vuejs.org/)
