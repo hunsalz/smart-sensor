@@ -1,6 +1,13 @@
 # smart-sensor-app
 
-## Project setup
+## Setup Parse Server
+```
+docker-compose up
+```
+Visit [Parse Dashboard](http://localhost:4040)
+Default login: admin/admin
+
+## Setup App
 ```
 npm install
 ```
