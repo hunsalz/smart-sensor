@@ -1,9 +1,14 @@
-# General sketch setup
+# Sketch setup
 
-*Precondition:* [Arduino IDE](https://github.com/arduino/Arduino) is installed.
+## Preconditions
 
-*Dependency:* `git clone https://github.com/hunsalz/espUtils.git` into your `/arduino/libraries` directory.
+* [Arduino IDE](https://github.com/arduino/Arduino) is installed.
+* [espUtils](https://github.com/hunsalz/espUtils.git) is installed into your `/arduino/libraries` directory: `git clone https://github.com/hunsalz/espUtils.git`
 
-1. Move [./config/config.h.template](./config/config.h.template) to `config.h` and fill out the blanks with your data.
+## Configuration
 
-2. Verify, compile and upload sketch to your ESP32 or ESP8266.
+Move [./config/config.h.template](./config/config.h.template) to `config.h` and fill out the blanks with your data.
+
+## Compile and upload
+
+Verify, compile and upload sketch to your ESP32 or ESP8266.
