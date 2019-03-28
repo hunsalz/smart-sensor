@@ -17,6 +17,9 @@ node_modules
 package-lock.json
 npm-debug.log*
 
+# incubator folder
+**/incubator
+
 # builds
 **/build
 **/dist
